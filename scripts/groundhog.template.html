@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Groundhog Day Prognosticators</title>
+<meta name="description" content="Search Groundhog Day prognosticators by name, state or province, and type of creature, and see each one's track record.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fbf8f3; --surface: #fff; --ink: #1e1b18; --muted: #6b645c; --line: #e6dfd4;
+  --accent: #c8102e; --accent-soft: #fbe9ec;
+  --hit: #2f7d4f; --miss: #b4541a; --none: #cfc7ba;
+  --serif: "Fraunces", Georgia, serif; --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #161412; --surface: #1f1c19; --ink: #f1ece4; --muted: #a39a8e; --line: #332e29;
+    --accent: #ff5a73; --accent-soft: #2e1a1e; --hit: #5fbf86; --miss: #e08a4f; --none: #4a443d; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
+.app { max-width: 920px; margin: 0 auto; padding: 20px 16px 32px; }
+h1 { font: 600 clamp(1.5rem, 4vw, 2rem)/1.2 var(--serif); margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 16px; font-size: .95rem; }
+.controls { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; }
+.controls label { display: block; font-size: .75rem; font-weight: 600; color: var(--muted); margin-bottom: 3px; text-transform: uppercase; letter-spacing: .04em; }
+input, select { width: 100%; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; min-height: 42px; }
+input:focus, select:focus, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin: 14px 0 10px; font-size: .9rem; color: var(--muted); }
+.bar button { font: inherit; background: none; border: 0; color: var(--accent); cursor: pointer; text-decoration: underline; padding: 4px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+.head { display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center; padding: 14px; }
+.photo { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.name { font: 600 1.15rem/1.25 var(--serif); margin: 0; }
+.meta { color: var(--muted); font-size: .88rem; margin: 2px 0 0; }
+.tag { display: inline-block; font-size: .72rem; font-weight: 600; padding: 1px 8px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); margin-left: 6px; vertical-align: 2px; }
+.tag.off { background: var(--line); color: var(--muted); }
+.score { text-align: right; min-width: 92px; }
+.pct { font: 600 1.7rem/1 var(--serif); }
+.pct small { font-size: .9rem; }
+.of { font-size: .75rem; color: var(--muted); margin-top: 3px; }
+.strip { display: flex; flex-wrap: wrap; gap: 3px; padding: 0 14px 12px; }
+.dot { width: 14px; height: 14px; border-radius: 3px; background: var(--none); }
+.dot.hit { background: var(--hit); }
+.dot.miss { background: var(--miss); }
+details { border-top: 1px solid var(--line); }
+summary { cursor: pointer; padding: 9px 14px; font-size: .85rem; color: var(--muted); font-weight: 500; }
+.more { padding: 0 14px 14px; font-size: .92rem; }
+.more p { margin: 0 0 10px; }
+.stats { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-bottom: 10px; }
+.stats b { font-weight: 600; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: .78rem; color: var(--muted); padding: 0 0 10px; }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; background: var(--c); }
+.note { font-size: .82rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; margin-top: 18px; }
+.note a { color: var(--accent); }
+.empty { text-align: center; color: var(--muted); padding: 40px 0; }
+.more-btn[hidden] { display: none; }
+.more-btn { display: block; margin: 14px auto 0; font: 600 .95rem var(--sans); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 10px 20px; cursor: pointer; }
+table { border-collapse: collapse; width: 100%; font-size: .85rem; }
+td, th { text-align: left; padding: 3px 8px 3px 0; }
+@media (max-width: 640px) {
+  .controls { grid-template-columns: 1fr 1fr; }
+  .controls > :first-child { grid-column: 1 / -1; }
+  .head { grid-template-columns: 52px 1fr; }
+  .photo { width: 52px; height: 52px; }
+  .score { grid-column: 1 / -1; text-align: left; display: flex; align-items: baseline; gap: 10px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Groundhog Day prognosticators</h1>
+  <p class="sub">Search nearly 100 weather-predicting critters by name, state or province, and type of creature.</p>
+
+  <div class="controls" role="search">
+    <div><label for="q">Name or city</label><input id="q" type="search" placeholder="e.g. Phil, Staten Island" autocomplete="off"></div>
+    <div><label for="region">State / province</label><select id="region"></select></div>
+    <div><label for="type">Type of creature</label><select id="type"></select></div>
+    <div><label for="sort">Sort by</label><select id="sort">
+      <option value="rate">Best track record</option>
+      <option value="count">Most predictions</option>
+      <option value="name">Name (A–Z)</option>
+    </select></div>
+  </div>
+
+  <div class="bar"><span id="count" aria-live="polite"></span><button id="reset" type="button" hidden>Clear filters</button></div>
+  <div id="results"></div>
+  <button id="more" class="more-btn" type="button" hidden>Show more</button>
+
+  <div class="note">
+    <b>How the track record works.</b> The data records each prediction (shadow = six more weeks of winter, no shadow = early spring) but not the actual weather,
+    so a predictor's score is the share of years it <i>agreed with the majority of all predictors</i> that year. Years with an even split or no recorded call are left out.
+    It measures who goes with the crowd, not who is meteorologically right. Data: <a href="https://groundhog-day.com" target="_blank" rel="noopener">groundhog-day.com</a>.
+  </div>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const C = DATA.consensus, PAGE = 20;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+// Track record against the yearly consensus
+for (const a of DATA.animals) {
+  let hit = 0, graded = 0, shadows = 0, calls = 0;
+  for (const [y, s] of a.p) {
+    if (s !== null) { calls++; shadows += s; }
+    if (s !== null && C[y] !== undefined) { graded++; if (C[y] === s) hit++; }
+  }
+  a.hit = hit; a.graded = graded; a.calls = calls; a.shadows = shadows;
+  a.rate = graded ? hit / graded : -1;
+  a.hay = norm([a.name, a.city, a.region, a.type].join(" "));
+}
+
+const fillSelect = (el, label, values) => {
+  const counts = {};
+  values.forEach(v => { if (v) counts[v] = (counts[v] || 0) + 1; });
+  el.innerHTML = `<option value="">${label}</option>` + Object.keys(counts).sort().map(v => `<option value="${esc(v)}">${esc(v)} (${counts[v]})</option>`).join("");
+};
+fillSelect($("region"), "All states & provinces", DATA.animals.map(a => a.region));
+fillSelect($("type"), "All creatures", DATA.animals.map(a => a.type));
+
+let shown = PAGE, list = [];
+
+function dots(a) {
+  return a.p.map(([y, s]) => {
+    let cls = "", why = "no call recorded";
+    if (s !== null) {
+      const call = s ? "saw shadow" : "no shadow";
+      if (C[y] === undefined) why = call + ", no majority that year";
+      else if (C[y] === s) { cls = "hit"; why = call + ", agreed with majority"; }
+      else { cls = "miss"; why = call + ", went against majority"; }
+    }
+    return `<span class="dot ${cls}" title="${y}: ${why}"></span>`;
+  }).join("");
+}
+
+function card(a) {
+  const pct = a.graded ? Math.round(a.rate * 100) : null;
+  const last = a.p[a.p.length - 1];
+  const where = [a.city, a.region].filter(Boolean).join(", ");
+  const first = a.p[0][0];
+  return `<article class="card">
+    <div class="head">
+      <img class="photo" src="${esc(a.img)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;photo&quot;>🦫</div>'">
+      <div>
+        <h2 class="name">${esc(a.name)}${a.active ? "" : '<span class="tag off">Retired</span>'}</h2>
+        <p class="meta">${esc(a.type)} · ${esc(where)}${a.country === "Canada" ? ", Canada" : ""}</p>
+      </div>
+      <div class="score">
+        <div class="pct">${pct === null ? "–" : pct + "<small>%</small>"}</div>
+        <div class="of">${a.graded ? `${a.hit} of ${a.graded} years<br>matched the majority` : "not enough data"}</div>
+      </div>
+    </div>
+    <div class="strip" aria-label="Year-by-year record">${dots(a)}</div>
+    <details>
+      <summary>Details &amp; full record</summary>
+      <div class="more">
+        <p>${esc(a.desc)}</p>
+        <div class="stats">
+          <span><b>${a.p.length}</b> prediction${a.p.length === 1 ? "" : "s"} since ${first}</span>
+          <span><b>${a.shadows}</b> shadow · <b>${a.calls - a.shadows}</b> no shadow</span>
+          ${last ? `<span>Latest (${last[0]}): <b>${last[1] === null ? "no call recorded" : last[1] ? "shadow, six more weeks of winter" : "no shadow, early spring"}</b></span>` : ""}
+        </div>
+        <div class="legend"><span style="--c:var(--hit)">Matched majority</span><span style="--c:var(--miss)">Went against majority</span><span style="--c:var(--none)">No call / no majority</span></div>
+      </div>
+    </details>
+  </article>`;
+}
+
+function render() {
+  const q = norm($("q").value.trim()), region = $("region").value, type = $("type").value, sort = $("sort").value;
+  list = DATA.animals.filter(a => (!q || q.split(/\s+/).every(w => a.hay.includes(w))) && (!region || a.region === region) && (!type || a.type === type));
+  const by = {
+    rate: (a, b) => b.rate - a.rate || b.graded - a.graded || a.name.localeCompare(b.name),
+    count: (a, b) => b.p.length - a.p.length || a.name.localeCompare(b.name),
+    name: (a, b) => a.name.localeCompare(b.name),
+  }[sort];
+  list.sort(by);
+  $("results").innerHTML = list.length ? list.slice(0, shown).map(card).join("") : '<p class="empty">No prognosticators match those filters.</p>';
+  $("count").textContent = `${list.length} of ${DATA.animals.length} prognosticators`;
+  $("more").hidden = list.length <= shown;
+  $("reset").hidden = !(q || region || type);
+  postHeight();
+}
+
+function postHeight() {
+  const h = document.documentElement.scrollHeight;
+  if (window.parent !== window) parent.postMessage({ type: "groundhog-height", height: h }, "*");
+}
+
+["q", "region", "type", "sort"].forEach(id => $(id).addEventListener(id === "q" ? "input" : "change", () => { shown = PAGE; render(); }));
+$("more").onclick = () => { shown += PAGE; render(); };
+$("reset").onclick = () => { $("q").value = ""; $("region").value = ""; $("type").value = ""; shown = PAGE; render(); };
+document.addEventListener("toggle", postHeight, true);
+window.addEventListener("resize", postHeight);
+if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.body);
+render();
+</script>
+</body>
+</html>
