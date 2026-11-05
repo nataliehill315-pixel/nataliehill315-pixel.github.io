@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNL Majors Search | Daily Nebraskan</title>
+<meta name="description" content="Search University of Nebraska-Lincoln majors and see how enrollment has changed from Fall 2016 to Fall 2025.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #ba1f1f; --red-dark: #8f1717; --ink: #333; --muted: #6a6a6a; --line: #dcdcdc;
+  --panel: #f1f1f1; --white: #fff;
+  --head: "Roboto Condensed", "Arial Narrow", Arial, sans-serif;
+  --body: "Open Sans", Helvetica, Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--white); color: var(--ink); font: 400 14px/1.5 var(--body); }
+.app { max-width: 860px; margin: 0 auto; padding: 0 16px 24px; }
+
+/* nameplate bar, echoing dailynebraskan.com's charcoal footer / red accent */
+.bar { background: var(--ink); color: #fff; border-bottom: 4px solid var(--red); margin: 0 -16px 18px; padding: 10px 16px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.bar b { font: 700 18px/1 var(--head); letter-spacing: .02em; text-transform: uppercase; }
+.bar span { font-size: 12px; color: #ccc; }
+h1 { font: 700 clamp(26px, 5vw, 36px)/1.1 var(--head); margin: 0 0 6px; color: #000; }
+.sub { color: var(--muted); margin: 0 0 16px; font-size: 15px; }
+
+.search { position: relative; }
+.search label { display: block; font: 700 12px/1 var(--head); letter-spacing: .06em; text-transform: uppercase; color: var(--red); margin-bottom: 6px; }
+.field { display: flex; gap: 0; }
+.field input { flex: 1; min-width: 0; font: 400 16px var(--body); color: var(--ink); padding: 11px 12px; border: 1px solid #999; border-right: 0; border-radius: 3px 0 0 3px; background: #fff; }
+.field button { font: 700 14px var(--head); letter-spacing: .05em; text-transform: uppercase; background: var(--red); color: #fff; border: 0; padding: 0 18px; border-radius: 0 3px 3px 0; cursor: pointer; }
+.field button:hover { background: var(--red-dark); }
+input:focus, button:focus-visible, summary:focus-visible, .seg button:focus-visible { outline: 3px solid #305b80; outline-offset: 1px; }
+.list { position: absolute; z-index: 10; left: 0; right: 0; top: 100%; margin: 2px 0 0; padding: 0; list-style: none; background: #fff; border: 1px solid #999; border-radius: 3px; box-shadow: 0 6px 16px rgba(0,0,0,.18); max-height: 320px; overflow: auto; }
+.list li { padding: 9px 12px; display: flex; justify-content: space-between; gap: 12px; cursor: pointer; border-bottom: 1px solid var(--panel); }
+.list li:last-child { border-bottom: 0; }
+.list li[aria-selected="true"], .list li:hover { background: var(--panel); }
+.list .n { font-weight: 600; } .list .c { color: var(--muted); white-space: nowrap; font-size: 13px; }
+.list mark { background: none; color: var(--red); font-weight: 700; }
+.list .none { cursor: default; color: var(--muted); }
+
+.try { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+.try button, .chip button.x { font: inherit; }
+.try button { background: none; border: 0; padding: 2px 0; margin-right: 10px; color: var(--red); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; }
+.chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-left-width: 6px; background: #fff; padding: 5px 6px 5px 10px; border-radius: 3px; font-weight: 600; font-size: 13px; }
+.chip button.x { background: none; border: 0; cursor: pointer; color: var(--muted); font-size: 18px; line-height: 1; padding: 0 4px; }
+.chip button.x:hover { color: var(--red); }
+.hint { color: var(--muted); font-size: 13px; align-self: center; }
+
+.panel { margin-top: 14px; border-top: 3px solid var(--ink); padding-top: 12px; }
+.ptop { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 10px; }
+h2 { font: 700 clamp(20px, 4vw, 26px)/1.15 var(--head); margin: 0; color: #000; }
+.seg { display: inline-flex; border: 1px solid #999; border-radius: 3px; overflow: hidden; }
+.seg button { font: 600 12px var(--body); background: #fff; color: var(--ink); border: 0; padding: 7px 11px; cursor: pointer; }
+.seg button + button { border-left: 1px solid #999; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+.stat { background: var(--panel); padding: 10px 12px; border-radius: 3px; }
+.stat .l { font: 700 11px/1 var(--head); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.stat .v { font: 700 26px/1.15 var(--head); color: #000; margin-top: 4px; }
+.stat .d { font-size: 12px; color: var(--muted); }
+.up { color: #1b6e3c !important; } .down { color: var(--red) !important; }
+
+.chartwrap { position: relative; margin-top: 4px; }
+svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+svg text { font-family: var(--body); fill: var(--muted); font-size: 12px; }
+.grid { stroke: #e4e4e4; stroke-width: 1; }
+.axis { stroke: #999; stroke-width: 1; }
+.tip { position: absolute; pointer-events: none; background: #222; color: #fff; padding: 8px 10px; border-radius: 3px; font-size: 12px; line-height: 1.45; min-width: 120px; box-shadow: 0 4px 12px rgba(0,0,0,.3); transform: translate(-50%, 0); z-index: 5; }
+.tip b { font: 700 13px var(--head); letter-spacing: .04em; display: block; margin-bottom: 2px; }
+.tip i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+.tip .row { display: flex; justify-content: space-between; gap: 14px; white-space: nowrap; }
+
+details { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px; }
+summary { cursor: pointer; font-weight: 700; color: var(--red); }
+.tblwrap { overflow-x: auto; margin-top: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 5px 8px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; white-space: normal; min-width: 150px; }
+thead th { background: var(--panel); font-weight: 700; }
+.empty { text-align: center; padding: 36px 12px; color: var(--muted); }
+.notes { margin-top: 16px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
+.notes b { color: var(--ink); }
+.sr { position: absolute; left: -9999px; }
+@media (max-width: 520px) {
+  .stats { grid-template-columns: 1fr; }
+  .stat { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .stat .v { font-size: 22px; margin: 0; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="bar"><b>Daily Nebraskan</b><span>Student voice of the University of Nebraska-Lincoln since 1901</span></div>
+  <h1>How many students are in your major?</h1>
+  <p class="sub">Search any UNL major to see how enrollment has changed every fall since 2016.</p>
+
+  <div class="search">
+    <label for="q">Search majors</label>
+    <div class="field">
+      <input id="q" type="text" role="combobox" aria-expanded="false" aria-controls="list" aria-autocomplete="list" autocomplete="off" spellcheck="false" placeholder="e.g. psychology, finance, journalism">
+      <button id="go" type="button">Search</button>
+    </div>
+    <ul id="list" class="list" role="listbox" hidden></ul>
+  </div>
+  <p class="try" id="try"></p>
+
+  <div class="chips" id="chips"></div>
+  <div id="out"></div>
+
+  <div class="notes">
+    <b>About the data.</b> Headcount of students enrolled in each major each fall, from the University of Nebraska-Lincoln (records request DR12573). Students are counted under each major they declare, so a double major appears in both. Majors are matched by the name the university used each year: a program that was renamed, merged or split appears as separate entries, and a gap in a line means the major was not listed that fall. Undergraduate and graduate programs that share a name are added together; use “By college &amp; degree” to separate them. The “Business Administration” college is shown as “Business,” its later name.
+  </div>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const YEARS = DATA.years, N = YEARS.length;
+const COLORS = ["#ba1f1f", "#305b80", "#d9a21b", "#2a8c82", "#7a4b94"];
+const $ = id => document.getElementById(id);
+const fmt = n => n == null ? "—" : n.toLocaleString("en-US");
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// totals per major per year (null = not listed that fall)
+for (const m of DATA.majors) {
+  m.t = YEARS.map((_, i) => { let s = null; for (const r of m.r) if (r[2][i] != null) s = (s || 0) + r[2][i]; return s; });
+  m.latest = m.t[N - 1] || 0;
+  m.peak = Math.max(...m.t.map(v => v || 0));
+  m.hay = (m.n + " " + m.raw).toLowerCase().replace(/&/g, "and");
+  m.id = m.raw;
+}
+const byId = Object.fromEntries(DATA.majors.map(m => [m.id, m]));
+
+let picked = [];       // selected major ids (max 5)
+let mode = "combined"; // or "split"
+let hl = -1, results = [];
+
+/* ---------- search ---------- */
+const norm = s => s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
+function search(q) {
+  const words = norm(q).split(" ").filter(Boolean);
+  if (!words.length) return [];
+  const out = [];
+  for (const m of DATA.majors) {
+    const h = norm(m.hay);
+    if (!words.every(w => h.includes(w))) continue;
+    const starts = norm(m.n).startsWith(words[0]) ? 0 : (h.includes(" " + words[0]) ? 1 : 2);
+    out.push([starts, -m.latest, -m.peak, m]);
+  }
+  out.sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]);
+  return out.slice(0, 12).map(x => x[3]);
+}
+function highlight(name, q) {
+  const words = norm(q).split(" ").filter(Boolean).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  let s = esc(name);
+  if (words.length) s = s.replace(new RegExp("(" + words.join("|") + ")", "ig"), "<mark>$1</mark>");
+  return s;
+}
+function renderList() {
+  const q = $("q").value;
+  if (!q.trim()) { closeList(); return; }
+  results = search(q);
+  hl = results.length ? 0 : -1;
+  const ul = $("list");
+  ul.innerHTML = results.length
+    ? results.map((m, i) => `<li role="option" id="opt${i}" data-i="${i}" aria-selected="${i === hl}"><span class="n">${highlight(m.n, q)}</span><span class="c">${m.latest ? fmt(m.latest) + " students" : "not in 2025"}</span></li>`).join("")
+    : `<li class="none" role="option">No majors match “${esc(q)}”</li>`;
+  ul.hidden = false; $("q").setAttribute("aria-expanded", "true");
+}
+function closeList() { $("list").hidden = true; $("q").setAttribute("aria-expanded", "false"); hl = -1; }
+function moveHl(d) {
+  if (!results.length) return;
+  hl = (hl + d + results.length) % results.length;
+  [...$("list").children].forEach((li, i) => li.setAttribute("aria-selected", i === hl));
+  const el = $("opt" + hl); el && el.scrollIntoView({ block: "nearest" });
+  $("q").setAttribute("aria-activedescendant", "opt" + hl);
+}
+function choose(m) {
+  if (!m) return;
+  if (!picked.includes(m.id)) {
+    if (picked.length >= 5) picked.shift();
+    picked.push(m.id);
+  }
+  if (picked.length > 1) mode = "combined";
+  $("q").value = ""; closeList(); render(); $("q").focus();
+}
+$("q").addEventListener("input", renderList);
+$("q").addEventListener("focus", renderList);
+$("q").addEventListener("keydown", e => {
+  if (e.key === "ArrowDown") { e.preventDefault(); if ($("list").hidden) renderList(); else moveHl(1); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); moveHl(-1); }
+  else if (e.key === "Enter") { e.preventDefault(); if ($("list").hidden) renderList(); if (results[hl >= 0 ? hl : 0]) choose(results[hl >= 0 ? hl : 0]); }
+  else if (e.key === "Escape") closeList();
+});
+$("go").addEventListener("click", () => { renderList(); if (results[0]) choose(results[0]); });
+$("list").addEventListener("mousedown", e => { const li = e.target.closest("li[data-i]"); if (li) { e.preventDefault(); choose(results[+li.dataset.i]); } });
+document.addEventListener("click", e => { if (!e.target.closest(".search")) closeList(); });
+
+/* ---------- series ---------- */
+function seriesFor() {
+  if (picked.length === 1 && mode === "split") {
+    const m = byId[picked[0]];
+    return m.r.map((r, i) => ({ label: `${r[0]} · ${r[1]}`, vals: r[2], color: COLORS[i % COLORS.length], sub: true }))
+      .sort((a, b) => (b.vals[N - 1] || 0) - (a.vals[N - 1] || 0)).slice(0, 5)
+      .map((s, i) => ({ ...s, color: COLORS[i] }));
+  }
+  return picked.map((id, i) => ({ label: byId[id].n, vals: byId[id].t, color: COLORS[i % COLORS.length] }));
+}
+
+/* ---------- chart ---------- */
+function niceStep(v) {
+  const p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p;
+  return ([1, 2, 2.5, 3, 4, 5, 6, 8, 10].find(k => k >= f) || 10) * p;
+}
+function chart(series) {
+  const W = 760, H = 340, L = 52, R = 18, T = 14, B = 34;
+  const top = Math.max(1, ...series.flatMap(s => s.vals.map(v => v || 0)));
+  const step = niceStep(top / 4), steps = Math.ceil(top / step), max = step * steps;
+  const x = i => L + (W - L - R) * (N === 1 ? .5 : i / (N - 1));
+  const y = v => T + (H - T - B) * (1 - v / max);
+  let g = "";
+  for (let k = 0; k <= steps; k++) {
+    const v = max * k / steps, yy = y(v);
+    g += `<line class="${k ? "grid" : "axis"}" x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}"/><text x="${L - 8}" y="${yy + 4}" text-anchor="end">${fmt(Math.round(v))}</text>`;
+  }
+  YEARS.forEach((yr, i) => { g += `<text x="${x(i)}" y="${H - 10}" text-anchor="middle">${N > 6 && window.innerWidth < 480 && i % 2 ? "" : yr}</text>`; });
+  let lines = "";
+  series.forEach(s => {
+    let d = "", pen = false;
+    s.vals.forEach((v, i) => { if (v == null) { pen = false; return; } d += (pen ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1); pen = true; });
+    lines += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+    s.vals.forEach((v, i) => { if (v != null) lines += `<circle cx="${x(i)}" cy="${y(v)}" r="${s.vals[i - 1] == null && s.vals[i + 1] == null ? 4.5 : 3.5}" fill="#fff" stroke="${s.color}" stroke-width="2.2"/>`; });
+  });
+  return { W, H, L, R, T, B, x, svg: `<svg id="svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Line chart of enrollment by fall term">${g}<line id="guide" class="axis" y1="${T}" y2="${H - B}" stroke-dasharray="3 3" visibility="hidden"/>${lines}<g id="hot"></g><rect id="hit" x="${L}" y="${T}" width="${W - L - R}" height="${H - T - B}" fill="transparent"/></svg>`, y };
+}
+function wireTooltip(c, series) {
+  const svg = $("svg"), tip = $("tip"), guide = $("guide"), hot = $("hot");
+  const hide = () => { tip.hidden = true; guide.setAttribute("visibility", "hidden"); hot.innerHTML = ""; };
+  const move = e => {
+    const r = svg.getBoundingClientRect(), px = (e.clientX - r.left) * c.W / r.width;
+    let i = Math.round((px - c.L) / (c.W - c.L - c.R) * (N - 1)); i = Math.max(0, Math.min(N - 1, i));
+    guide.setAttribute("x1", c.x(i)); guide.setAttribute("x2", c.x(i)); guide.setAttribute("visibility", "visible");
+    hot.innerHTML = series.filter(s => s.vals[i] != null).map(s => `<circle cx="${c.x(i)}" cy="${c.y(s.vals[i])}" r="6" fill="${s.color}" stroke="#fff" stroke-width="2"/>`).join("");
+    tip.innerHTML = `<b>Fall ${YEARS[i]}</b>` + series.map(s => `<div class="row"><span><i style="background:${s.color}"></i>${esc(s.label.length > 34 ? s.label.slice(0, 33) + "…" : s.label)}</span><strong>${s.vals[i] == null ? "not listed" : fmt(s.vals[i])}</strong></div>`).join("");
+    tip.hidden = false;
+    const wr = svg.parentElement.getBoundingClientRect(), tw = tip.offsetWidth;
+    let left = (c.x(i) / c.W) * r.width + (r.left - wr.left);
+    left = Math.max(tw / 2, Math.min(wr.width - tw / 2, left));
+    tip.style.left = left + "px"; tip.style.top = "6px";
+  };
+  const hit = $("hit");
+  hit.addEventListener("pointermove", move); hit.addEventListener("pointerdown", move);
+  hit.addEventListener("pointerleave", hide);
+}
+
+/* ---------- render ---------- */
+function stats(m) {
+  const t = m.t; let f = t.findIndex(v => v != null), l = N - 1;
+  while (l > 0 && t[l] == null) l--;
+  const a = t[f], b = t[l], diff = b - a, pct = a ? diff / a * 100 : null;
+  const pk = t.indexOf(m.peak);
+  const sign = diff > 0 ? "+" : diff < 0 ? "−" : "";
+  const cls = diff > 0 ? "up" : diff < 0 ? "down" : "";
+  const gone = t[N - 1] == null;
+  return `<div class="stats">
+    <div class="stat"><div class="l">Fall ${YEARS[l]}</div><div class="v">${fmt(b)}</div><div class="d">${gone ? "last year listed" : "students"}</div></div>
+    <div class="stat"><div class="l">Change since ${YEARS[f]}</div><div class="v ${cls}">${f === l ? "—" : sign + fmt(Math.abs(diff))}</div><div class="d">${f === l || pct == null ? "only one year listed" : sign + Math.abs(pct).toFixed(1) + "%  (" + fmt(a) + " → " + fmt(b) + ")"}</div></div>
+    <div class="stat"><div class="l">Peak</div><div class="v">${fmt(m.peak)}</div><div class="d">Fall ${YEARS[pk]}</div></div>
+  </div>`;
+}
+function table(series) {
+  return `<div class="tblwrap"><table><thead><tr><th>${picked.length === 1 && mode === "split" ? "College · degree" : "Major"}</th>${YEARS.map(y => `<th>${y}</th>`).join("")}</tr></thead><tbody>${
+    series.map(s => `<tr><td>${esc(s.label)}</td>${s.vals.map(v => `<td>${fmt(v)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+}
+function render() {
+  const chips = $("chips");
+  chips.innerHTML = picked.map((id, i) => `<span class="chip" style="border-left-color:${COLORS[i]}">${esc(byId[id].n)}<button class="x" data-id="${esc(id)}" aria-label="Remove ${esc(byId[id].n)}">×</button></span>`).join("")
+    + (picked.length && picked.length < 5 ? `<span class="hint">Search again to add another major and compare.</span>` : "");
+  const out = $("out");
+  if (!picked.length) { out.innerHTML = `<div class="empty">Search for a major above to see its enrollment trend.</div>`; return; }
+  const series = seriesFor(), single = picked.length === 1, m = byId[picked[0]];
+  const c = chart(series);
+  const canSplit = single && m.r.length > 1;
+  out.innerHTML = `<section class="panel">
+    <div class="ptop"><h2>${single ? esc(m.n) : "Enrollment compared"}<span style="font:400 13px var(--body);color:var(--muted);display:block;margin-top:2px">Students enrolled each fall</span></h2>
+    ${canSplit ? `<div class="seg" role="group" aria-label="Chart view"><button type="button" data-mode="combined" aria-pressed="${mode === "combined"}">All students</button><button type="button" data-mode="split" aria-pressed="${mode === "split"}">By college &amp; degree</button></div>` : ""}</div>
+    ${single ? stats(m) : ""}
+    <div class="chartwrap">${c.svg}<div class="tip" id="tip" hidden></div></div>
+    ${series.length > 1 ? `<div class="chips" style="margin-top:6px">${series.map(s => `<span class="hint" style="display:inline-flex;align-items:center;gap:6px"><i style="width:12px;height:4px;background:${s.color};display:inline-block"></i>${esc(s.label)}</span>`).join("")}</div>` : ""}
+    <details><summary>See the numbers</summary>${table(series)}</details>
+  </section>`;
+  wireTooltip(c, series);
+  postHeight();
+}
+$("chips").addEventListener("click", e => { const b = e.target.closest("button.x"); if (b) { picked = picked.filter(id => id !== b.dataset.id); render(); } });
+$("out").addEventListener("click", e => { const b = e.target.closest("[data-mode]"); if (b) { mode = b.dataset.mode; render(); } });
+
+/* quick-pick examples: the biggest majors with a full history */
+const popular = [...DATA.majors].filter(m => m.t.every(v => v != null)).sort((a, b) => b.latest - a.latest).slice(0, 5);
+$("try").innerHTML = "Popular: " + popular.map(m => `<button type="button" data-id="${esc(m.id)}">${esc(m.n)}</button>`).join("");
+$("try").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { picked = [b.dataset.id]; mode = "combined"; render(); } });
+
+/* iframe auto-height: the parent page can listen for these messages (see README) */
+function postHeight() {
+  try { parent.postMessage({ type: "dn-majors-height", height: document.documentElement.scrollHeight }, "*"); } catch (e) {}
+}
+new ResizeObserver(postHeight).observe(document.body);
+window.addEventListener("resize", () => { if (picked.length) render(); });
+
+const start = DATA.majors.find(m => /journalism/i.test(m.raw) && m.latest) || popular[0];
+picked = [start.id]; render();
+</script>
+</body>
+</html>
