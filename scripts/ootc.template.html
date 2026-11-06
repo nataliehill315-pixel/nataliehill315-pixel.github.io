@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Out of Context | The Daily Nebraskan</title>
+<meta name="description" content="A daily game from The Daily Nebraskan. Match real quotes from recent stories to the headlines they came from.">
+<meta property="og:title" content="Out of Context | The Daily Nebraskan">
+<meta property="og:description" content="Five quotes. Five headlines. Can you match them?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#ba1f1f; --red-dark:#8f1717;
+  --bg:#f4f4f4; --surface:#fff; --ink:#111; --muted:#515151; --line:#d8d8dc;
+  --bar:#1a1a1a; --good:#1f7a3d; --good-bg:#e4f3e8; --bad-bg:#fbe4e4;
+  --logo-filter:none;
+  --head:"Roboto Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121212; --surface:#1d1d1d; --ink:#f2f2f2; --muted:#a9a9ae; --line:#333;
+    --bar:#000; --good:#5ccf84; --good-bg:#17301f; --bad-bg:#3a1a1a; --red:#e04545;
+    --logo-filter:invert(1);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.util{background:var(--surface);border-bottom:1px solid var(--line);font:700 11px var(--head);letter-spacing:.06em;text-transform:uppercase}
+.util .in,.mast,.navbar .in,main{max-width:760px;margin:0 auto;padding-left:16px;padding-right:16px}
+.util .in{display:flex;justify-content:space-between;padding-top:7px;padding-bottom:7px;color:var(--muted)}
+.util a{text-decoration:none}.util a:hover{color:var(--red)}
+.mast{padding-top:22px;padding-bottom:18px;text-align:center;background:var(--surface)}
+.mast{max-width:none;border-bottom:1px solid var(--line)}
+.mast img{width:min(340px,70vw);height:auto;filter:var(--logo-filter)}
+.navbar{background:var(--bar);border-bottom:3px solid var(--red)}
+.navbar .in{display:flex;align-items:center;gap:22px;padding-top:0;padding-bottom:0;overflow-x:auto}
+.navbar a{color:#fff;font:700 13px var(--head);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;padding:12px 0;white-space:nowrap}
+.navbar a:hover{color:#ff9d9d}
+.navbar a.on{box-shadow:inset 0 -3px 0 #fff}
+main{padding-top:26px;padding-bottom:50px}
+.kicker{font:700 13px var(--head);letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin:0}
+h1{font:700 44px/1.02 var(--head);text-transform:uppercase;letter-spacing:-.01em;margin:4px 0 8px}
+h1 em{font-style:normal;color:var(--red)}
+.dek{color:var(--muted);margin:0 0 4px}
+.meta{display:flex;justify-content:space-between;align-items:center;border-top:3px double var(--ink);border-bottom:1px solid var(--line);margin:18px 0;padding:8px 0;font:700 13px var(--head);letter-spacing:.05em;text-transform:uppercase}
+.tries span{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--red);margin-left:5px;vertical-align:-1px}
+.tries span.used{background:transparent;border:2px solid var(--line)}
+.how{font-size:14px;color:var(--muted);margin:0 0 16px}
+.card{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--ink);margin-bottom:12px;padding:14px 16px;cursor:pointer;transition:border-color .12s,background .12s}
+.card:hover{border-left-color:var(--red)}
+.card.sel{border-left-color:var(--red);outline:2px solid var(--red);outline-offset:-2px}
+.card.ok{border-left-color:var(--good);background:var(--good-bg);cursor:default}
+.card.no{border-left-color:var(--red);background:var(--bad-bg);animation:shake .35s}
+.card .n{font:700 12px var(--head);letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.card q{display:block;quotes:"\201C" "\201D";font:700 21px/1.3 var(--head);margin:2px 0 10px}
+.pick{width:100%;font:700 16px var(--head);padding:10px 12px;border:2px solid var(--ink);background:var(--surface);color:var(--ink);border-radius:0}
+.pick:disabled{opacity:1;border-color:var(--good);-webkit-text-fill-color:var(--ink)}
+.card{cursor:default}
+.slot{min-height:40px;border:2px dashed var(--line);padding:8px 10px;font-size:14px;font-weight:600;color:var(--muted);display:flex;align-items:center}
+.slot.filled{border:2px solid var(--ink);color:var(--ink);background:var(--bg);font-family:var(--head);font-size:16px;font-weight:700}
+.card.ok .slot,.card.over .slot{cursor:default}
+.card.ok .slot{border-color:var(--good)}
+.reveal{display:none;margin-top:10px;font-size:14px;color:var(--muted)}
+.reveal b{color:var(--ink)}
+.over .reveal,.ok.over .reveal{display:block}
+.reveal a{color:var(--red);font-weight:700}
+.pool-h{font:700 13px var(--head);letter-spacing:.1em;text-transform:uppercase;margin:24px 0 8px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.pool{display:grid;gap:8px}
+.chip{background:var(--surface);border:1px solid var(--ink);padding:10px 14px;text-align:left;font:700 17px/1.25 var(--head);color:var(--ink);cursor:pointer}
+.chip:hover{background:var(--ink);color:var(--surface)}
+.chip.used{opacity:.25;pointer-events:none}
+.actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+button.btn{background:var(--red);color:#fff;border:0;padding:13px 22px;font:700 15px var(--head);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+button.btn:hover:not(:disabled){background:var(--red-dark)}
+button.btn:disabled{background:var(--line);color:var(--muted);cursor:not-allowed}
+button.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.msg{min-height:22px;font-weight:600;margin-top:12px}
+.result{display:none;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--red);padding:18px;margin-top:22px}
+.result.show{display:block}
+.result h2{font:700 28px var(--head);text-transform:uppercase;margin:0 0 4px}
+.grid{font-size:26px;letter-spacing:3px;line-height:1.3;margin:8px 0}
+.stats{display:flex;gap:22px;margin:14px 0;font:700 12px var(--head);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.stats b{display:block;font-size:30px;color:var(--ink);line-height:1}
+.next{font-size:14px;color:var(--muted)}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;padding:18px 16px 40px;max-width:760px;margin:0 auto}
+footer a{color:var(--red)}
+dialog{border:0;border-top:4px solid var(--red);padding:22px;max-width:460px;background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+dialog h2{font:700 26px var(--head);text-transform:uppercase;margin:0 0 8px}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media(max-width:520px){h1{font-size:36px}.card q{font-size:19px}}
+.sr{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<div class="util"><div class="in"><span>Student voice of the University of Nebraska–Lincoln since 1901</span><a href="https://www.dailynebraskan.com/" target="_blank" rel="noopener">dailynebraskan.com &rarr;</a></div></div>
+<header class="mast"><a href="https://www.dailynebraskan.com/" target="_blank" rel="noopener"><img src="assets/dn-logo.png" alt="The Daily Nebraskan" width="340" height="53"></a></header>
+<nav class="navbar" aria-label="Sections"><div class="in">
+  <a href="https://www.dailynebraskan.com/news/" target="_blank" rel="noopener">News</a>
+  <a href="https://www.dailynebraskan.com/sports/" target="_blank" rel="noopener">Sports</a>
+  <a href="https://www.dailynebraskan.com/culture/" target="_blank" rel="noopener">Culture</a>
+  <a href="https://www.dailynebraskan.com/opinion/" target="_blank" rel="noopener">Opinion</a>
+  <a href="#" class="on">Out of Context</a>
+</div></nav>
+
+<main>
+  <p class="kicker">The Daily Nebraskan Daily Game</p>
+  <h1>Out of <em>Context</em></h1>
+  <p class="dek">Five real quotes from recent Daily Nebraskan stories. Match each one to the headline it ran under.</p>
+  <div class="meta"><span id="date"></span><span class="tries" id="tries" aria-label="Attempts left"></span></div>
+  <p class="how">Pick the headline each quote ran under from its dropdown. Every list holds headlines from the same section as the quote. You get four tries to submit.</p>
+
+  <div id="cards"></div>
+  <div class="actions"><button class="btn" id="submit" disabled>Submit matches</button><button class="btn ghost" id="helpBtn">How to play</button></div>
+  <div class="msg" id="msg" role="status" aria-live="polite"></div>
+
+  <section class="result" id="result">
+    <h2 id="rTitle"></h2>
+    <div class="grid" id="rGrid" aria-hidden="true"></div>
+    <div class="stats"><div><b id="sPlayed">0</b>Played</div><div><b id="sWin">0</b>Perfect</div><div><b id="sStreak">0</b>Streak</div><div><b id="sBest">0</b>Best streak</div></div>
+    <button class="btn" id="share">Copy results</button>
+    <p class="next" id="next"></p>
+  </section>
+</main>
+
+<footer>
+  Every quote is pulled from a story published by <a href="https://www.dailynebraskan.com/" target="_blank" rel="noopener">The Daily Nebraskan</a>; open any matched card to read the full story. A new puzzle drops every day. Pool refreshed <span id="built">{{BUILT}}</span>.
+</footer>
+
+<dialog id="help">
+  <h2>How to play</h2>
+  <p>Each card holds a real quote lifted out of a Daily Nebraskan story. Use its dropdown to choose the headline it ran under. A news quote gets news headlines, a sports quote gets sports headlines, and so on.</p>
+  <p>Submit when every quote has an answer. Correct matches lock in green. Wrong picks are cleared and removed from that list. You have four attempts.</p>
+  <p>Then see what each quote was really about. That's the whole point of reading the whole story.</p>
+  <form method="dialog"><button class="btn">Got it</button></form>
+</dialog>
+
+<script>
+const POOL=/*POOL*/[];
+const N=5, MAX=4, NOPT=6, KEY="dn-ootc-v4";
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function todayStr(){
+  const p=new URLSearchParams(location.search).get("date");
+  if(p&&/^\d{4}-\d{2}-\d{2}$/.test(p))return p;
+  const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function seeded(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}
+  let a=h>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuffle(arr,r){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+const store={get(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}},set(v){try{localStorage.setItem(KEY,JSON.stringify(v))}catch(e){}}};
+
+const today=todayStr();
+const rnd=seeded("dn-ootc|"+today);
+// Pick N stories (varied sections). Each question's dropdown holds its correct headline
+// plus other headlines from the SAME section (news quote -> news headlines, etc.).
+function pick(){
+  const order=shuffle(POOL.map((_,i)=>i),rnd), chosen=[], secs={};
+  for(const cap of [2,N]){
+    for(const i of order){
+      if(chosen.length>=N)break; if(chosen.includes(i))continue;
+      const s=POOL[i].section; if((secs[s]||0)>=cap)continue;
+      chosen.push(i);secs[s]=(secs[s]||0)+1;
+    }
+  }
+  return chosen.map(i=>{
+    const st=POOL[i];
+    const others=shuffle(POOL.filter((o,j)=>j!==i&&o.section===st.section),rnd).slice(0,NOPT-1);
+    let opts=shuffle([{t:st.title,ok:true},...others.map(o=>({t:o.title,ok:false}))],rnd);
+    // top up from other sections only if a section is too small
+    if(opts.length<4){const more=shuffle(POOL.filter(o=>o.section!==st.section),rnd).slice(0,4-opts.length);opts=shuffle([...opts,...more.map(o=>({t:o.title,ok:false}))],rnd)}
+    return{title:st.title,url:st.url,section:st.section,author:st.author,
+      q:st.quotes[Math.floor(rnd()*st.quotes.length)],opts};
+  });
+}
+const saved=store.get();
+let G=saved.game&&saved.game.date===today?saved.game:null;
+if(!G){
+  const items=pick();
+  G={date:today,items,assign:items.map(()=>null),locked:items.map(()=>false),out:items.map(()=>[]),
+     tries:0,history:[],done:false,won:false};
+}
+const items=G.items;
+const save=()=>{const s=store.get();s.game=G;store.set(s)};
+const secLabel={news:"News",sports:"Sports",culture:"Culture"};
+
+function render(){
+  $("date").textContent=new Date(today+"T12:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+  $("tries").innerHTML=Array.from({length:MAX},(_,i)=>`<span class="${i<G.tries?"used":""}"></span>`).join("");
+  $("cards").innerHTML=items.map((it,i)=>{
+    const a=G.assign[i], cls=["card"];
+    if(G.locked[i])cls.push("ok"); if(G.done)cls.push("over");
+    if(G.flash&&G.flash.includes(i))cls.push("no");
+    const dis=G.locked[i]||G.done?"disabled":"";
+    const options=`<option value="">Choose a headline…</option>`+it.opts.map((o,k)=>
+      G.out[i].includes(k)?"":`<option value="${k}" ${a===k?"selected":""}>${esc(o.t)}</option>`).join("");
+    const sel=`<label class="sr" for="s${i}">Headline for quote ${i+1}</label><select class="pick" id="s${i}" data-i="${i}" ${dis}>${options}</select>`;
+    const rev=`<div class="reveal"><b>In context:</b> ${G.locked[i]?"":`<i>(Ran under <a href="${it.url}" target="_blank" rel="noopener">${esc(it.title)}</a>.)</i> `}${esc(it.q.sum)} <a href="${it.url}" target="_blank" rel="noopener">Read the story &rarr;</a></div>`;
+    return `<div class="${cls.join(" ")}"><div class="n">Quote ${i+1} · ${esc(secLabel[it.section]||it.section)} headlines</div><q>${esc(it.q.q)}</q>${sel}${rev}</div>`;
+  }).join("");
+  $("submit").disabled=G.done||G.assign.some((x,i)=>x===null&&!G.locked[i]);
+  G.flash=null;
+  if(G.done)showResult();
+}
+
+$("cards").addEventListener("change",e=>{
+  const s=e.target.closest("select.pick"); if(!s||G.done)return;
+  G.assign[+s.dataset.i]=s.value===""?null:+s.value;
+  $("msg").textContent="";save();
+  $("submit").disabled=G.assign.some((x,i)=>x===null&&!G.locked[i]);
+});
+$("submit").addEventListener("click",()=>{
+  const wrong=[];let right=0;
+  items.forEach((it,i)=>{
+    if(G.locked[i]){right++;return}
+    if(it.opts[G.assign[i]].ok){G.locked[i]=true;right++}else wrong.push(i);
+  });
+  G.tries++;
+  G.history.push(items.map((_,i)=>G.locked[i]&&!wrong.includes(i)));
+  if(right===N){G.done=true;G.won=true;}
+  else if(G.tries>=MAX){G.done=true;G.won=false;}
+  else{
+    G.flash=wrong.slice();
+    wrong.forEach(i=>{G.out[i].push(G.assign[i]);G.assign[i]=null});
+    $("msg").textContent=`${right} of ${N} correct. ${MAX-G.tries} ${MAX-G.tries===1?"try":"tries"} left. Wrong picks are removed from the list.`;
+  }
+  if(G.done){recordStats();$("msg").textContent=""; }
+  save();render();
+});
+
+function recordStats(){
+  const s=store.get(), st=s.stats||{played:0,perfect:0,streak:0,best:0,last:null};
+  if(st.last===today)return;
+  const y=new Date(today+"T12:00:00");y.setDate(y.getDate()-1);
+  const yStr=y.getFullYear()+"-"+String(y.getMonth()+1).padStart(2,"0")+"-"+String(y.getDate()).padStart(2,"0");
+  st.played++; if(G.won){st.perfect++;st.streak=(st.last===yStr||st.streak===0)?st.streak+1:1;}else st.streak=0;
+  st.best=Math.max(st.best,st.streak);st.last=today;
+  s.stats=st;store.set(s);
+}
+function shareText(){
+  const rows=G.history.map(r=>r.map(x=>x?"🟩":"🟥").join("")).join("\n");
+  return `The Daily Nebraskan: Out of Context\n${today}  ${G.won?G.tries:"X"}/${MAX}\n${rows}\n${location.href.split("?")[0]}`;
+}
+function showResult(){
+  const st=store.get().stats||{played:0,perfect:0,streak:0,best:0};
+  $("result").classList.add("show");
+  $("rTitle").textContent=G.won?(G.tries===1?"Flawless.":"You got it."):"Out of tries.";
+  $("rGrid").innerHTML=G.history.map(r=>r.map(x=>x?"🟩":"🟥").join("")).join("<br>");
+  $("sPlayed").textContent=st.played;$("sWin").textContent=st.perfect;$("sStreak").textContent=st.streak;$("sBest").textContent=st.best;
+  $("msg").textContent="Scroll up and read each quote in context.";
+  const t=()=>{const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);const d=m-n,h=Math.floor(d/36e5),mi=Math.floor(d%36e5/6e4);
+    $("next").textContent=`Next puzzle in ${h}h ${mi}m.`};t();setInterval(t,30000);
+}
+$("share").addEventListener("click",async()=>{
+  const t=shareText();
+  try{if(navigator.share&&/Mobi|Android/i.test(navigator.userAgent)){await navigator.share({text:t});return}
+    await navigator.clipboard.writeText(t);$("share").textContent="Copied!";}catch(e){$("share").textContent="Copy failed"}
+  setTimeout(()=>$("share").textContent="Copy results",1800);
+});
+$("helpBtn").addEventListener("click",()=>$("help").showModal());
+
+if(POOL.length<N){document.querySelector("main").innerHTML="<p>Not enough stories to build today's puzzle. Check back soon.</p>"}
+else{
+  render();
+  if(!store.get().seen){const s=store.get();s.seen=1;store.set(s);try{$("help").showModal()}catch(e){}}
+}
+</script>
+</body>
+</html>
