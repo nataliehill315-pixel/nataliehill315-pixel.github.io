@@ -3,6 +3,7 @@ and embeds a pool of pull-quotes into the game template.
 
 Usage: python3 scripts/build_ootc.py
 Stdlib only. Re-run (e.g. daily via GitHub Actions) to refresh the pool.
+The pool holds only stories published today; the puzzle is keyed to that date.
 """
 import html, json, re, urllib.request
 import xml.etree.ElementTree as ET
@@ -107,28 +108,19 @@ for it in root_xml.iter("item"):
 
 print(len(stories), "new stories with quotes")
 
-# Keep an archive of every story seen so the pool grows over time and a thin or failed
-# fetch can never leave the game without enough stories.
-cache_path = root / "scripts" / "pool.json"
-archive = {}
-if cache_path.exists():
-    archive = {st["url"]: st for st in json.loads(cache_path.read_text())}
-    for st in archive.values():  # re-apply the keyword filter to older stories
-        st["quotes"] = [q for q in st["quotes"] if not leaks(q["q"], st["title"])]
-    archive = {u: st for u, st in archive.items() if st["quotes"]}
-for st in stories:
-    archive[st["url"]] = st
-pool = sorted(archive.values(), key=lambda st: st["date"], reverse=True)[:90]
+# Only stories published today (the feed's own dates, Central time).
+MIN_POOL = 5
+today = datetime.now().strftime("%Y-%m-%d")
+pool = [st for st in stories if st["date"] == today]
+if len(pool) < MIN_POOL:
+    raise SystemExit(f"Only {len(pool)} stories with usable quotes were published today ({today}); need {MIN_POOL}. "
+                     "Not overwriting out-of-context.html. Try again later in the day.")
 sections = {}
 for st in pool:
     sections[st["section"]] = sections.get(st["section"], 0) + 1
-if len(pool) < 10:
-    raise SystemExit(f"Only {len(pool)} stories in the pool (need 10+); not overwriting out-of-context.html. "
-                     "Check your network connection and rerun.")
-cache_path.write_text(json.dumps(pool, ensure_ascii=False, indent=1))
-print(len(pool), "stories in pool:", sections)
+print(len(pool), f"stories published {today}:", sections)
 
 tpl = (root / "scripts" / "ootc.template.html").read_text()
 built = datetime.now().strftime("%Y-%m-%d")
 data = json.dumps(pool, ensure_ascii=False).replace("</", "<\\/")
-(root / "out-of-context.html").write_text(tpl.replace("/*POOL*/[]", data).replace("{{BUILT}}", built))
+(root / "out-of-context.html").write_text(tpl.replace("/*POOL*/[]", data).replace("{{BUILT}}", built).replace("{{POOLDATE}}", today))

@@ -110,7 +110,7 @@ dialog h2{font:700 26px var(--head);text-transform:uppercase;margin:0 0 8px}
 <main>
   <p class="kicker">The Daily Nebraskan Daily Game</p>
   <h1>Out of <em>Context</em></h1>
-  <p class="dek">Five real quotes from recent Daily Nebraskan stories. Match each one to the headline it ran under.</p>
+  <p class="dek">Five real quotes from today's Daily Nebraskan stories. Match each one to the headline it ran under.</p>
   <div class="meta"><span id="date"></span><span class="tries" id="tries" aria-label="Attempts left"></span></div>
   <p class="how">Pick the headline each quote ran under from its dropdown. Every list holds headlines from the same section as the quote. You get four tries to submit.</p>
 
@@ -128,7 +128,7 @@ dialog h2{font:700 26px var(--head);text-transform:uppercase;margin:0 0 8px}
 </main>
 
 <footer>
-  Every quote is pulled from a story published by <a href="https://www.dailynebraskan.com/" target="_blank" rel="noopener">The Daily Nebraskan</a>; open any matched card to read the full story. A new puzzle drops every day. Pool refreshed <span id="built">{{BUILT}}</span>.
+  Every quote is pulled from a story published by <a href="https://www.dailynebraskan.com/" target="_blank" rel="noopener">The Daily Nebraskan</a>; open any matched card to read the full story. Every puzzle uses only stories published that day. Updated <span id="built">{{BUILT}}</span>.
 </footer>
 
 <dialog id="help">
@@ -141,14 +141,15 @@ dialog h2{font:700 26px var(--head);text-transform:uppercase;margin:0 0 8px}
 
 <script>
 const POOL=/*POOL*/[];
-const N=5, MAX=4, NOPT=6, KEY="dn-ootc-v5";
+const POOL_DATE="{{POOLDATE}}"; // the puzzle is keyed to the date its stories were published
+const N=5, MAX=4, NOPT=6, KEY="dn-ootc-v6";
 const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 function todayStr(){
   const p=new URLSearchParams(location.search).get("date");
   if(p&&/^\d{4}-\d{2}-\d{2}$/.test(p))return p;
-  const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  return POOL_DATE;
 }
 function seeded(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}
   let a=h>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
