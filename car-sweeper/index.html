@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Car Sweeper | The Daily Nebraskan</title>
+<meta name="description" content="A Daily Nebraskan game. It's Minesweeper, but the mines are parking tickets on UNL's campus. Played with the keyboard.">
+<meta property="og:title" content="Car Sweeper | The Daily Nebraskan">
+<meta property="og:description" content="Minesweeper, but every mine is a parking ticket. Can you find every legal spot on campus?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#ba1f1f; --red-dark:#8f1717;
+  --bg:#f4f4f4; --surface:#fff; --ink:#111; --muted:#515151; --line:#d8d8dc;
+  --bar:#1a1a1a; --good:#1f7a3d; --good-bg:#e4f3e8; --bad-bg:#fbe4e4;
+  --logo-filter:none;
+  --head:"Roboto Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121212; --surface:#1d1d1d; --ink:#f2f2f2; --muted:#a9a9ae; --line:#333;
+    --bar:#000; --good:#5ccf84; --good-bg:#17301f; --bad-bg:#3a1a1a; --red:#e04545;
+    --logo-filter:invert(1);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121212; --surface:#1d1d1d; --ink:#f2f2f2; --muted:#a9a9ae; --line:#333;
+  --bar:#000; --good:#5ccf84; --good-bg:#17301f; --bad-bg:#3a1a1a; --red:#e04545;
+  --logo-filter:invert(1);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+
+/* ---- DN chrome (matches Out of Context) ---- */
+.util{background:var(--surface);border-bottom:1px solid var(--line);font:700 11px var(--head);letter-spacing:.06em;text-transform:uppercase}
+.util .in,.navbar .in,main,footer{max-width:1080px;margin:0 auto;padding-left:16px;padding-right:16px}
+.util .in{display:flex;justify-content:space-between;gap:12px;padding-top:7px;padding-bottom:7px;color:var(--muted)}
+.util a{text-decoration:none}.util a:hover{color:var(--red)}
+.mast{padding:22px 16px 18px;text-align:center;background:var(--surface);border-bottom:1px solid var(--line)}
+.mast img{width:min(340px,70vw);height:auto;filter:var(--logo-filter)}
+.navbar{background:var(--bar);border-bottom:3px solid var(--red)}
+.navbar .in{display:flex;align-items:center;gap:22px;overflow-x:auto}
+.navbar a{color:#fff;font:700 13px var(--head);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;padding:12px 0;white-space:nowrap}
+.navbar a:hover{color:#ff9d9d}
+.navbar a.on{box-shadow:inset 0 -3px 0 #fff}
+main{padding-top:26px;padding-bottom:50px}
+.kicker{font:700 13px var(--head);letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin:0}
+h1{font:700 44px/1.02 var(--head);text-transform:uppercase;letter-spacing:-.01em;margin:4px 0 8px}
+h1 em{font-style:normal;color:var(--red)}
+.dek{color:var(--muted);margin:0 0 4px;max-width:680px}
+.rule{border-top:3px double var(--ink);border-bottom:1px solid var(--line);margin:18px 0 20px;padding:8px 0;font:700 13px var(--head);letter-spacing:.05em;text-transform:uppercase;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;padding-top:18px;padding-bottom:40px}
+footer a{color:var(--red)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+
+/* ---- Classic Minesweeper board ---- */
+.board-wrap{display:flex;flex-direction:column;align-items:center;min-width:0}
+.ms{
+  --cell:28px;
+  display:inline-block;background:#c0c0c0;padding:8px;
+  border:3px solid;border-color:#fff #7b7b7b #7b7b7b #fff;
+  max-width:100%;
+}
+.ms:focus{outline:none}
+.ms:focus-visible{box-shadow:0 0 0 3px var(--red)}
+.top{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding:6px 7px;margin-bottom:8px;
+  border:3px solid;border-color:#7b7b7b #fff #fff #7b7b7b;
+}
+.led{background:#000;color:#ff1a1a;font:700 26px/1 "Courier New",ui-monospace,monospace;padding:3px 5px;letter-spacing:1px;min-width:62px;text-align:center;border:2px solid;border-color:#7b7b7b #fff #fff #7b7b7b}
+.face{
+  width:42px;height:42px;padding:3px;background:#c0c0c0;cursor:pointer;
+  border:3px solid;border-color:#fff #7b7b7b #7b7b7b #fff;
+  display:flex;align-items:center;justify-content:center;
+}
+.face:active{border-color:#7b7b7b #fff #fff #7b7b7b}
+.face svg{width:100%;height:100%}
+.face:focus-visible{outline:2px solid var(--red)}
+.grid{
+  display:grid;border:3px solid;border-color:#7b7b7b #fff #fff #7b7b7b;
+}
+.t{
+  width:var(--cell);height:var(--cell);position:relative;
+  background:#c0c0c0;border:calc(var(--cell)*.11) solid;border-color:#fff #7b7b7b #7b7b7b #fff;
+  display:flex;align-items:center;justify-content:center;
+  font:700 calc(var(--cell)*.66)/1 var(--head);user-select:none;cursor:pointer;
+}
+.t.open{border:1px solid #8e8e8e;border-width:0 1px 1px 0;background:#c9c9c9;cursor:default}
+.t.boom{background:#ff2a2a}
+.t svg{width:78%;height:78%;pointer-events:none}
+.t svg.parked{width:74%;opacity:.28}
+.t.wrong::after{content:"";position:absolute;inset:14%;background:linear-gradient(45deg,transparent 44%,#e00 44% 56%,transparent 56%),linear-gradient(-45deg,transparent 44%,#e00 44% 56%,transparent 56%)}
+.t.cur{z-index:2;box-shadow:0 0 0 3px var(--red), 0 0 0 5px #fff}
+.ms.done .t.cur{box-shadow:none}
+.n1{color:#0000ff}.n2{color:#007b00}.n3{color:#ff0000}.n4{color:#00007b}
+.n5{color:#7b0000}.n6{color:#007b7b}.n7{color:#000}.n8{color:#7b7b7b}
+
+.msg{margin-top:14px;width:100%;max-width:640px;min-height:50px;padding:10px 14px;font-weight:600;font-size:15px;
+  background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--ink);display:flex;align-items:center;gap:12px}
+.msg.lose{border-left-color:var(--red);background:var(--bad-bg)}
+.msg.win{border-left-color:var(--good);background:var(--good-bg)}
+.msg.note{border-left-color:#e0a800}
+.msg svg{width:30px;height:30px;flex:none}
+.msg small{display:block;font-weight:400;color:var(--muted)}
+
+/* ---- side panel ---- */
+.panel{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--red);padding:14px 16px;font-size:14px}
+.panel + .panel{margin-top:14px}
+.panel h2{font:700 15px var(--head);text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px}
+.keys{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.keys li{display:flex;justify-content:space-between;align-items:center;gap:10px}
+kbd{display:inline-block;min-width:24px;text-align:center;padding:1px 6px;border:1px solid var(--line);border-bottom-width:3px;border-radius:4px;background:var(--bg);color:var(--ink);font:700 12px var(--head)}
+.legend{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.legend li{display:flex;align-items:center;gap:10px}
+.sw{width:26px;height:26px;flex:none;background:#c9c9c9;border:1px solid #8e8e8e;display:flex;align-items:center;justify-content:center;font:700 17px var(--head)}
+.sw.covered{background:#c0c0c0;border:3px solid;border-color:#fff #7b7b7b #7b7b7b #fff}
+.sw svg{width:80%;height:80%}
+.lots{display:grid;gap:6px}
+.lots button{all:unset;cursor:pointer;display:flex;justify-content:space-between;gap:8px;padding:7px 9px;border:1px solid var(--line);font:700 13px var(--head);text-transform:uppercase;letter-spacing:.03em}
+.lots button span:last-child{color:var(--muted);font-weight:400}
+.lots button[aria-pressed="true"]{border-color:var(--red);box-shadow:inset 4px 0 0 var(--red)}
+.lots button:focus-visible{outline:2px solid var(--red)}
+@media(max-width:520px){h1{font-size:36px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="car" viewBox="0 0 32 20">
+      <path d="M2 13.2V10.4Q2 8.3 4.2 8.1L8.4 7.6 11.6 3.4Q12.5 2.4 14 2.4H21.2Q22.6 2.4 23.6 3.5L27.2 7.6H28Q30.2 7.8 30.2 10V13.2Q30.2 14.6 28.8 14.6H3.4Q2 14.6 2 13.2Z" fill="currentColor"/>
+      <path d="M10.6 7.8 13.2 4.3H17V7.8ZM18.4 7.8V4.3H21.7L24.8 7.8Z" fill="#d6ecf8"/>
+      <circle cx="8.8" cy="15" r="3.3" fill="#1b1b1b"/><circle cx="8.8" cy="15" r="1.3" fill="#c8c8c8"/>
+      <circle cx="23.8" cy="15" r="3.3" fill="#1b1b1b"/><circle cx="23.8" cy="15" r="1.3" fill="#c8c8c8"/>
+      <rect x="28.4" y="9" width="1.6" height="1.8" rx=".5" fill="#ffe680"/>
+    </symbol>
+    <symbol id="cone" viewBox="0 0 24 24">
+      <path d="M10 2.5h4l5 16.5H5z" fill="#ff6a00"/>
+      <path d="M8.6 8.3h6.8l1 3.3H7.6zM6.8 14.2h10.4l.9 2.9H5.9z" fill="#fff"/>
+      <rect x="3" y="19" width="18" height="3" fill="#c94f00"/>
+    </symbol>
+    <symbol id="ticket" viewBox="0 0 24 24">
+      <path d="M5 2h14v20l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4z" fill="#fff36b" stroke="#000" stroke-width="1"/>
+      <rect x="7.3" y="4.8" width="9.4" height="2.6" fill="#d00"/>
+      <rect x="7.3" y="9.6" width="9.4" height="1.3" fill="#000"/>
+      <rect x="7.3" y="12.4" width="6" height="1.3" fill="#000"/>
+      <rect x="7.3" y="15.2" width="7.6" height="1.3" fill="#000"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="util"><div class="in"><span>Student voice of the University of Nebraska–Lincoln since 1901</span><a href="https://www.dailynebraskan.com/" target="_blank" rel="noopener">dailynebraskan.com &rarr;</a></div></div>
+<header class="mast"><a href="https://www.dailynebraskan.com/" target="_blank" rel="noopener"><img src="../assets/dn-logo.png" alt="The Daily Nebraskan" width="340" height="53"></a></header>
+<nav class="navbar" aria-label="Sections"><div class="in">
+  <a href="https://www.dailynebraskan.com/news/" target="_blank" rel="noopener">News</a>
+  <a href="https://www.dailynebraskan.com/sports/" target="_blank" rel="noopener">Sports</a>
+  <a href="https://www.dailynebraskan.com/culture/" target="_blank" rel="noopener">Culture</a>
+  <a href="https://www.dailynebraskan.com/opinion/" target="_blank" rel="noopener">Opinion</a>
+  <a href="#" class="on">Car Sweeper</a>
+</div></nav>
+
+<main>
+  <p class="kicker">A Daily Nebraskan Game</p>
+  <h1>Car <em>Sweeper</em></h1>
+  <p class="dek">Class starts in 10 minutes and you still need somewhere to park. Some spots on campus are fair game, and others are a guaranteed ticket. Find every legal spot in the lot! Pull into a spot to check it out. If it's legal, a number tells you how many of the 8 spots around it will get you ticketed. Read the clues carefully and you'll never have to gamble on a spot.</p>
+  <p class="dek" style="margin-top:10px">Know a spot is a ticket waiting to happen? Set out a traffic cone so nobody pulls in by mistake. The red counter shows how many ticket spots are still unmarked. Once a number has that many cones around it, pull into the number again to park in every other spot next to it at once.</p>
+  <div class="rule"><span id="lotLabel">Beginner · Visitor Lot</span><span>Space or left-click parks · F or right-click places a cone</span></div>
+
+  <div class="layout">
+    <section class="board-wrap" aria-label="Game board">
+      <div class="ms" id="ms" tabindex="0">
+        <div class="top">
+          <div class="led" id="ledCones" title="Tickets left to mark">010</div>
+          <button class="face" id="face" title="New game (R)" aria-label="New game"><svg><use href="#car" style="color:#ba1f1f"/></svg></button>
+          <div class="led" id="ledTime" title="Seconds">000</div>
+        </div>
+        <div class="grid" id="grid" role="grid" aria-label="Parking lot"></div>
+      </div>
+      <div class="msg" id="msg" role="status" aria-live="polite"></div>
+    </section>
+
+    <aside>
+      <div class="panel">
+        <h2>Keyboard</h2>
+        <ul class="keys">
+          <li><span>Move</span><span><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd></span></li>
+          <li><span>Park</span><span><kbd>Space</kbd></span></li>
+          <li><span>Place cone</span><span><kbd>F</kbd></span></li>
+          <li><span>New game</span><span><kbd>R</kbd></span></li>
+          <li><span>Difficulty</span><span><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></span></li>
+        </ul>
+        <p style="margin:10px 0 0;color:var(--muted);font-size:13px">Keys act on the square your mouse is over. Arrow keys take over until you move the mouse to a new square.</p>
+        <h2 style="margin-top:16px">Mouse</h2>
+        <ul class="keys">
+          <li><span>Select square</span><span>Hover</span></li>
+          <li><span>Park</span><span><kbd>Left-click</kbd></span></li>
+          <li><span>Place cone</span><span><kbd>Right-click</kbd></span></li>
+          <li><span>New game</span><span>Click the car</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>What you'll see</h2>
+        <ul class="legend">
+          <li><span class="sw covered"></span>Unchecked spot</li>
+          <li><span class="sw"><svg><use href="#car" style="color:#555"/></svg></span>Parked. No tickets nearby</li>
+          <li><span class="sw n2">2</span>Parked. 2 ticket spots touch it</li>
+          <li><span class="sw covered"><svg><use href="#cone"/></svg></span>Your cone: "don't park here"</li>
+          <li><span class="sw" style="background:#ff2a2a"><svg><use href="#ticket"/></svg></span>Ticket. Game over</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>Difficulty</h2>
+        <div class="lots" id="lots"></div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  Car Sweeper is a game from <a href="https://www.dailynebraskan.com/" target="_blank" rel="noopener">The Daily Nebraskan</a>. The lots, violations and fines in it are made up for fun. For real campus parking rules, check with UNL Parking and Transit Services.
+</footer>
+
+<script>
+(() => {
+  const LEVELS = [
+    { level: "Beginner",     lot: "Visitor Lot",       rows: 9,  cols: 9,  tickets: 10 },
+    { level: "Intermediate", lot: "17th & R Garage",   rows: 16, cols: 16, tickets: 40 },
+    { level: "Expert",       lot: "Game Day Saturday", rows: 16, cols: 30, tickets: 99 },
+  ];
+  const REASONS = [
+    ["No valid permit", 50], ["Expired meter", 25], ["Parked in a fire lane", 75],
+    ["Reserved 24/7 stall", 50], ["Loading zone", 40], ["Faculty/staff only", 50],
+    ["Motorcycle stall", 30], ["Game-day tow zone", 100], ["Parked over the line", 25],
+  ];
+  const FACE = {
+    play: `<svg><use href="#car" style="color:#ba1f1f"/></svg>`,
+    lose: `<svg><use href="#ticket"/></svg>`,
+    win:  `<svg><use href="#car" style="color:#1f7a3d"/></svg>`,
+  };
+
+  const $ = id => document.getElementById(id);
+  const gridEl = $("grid"), msEl = $("ms"), msgEl = $("msg");
+  let lvl = 0, rows, cols, nT, grid, tiles, cur, started, over, opened, cones, t0, timerId;
+
+  LEVELS.forEach((L, i) => {
+    const b = document.createElement("button");
+    b.innerHTML = `<span>${i+1} · ${L.level}</span><span>${L.cols}×${L.rows}, ${L.tickets} tickets</span>`;
+    b.addEventListener("click", () => { lvl = i; newGame(); msEl.focus(); });
+    $("lots").appendChild(b);
+  });
+  $("face").addEventListener("click", () => { newGame(); msEl.focus(); });
+
+  const pad3 = n => String(Math.max(-99, Math.min(999, n))).padStart(3, "0");
+
+  function newGame(){
+    const L = LEVELS[lvl];
+    rows = L.rows; cols = L.cols; nT = L.tickets;
+    started = false; over = false; opened = 0; cones = 0;
+    cur = { r: Math.floor(rows/2), c: Math.floor(cols/2) };
+    clearInterval(timerId); $("ledTime").textContent = "000";
+    grid = Array.from({length: rows}, () => Array.from({length: cols}, () => ({ ticket:false, adj:0, open:false, cone:false })));
+    $("lotLabel").textContent = `${L.level} · ${L.lot}`;
+    [...$("lots").children].forEach((b, i) => b.setAttribute("aria-pressed", i === lvl));
+    $("face").innerHTML = FACE.play;
+    build();
+    say("", `Press <kbd>Space</kbd> or left-click a square to park your first car. The first spot is always safe.`);
+    render();
+  }
+
+  function size(){
+    const availW = msEl.parentElement.clientWidth - 30;
+    const availH = window.innerHeight - 190;
+    const cell = Math.max(18, Math.min(32, Math.floor(availW / cols), Math.floor(availH / rows)));
+    msEl.style.setProperty("--cell", cell + "px");
+  }
+
+  function build(){
+    gridEl.innerHTML = "";
+    gridEl.style.gridTemplateColumns = `repeat(${cols}, var(--cell))`;
+    tiles = [];
+    for (let r = 0; r < rows; r++){
+      tiles.push([]);
+      for (let c = 0; c < cols; c++){
+        const d = document.createElement("div");
+        d.className = "t";
+        // hovering moves the red box, so Space/F act on the square under the mouse.
+        // Arrow keys move it away again; it only follows the mouse once the mouse enters a new square.
+        d.addEventListener("mouseenter", () => { if (cur.r !== r || cur.c !== c){ cur = {r, c}; render(); } });
+        d.addEventListener("click", () => { cur = {r, c}; park(); msEl.focus(); });
+        d.addEventListener("contextmenu", e => { e.preventDefault(); cur = {r, c}; cone(); msEl.focus(); });
+        gridEl.appendChild(d); tiles[r].push(d);
+      }
+    }
+    size();
+  }
+
+  const around = (r, c) => {
+    const out = [];
+    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++){
+      if (!dr && !dc) continue;
+      const a = r + dr, b = c + dc;
+      if (a >= 0 && a < rows && b >= 0 && b < cols) out.push([a, b]);
+    }
+    return out;
+  };
+
+  // ---- No-guess boards ----
+  // Deal random boards until one can be solved from the first square using only logic a player can use:
+  // a number's remaining tickets equal its unchecked neighbors (all tickets) or zero (all safe),
+  // comparing two overlapping numbers, and the count of tickets left. So nobody ever has to guess.
+  function noGuessBoard(start){
+    const N = rows*cols, nb = [];
+    for (let i = 0; i < N; i++) nb.push(around(Math.floor(i/cols), i%cols).map(([a,b]) => a*cols + b));
+    const safe = new Set([start, ...nb[start]]);
+    const pool0 = [];
+    for (let i = 0; i < N; i++) if (!safe.has(i)) pool0.push(i);
+    let mine;
+    for (let tries = 0; tries < 50000; tries++){
+      const pool = pool0.slice();
+      mine = new Uint8Array(N);
+      for (let k = 0; k < nT; k++){
+        const j = Math.floor(Math.random()*pool.length);
+        mine[pool[j]] = 1; pool[j] = pool[pool.length-1]; pool.pop();
+      }
+      if (solvable(mine)) break;
+    }
+    return mine;
+
+    function solvable(mine){
+      const adj = new Uint8Array(N);
+      for (let i = 0; i < N; i++) if (mine[i]) for (const j of nb[i]) adj[j]++;
+      const st = new Uint8Array(N); // 0 unchecked, 1 parked, 2 coned
+      let left = N - nT, coned = 0;
+      const open = i => {
+        const stack = [i];
+        while (stack.length){
+          const k = stack.pop();
+          if (st[k]) continue;
+          st[k] = 1; left--;
+          if (!adj[k]) for (const j of nb[k]) if (!st[j]) stack.push(j);
+        }
+      };
+      const cone = i => { if (!st[i]){ st[i] = 2; coned++; } };
+      open(start);
+      while (left > 0){
+        let moved = false;
+        const cons = [];
+        for (let i = 0; i < N; i++){
+          if (st[i] !== 1 || !adj[i]) continue;
+          const U = []; let f = 0;
+          for (const j of nb[i]){ if (st[j] === 0) U.push(j); else if (st[j] === 2) f++; }
+          if (!U.length) continue;
+          const need = adj[i] - f;
+          if (need === 0){ U.forEach(open); moved = true; }
+          else if (need === U.length){ U.forEach(cone); moved = true; }
+          else cons.push({ U, need });
+        }
+        if (moved) continue;
+        const byCell = new Map();
+        cons.forEach((k, idx) => k.U.forEach(u => { if (!byCell.has(u)) byCell.set(u, []); byCell.get(u).push(idx); }));
+        pairs:
+        for (let a = 0; a < cons.length; a++){
+          const A = cons[a], inA = new Set(A.U), seen = new Set();
+          for (const u of A.U) for (const b of byCell.get(u)){
+            if (b === a || seen.has(b)) continue;
+            seen.add(b);
+            const B = cons[b], inB = new Set(B.U);
+            const onlyB = B.U.filter(x => !inA.has(x)), onlyA = A.U.filter(x => !inB.has(x));
+            if (B.need - A.need === onlyB.length && onlyA.length + onlyB.length){
+              onlyB.forEach(cone); onlyA.forEach(open); moved = true; break pairs;
+            }
+            if (!onlyA.length && B.need === A.need && onlyB.length){
+              onlyB.forEach(open); moved = true; break pairs;
+            }
+          }
+        }
+        if (moved) continue;
+        let unknown = 0;
+        for (let i = 0; i < N; i++) if (!st[i]) unknown++;
+        const rem = nT - coned;
+        if (rem === 0){ for (let i = 0; i < N; i++) if (!st[i]) open(i); continue; }
+        if (rem === unknown){ for (let i = 0; i < N; i++) if (!st[i]) cone(i); continue; }
+        return false;
+      }
+      return true;
+    }
+  }
+
+  function layTickets(sr, sc){
+    const mine = noGuessBoard(sr*cols + sc);
+    for (let i = 0; i < rows*cols; i++){
+      if (!mine[i]) continue;
+      const t = grid[Math.floor(i/cols)][i%cols];
+      t.ticket = true; t.reason = REASONS[Math.floor(Math.random()*REASONS.length)];
+    }
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++)
+      grid[r][c].adj = around(r, c).filter(([a,b]) => grid[a][b].ticket).length;
+    started = true; t0 = Date.now();
+    timerId = setInterval(() => { $("ledTime").textContent = pad3(Math.floor((Date.now()-t0)/1000)); }, 250);
+  }
+
+  function park(){
+    if (over) return;
+    const {r, c} = cur, t = grid[r][c];
+    if (t.cone){ say("note", `There's a cone on that spot. Press <kbd>F</kbd> or right-click to pick it up if you want to park there.`); return; }
+    if (!started) layTickets(r, c);
+    if (t.open){ chord(r, c); return; }
+    if (t.ticket){ lose(r, c); return; }
+    reveal(r, c);
+    say("", `Parked. Numbers count the ticket spots touching each square. Press <kbd>F</kbd> or right-click to put a cone on a spot you think is a ticket.`);
+    win(); render();
+  }
+
+  function reveal(r, c){
+    const stack = [[r, c]];
+    while (stack.length){
+      const [a, b] = stack.pop(), t = grid[a][b];
+      if (t.open || t.cone || t.ticket) continue;
+      t.open = true; opened++;
+      if (t.adj === 0) stack.push(...around(a, b));
+    }
+  }
+
+  // Space on a number whose cones are all placed parks in the rest of its neighbors
+  function chord(r, c){
+    const t = grid[r][c], n = around(r, c);
+    const placed = n.filter(([a,b]) => grid[a][b].cone).length;
+    if (!t.adj || placed !== t.adj){
+      say("note", t.adj
+        ? `You already parked here. Move to an unchecked spot, or put ${t.adj} cone${t.adj>1?"s":""} around this ${t.adj} first, then press <kbd>Space</kbd> or click here to park in all the rest.`
+        : `You already parked here. Move to an unchecked (raised) spot.`);
+      return;
+    }
+    for (const [a, b] of n){
+      const s = grid[a][b];
+      if (s.open || s.cone) continue;
+      if (s.ticket){ lose(a, b); return; }
+      reveal(a, b);
+    }
+    win(); render();
+  }
+
+  function cone(){
+    if (over) return;
+    const t = grid[cur.r][cur.c];
+    if (t.open){
+      say("note", `Cones only go on unchecked (raised) spots. You already parked on this one.`);
+      render(); return;
+    }
+    t.cone = !t.cone;
+    cones += t.cone ? 1 : -1;
+    say("", t.cone ? `Cone placed. You won't park here by accident. Press <kbd>F</kbd> or right-click again to remove it.` : `Cone removed.`);
+    render();
+  }
+
+  function lose(r, c){
+    over = true; clearInterval(timerId);
+    grid[r][c].boom = true;
+    const [why, fine] = grid[r][c].reason;
+    $("face").innerHTML = FACE.lose;
+    say("lose", `<svg><use href="#ticket"/></svg><span>You got a ticket: ${why}. That's $${fine}.<small>Press <kbd>R</kbd> to try a new lot.</small></span>`);
+    render();
+  }
+
+  function win(){
+    if (opened !== rows*cols - nT) return;
+    over = true; clearInterval(timerId);
+    for (const row of grid) for (const t of row) if (t.ticket && !t.cone){ t.cone = true; cones++; }
+    $("face").innerHTML = FACE.win;
+    const secs = Math.floor((Date.now()-t0)/1000);
+    say("win", `<svg><use href="#car" style="color:#1f7a3d"/></svg><span>Every legal spot found in ${secs} seconds. No tickets!<small>Press <kbd>R</kbd> to play again or <kbd>1</kbd>–<kbd>3</kbd> to change difficulty.</small></span>`);
+  }
+
+  function say(kind, html){
+    msgEl.className = "msg" + (kind ? " " + kind : "");
+    msgEl.innerHTML = html.startsWith("<svg") ? html : `<span>${html}</span>`;
+  }
+
+  function render(){
+    msEl.classList.toggle("done", over);
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++){
+      const t = grid[r][c], d = tiles[r][c];
+      let cls = "t", html = "";
+      if (t.open){
+        cls += " open";
+        if (t.adj){ cls += " n" + t.adj; html = t.adj; }
+        else html = `<svg class="parked"><use href="#car" style="color:#333"/></svg>`;
+      } else if (over && t.ticket && !t.cone){
+        cls += " open"; html = `<svg><use href="#ticket"/></svg>`;
+      } else if (t.cone){
+        html = `<svg><use href="#cone"/></svg>`;
+        if (over && !t.ticket) cls += " wrong";
+      }
+      if (t.boom) cls += " boom";
+      if (r === cur.r && c === cur.c) cls += " cur";
+      if (d.className !== cls) d.className = cls;
+      if (d._h !== html){ d.innerHTML = html; d._h = html; }
+    }
+    $("ledCones").textContent = pad3(nT - cones);
+  }
+
+  function move(dr, dc){
+    cur.r = Math.max(0, Math.min(rows-1, cur.r + dr));
+    cur.c = Math.max(0, Math.min(cols-1, cur.c + dc));
+    render();
+  }
+
+  document.addEventListener("keydown", e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    // e.code works no matter the keyboard layout or Caps Lock
+    const code = e.code, key = e.key;
+    let act = null;
+    if (code === "ArrowUp" || code === "KeyW") act = () => move(-1, 0);
+    else if (code === "ArrowDown" || code === "KeyS") act = () => move(1, 0);
+    else if (code === "ArrowLeft" || code === "KeyA") act = () => move(0, -1);
+    else if (code === "ArrowRight" || code === "KeyD") act = () => move(0, 1);
+    else if (code === "Space" || key === " " || key === "Enter") {
+      if (e.target.tagName === "BUTTON") return; // let side-panel buttons work
+      act = park;
+    }
+    else if (code === "KeyF" || key.toLowerCase() === "f") act = cone;
+    else if (code === "KeyR" || key.toLowerCase() === "r") act = newGame;
+    else if (["1","2","3"].includes(key)) act = () => { lvl = +key - 1; newGame(); };
+    if (act){ e.preventDefault(); act(); }
+  });
+  window.addEventListener("resize", size);
+
+  newGame();
+  msEl.focus();
+})();
+</script>
+</body>
+</html>
