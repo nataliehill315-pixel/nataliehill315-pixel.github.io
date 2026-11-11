@@ -110,6 +110,27 @@ footer a{color:var(--red)}
 .msg svg{width:30px;height:30px;flex:none}
 .msg small{display:block;font-weight:400;color:var(--muted)}
 
+/* ---- citation pop-up (only for the spot that got you ticketed) ---- */
+.ms{position:relative}
+.citation{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-2deg);z-index:5;
+  width:min(300px,90%);background:#fff36b;color:#111;padding:14px 16px 12px;
+  border:2px solid #111;box-shadow:0 10px 30px rgba(0,0,0,.45);font-family:var(--body);
+  animation:slap .25s ease-out;
+}
+.citation[hidden]{display:none}
+.citation .hd{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:6px;margin-bottom:8px;font:700 13px var(--head);letter-spacing:.12em;text-transform:uppercase}
+.citation .hd span:first-child{background:#d00;color:#fff;padding:1px 6px}
+.citation .x{all:unset;cursor:pointer;font:700 20px/1 var(--head);padding:0 4px}
+.citation .x:focus-visible{outline:2px solid #111}
+.citation .v{font:700 22px/1.1 var(--head);text-transform:uppercase;margin:0 0 6px}
+.citation p{margin:0 0 10px;font-size:14px;line-height:1.4}
+.citation .fine{display:flex;justify-content:space-between;align-items:baseline;border-top:1px dashed #111;padding-top:8px;font:700 13px var(--head);text-transform:uppercase;letter-spacing:.05em}
+.citation .fine b{font-size:24px}
+.citation .opts{margin-top:8px;font-size:12px;color:#333}
+.citation kbd{background:#fff;color:#111;border-color:#777}
+@keyframes slap{from{transform:translate(-50%,-50%) rotate(-8deg) scale(1.15);opacity:0}}
+
 /* ---- side panel ---- */
 .panel{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--red);padding:14px 16px;font-size:14px}
 .panel + .panel{margin-top:14px}
@@ -181,6 +202,13 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:1px 6px;border
           <div class="led" id="ledTime" title="Seconds">000</div>
         </div>
         <div class="grid" id="grid" role="grid" aria-label="Parking lot"></div>
+        <div class="citation" id="citation" role="alertdialog" aria-labelledby="citeV" aria-describedby="citeWhy" hidden>
+          <div class="hd"><span>Parking citation</span><button class="x" id="citeClose" aria-label="Close ticket">&times;</button></div>
+          <p class="v" id="citeV"></p>
+          <p id="citeWhy"></p>
+          <div class="fine"><span>Amount due</span><b id="citeFine"></b></div>
+          <div class="opts"><kbd>R</kbd> try a new lot &middot; <kbd>Esc</kbd> look at the lot</div>
+        </div>
       </div>
       <div class="msg" id="msg" role="status" aria-live="polite"></div>
     </section>
@@ -233,10 +261,20 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:1px 6px;border
     { level: "Intermediate", lot: "17th & R Garage",   rows: 16, cols: 16, tickets: 40 },
     { level: "Expert",       lot: "Game Day Saturday", rows: 16, cols: 30, tickets: 99 },
   ];
+  // [violation, why the spot was closed, fine]. Made up for the game.
   const REASONS = [
-    ["No valid permit", 50], ["Expired meter", 25], ["Parked in a fire lane", 75],
-    ["Reserved 24/7 stall", 50], ["Loading zone", 40], ["Faculty/staff only", 50],
-    ["Motorcycle stall", 30], ["Game-day tow zone", 100], ["Parked over the line", 25],
+    ["Closed for construction", "Crews fenced off this row for building work. Parking is limited until the project wraps up.", 50],
+    ["Event parking only", "This spot is being held for guests at tonight's event on campus.", 40],
+    ["Faculty/staff only", "This row needs a faculty or staff permit. A student permit doesn't count here.", 50],
+    ["Game-day reserved", "On home game Saturdays, this lot is saved for game-day permit holders.", 100],
+    ["Accessible parking", "This spot is for drivers with a disability parking permit.", 100],
+    ["EV charging only", "This spot is saved for electric cars that are plugged in and charging.", 40],
+    ["Snow removal", "Plows are clearing this row today. Cars left here get ticketed.", 75],
+    ["Fire lane", "This lane has to stay clear for emergency vehicles at all times.", 75],
+    ["Loading zone", "Delivery trucks use this spot to drop off supplies.", 40],
+    ["Expired meter", "The meter on this spot ran out of time.", 25],
+    ["Residence hall permit only", "This row is saved for students who live in the nearby dorms.", 50],
+    ["Service vehicles only", "Campus maintenance trucks need this spot for repairs.", 40],
   ];
   const FACE = {
     play: `<svg><use href="#car" style="color:#ba1f1f"/></svg>`,
@@ -255,6 +293,8 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:1px 6px;border
     $("lots").appendChild(b);
   });
   $("face").addEventListener("click", () => { newGame(); msEl.focus(); });
+  const closeCitation = () => { $("citation").hidden = true; msEl.focus(); };
+  $("citeClose").addEventListener("click", closeCitation);
 
   const pad3 = n => String(Math.max(-99, Math.min(999, n))).padStart(3, "0");
 
@@ -262,6 +302,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:1px 6px;border
     const L = LEVELS[lvl];
     rows = L.rows; cols = L.cols; nT = L.tickets;
     started = false; over = false; opened = 0; cones = 0;
+    $("citation").hidden = true;
     cur = { r: Math.floor(rows/2), c: Math.floor(cols/2) };
     clearInterval(timerId); $("ledTime").textContent = "000";
     grid = Array.from({length: rows}, () => Array.from({length: cols}, () => ({ ticket:false, adj:0, open:false, cone:false })));
@@ -462,9 +503,13 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:1px 6px;border
   function lose(r, c){
     over = true; clearInterval(timerId);
     grid[r][c].boom = true;
-    const [why, fine] = grid[r][c].reason;
+    const [violation, why, fine] = grid[r][c].reason;
     $("face").innerHTML = FACE.lose;
-    say("lose", `<svg><use href="#ticket"/></svg><span>You got a ticket: ${why}. That's $${fine}.<small>Press <kbd>R</kbd> to try a new lot.</small></span>`);
+    $("citeV").textContent = violation;
+    $("citeWhy").textContent = why;
+    $("citeFine").textContent = "$" + fine;
+    $("citation").hidden = false;
+    say("lose", `<svg><use href="#ticket"/></svg><span>Ticketed: ${violation}. That's $${fine}.<small>Press <kbd>R</kbd> to try a new lot.</small></span>`);
     render();
   }
 
@@ -513,6 +558,7 @@ kbd{display:inline-block;min-width:24px;text-align:center;padding:1px 6px;border
 
   document.addEventListener("keydown", e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "Escape" && !$("citation").hidden){ e.preventDefault(); closeCitation(); return; }
     // e.code works no matter the keyboard layout or Caps Lock
     const code = e.code, key = e.key;
     let act = null;
