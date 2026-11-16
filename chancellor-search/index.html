@@ -682,7 +682,7 @@ footer a{color:var(--red)}
     construction:{text:"It's construction season. Every walk takes an extra hour because of detours."},
     thursday:{text:"The Board moved its meeting up a day. The recommendation is due Thursday at 5 p.m."},
     catered:{text:"Good news: listening sessions are catered this round, so people actually show up. They take an hour less."},
-    intern:{text:"You've been assigned a student intern. Your notebook now labels which trait each clue is about."},
+    intern:{text:"You've been assigned a student intern. Your notebook now labels which trait each clue is about, and the intern is sticking around for every round after this one."},
   };
   const VOTES = [
     'The committee votes 14-1 to recommend them. (The lone "no" was the student representative, who was in a midterm and voted by text by accident.)',
@@ -810,6 +810,9 @@ footer a{color:var(--red)}
   const roundNo = () => (me ? me.rounds.length : 0) + 1;
   function updateRule(){ $("rankLabel").textContent = me ? `Round ${roundNo()} · ${rank()} ${me.name}` : "Case file · Chancellor search"; }
 
+  // The intern perk, once earned, stays for every later round.
+  const hasIntern = () => !!me && me.rounds.some(r => r.twist==="intern");
+  const internOn = () => S.twist==="intern" || hasIntern();
   function newCase(){
     const round = roundNo();
     const stops = Math.min(7, 5 + Math.floor((round-1)/2));
@@ -818,7 +821,7 @@ footer a{color:var(--red)}
     // twist: none on round 1, never twice in a row
     let twist = "none";
     if (round > 1){
-      const opts = ["none","shuttle","construction","catered","intern"].concat(stops <= 6 ? ["thursday"] : []).filter(t => !prev || t !== prev.twist || t==="none");
+      const opts = ["none","shuttle","construction","catered","intern"].concat(stops <= 6 ? ["thursday"] : []).filter(t => (!prev || t !== prev.twist || t==="none") && !(t==="intern" && hasIntern()));
       twist = pick(opts);
     }
     // Build the pool so you need 4 of the 5 traits: for every set of 3 traits there's a
@@ -946,6 +949,7 @@ footer a{color:var(--red)}
       ${S.cur!=="canfield" ? `<p>The committee lost its conference room in Canfield to a "space utilization study," so this round starts at ${esc(startName)}.</p>` : ""}
       <p>Same drill: listen to campus, narrow the pool in the search portal, then find the candidate before they leave town. This trail is ${S.stops} stops long.</p>`;
       if (TWISTS[S.twist].text) html += `<p class="hot">This round: ${esc(TWISTS[S.twist].text)}</p>`;
+      if (hasIntern()) html += `<p class="dim">Your student intern is still here, labeling which trait each clue in your notebook is about.</p>`;
     }
     html += `<p>The committee's recommendation is due to the Board by <span class="hot">${dueText()}</span> Good luck.</p>`;
     typeHTML(html);
@@ -1065,7 +1069,7 @@ footer a{color:var(--red)}
     portalState = null;
     sc.innerHTML = SCENES.note();
     const rec = S.rec!=null ? `<p class="hot">Looking for: ${esc(S.cands[S.rec].name)}</p>` : `<p class="dim">You don't know who you're looking for yet.</p>`;
-    const tag = n => S.twist==="intern" && n.trait>=0 ? ` <span class="mag">[${esc(TRAITS[n.trait].label)}]</span>` : "";
+    const tag = n => internOn() && n.trait>=0 ? ` <span class="mag">[${esc(TRAITS[n.trait].label)}]</span>` : "";
     const body = S.notes.length ? S.notes.map(n => `<p><span class="who">${esc(n.loc)}:</span> "${esc(n.text)}"${tag(n)}</p>`).join("") : `<p class="dim">Nothing useful yet. Go investigate.</p>`;
     typeHTML(`<p class="who">Your notebook · Round ${S.round}</p>${rec}<p class="dim">Due: ${dueText()}</p>${body}`);
     setMenu([{label:"Close notebook", fn: () => screenLoc()}]);
