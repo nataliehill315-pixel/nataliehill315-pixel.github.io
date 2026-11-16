@@ -400,6 +400,68 @@ footer a{color:var(--red)}
     return svg(s);
   }
 
+  // A candidate's look comes from their traits: background sets the outfit and wall prop,
+  // plus their hobby gear, signature look, ride and a speech bubble for their priority.
+  function candidatePortrait(c, shades){
+    let h = 7; for (const ch of c.name) h = (h*31 + ch.charCodeAt(0)) >>> 0;
+    const [bg, hobby, look, plan, ride] = c.t;
+    const skin = SKIN[h % SKIN.length], hair = HAIR[(h>>>3) % HAIR.length], style = (h>>>6) % 4;
+    const X = 96; // body center
+    let s = R(0,0,160,120,"url(#p-sky)")+R(0,0,160,120,"rgba(0,0,0,.35)");
+    // wall prop for their background (top right)
+    s += [
+      R(124,6,32,22,"#aa5500")+R(126,8,28,18,"#fff")+T(140,17,6,"Ph.D.","#000")+R(130,20,20,1,"#555"),
+      R(124,6,32,22,"#000")+P("M127 24 L134 18 L140 21 L152 9","","#55ff55",1.5)+T(140,14,5,"Q3","#55ff55"),
+      C(140,17,10,"#aa5500")+R(134,16,12,1,"#fff")+Array.from({length:4},(_,i)=>R(136+i*3,14,1,5,"#fff")).join(""),
+      R(130,4,2,26,"#aaa")+R(132,4,22,13,"#0000aa")+C(143,10,3,"#ffff55"),
+      Array.from({length:3},(_,i)=>P(`M${130+i*9} 8 l2 4 l4 0 l-3 3 l1 4 l-4 -2 l-4 2 l1 -4 l-3 -3 l4 0Z`,"#ffff55")).join(""),
+    ][bg];
+    // ride (bottom left)
+    const wheels = (a,b,r=5) => C(a,104,r,"#000")+C(a,104,r/2.5,"#aaa")+C(b,104,r,"#000")+C(b,104,r/2.5,"#aaa");
+    s += [
+      R(4,90,50,11,"#aa0000")+R(28,79,18,12,"#aa0000")+R(31,81,11,7,"url(#p-glass)")+R(6,90,20,2,"#550000")+wheels(14,44),
+      R(6,90,46,10,"#fff")+P("M14 90 Q20 78 34 78 Q46 78 48 90Z","#fff")+R(20,81,10,7,"url(#p-glass)")+R(33,81,10,7,"url(#p-glass)")+P("M30 91 L26 96 L30 96 L27 101","","#ffff55",1.5)+wheels(16,42),
+      `<circle cx="14" cy="102" r="8" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="44" cy="102" r="8" fill="none" stroke="#fff" stroke-width="1.5"/>`+P("M14 102 L24 88 L40 88 L44 102 M24 88 L30 102 L40 88 M38 84 L42 84","","#ff5555",1.5),
+      R(8,74,46,3,"#00aa00")+R(10,77,2,14,"#aaa")+R(50,77,2,14,"#aaa")+R(8,90,46,8,"#fff")+R(12,86,16,4,"#555")+wheels(16,46,4),
+      R(10,102,30,3,"#00aa00")+R(36,78,3,25,"#555")+R(30,77,15,3,"#555")+wheels(13,38,3),
+    ][ride];
+    // outfit by background: provost tweed, CEO suit, AD polo, senator suit, general uniform
+    const suit = ["#aa5500","#000055","#aa0000","#555","#005500"][bg];
+    const jacket = look===3 ? "#ff5555" : suit;
+    s += P(`M${X-50} 120 L${X-44} 92 Q${X-40} 84 ${X-20} 82 L${X+20} 82 Q${X+40} 84 ${X+44} 92 L${X+50} 120Z`, jacket);
+    if (bg!==2) s += P(`M${X-12} 82 L${X+12} 82 L${X+4} 120 L${X-4} 120Z`, "#fff"); // shirt front
+    if (look===2) s += P(`M${X-46} 120 L${X-42} 94 L${X-14} 84 L${X-8} 120Z`,"#0000aa")+P(`M${X+46} 120 L${X+42} 94 L${X+14} 84 L${X+8} 120Z`,"#0000aa");
+    if (bg===4) s += R(X-42,88,14,3,"#ffff55")+R(X+28,88,14,3,"#ffff55")+R(X-28,100,4,6,"#aa0000")+R(X-23,100,4,6,"#0000aa")+R(X-18,100,4,6,"#ffff55");
+    if (bg===3) s += R(X+20,94,5,5,"#ffff55");
+    if (bg===1) s += P(`M${X-3} 84 L${X+3} 84 L${X+2} 90 L${X+4} 110 L${X} 114 L${X-4} 110 L${X-2} 90Z`,"#aa0000");
+    s += R(X-10,70,20,14,skin);
+    if (style===1) s += R(X-28,26,56,56,hair);
+    s += R(X-24,28,48,46,skin)+R(X-28,46,4,10,skin)+R(X+24,46,4,10,skin);
+    if (style===0) s += R(X-26,22,52,12,hair);
+    if (style===1) s += R(X-26,22,52,10,hair);
+    if (style===2) s += R(X-26,22,52,6,hair)+R(X-26,26,6,10,hair)+R(X+20,26,6,10,hair);
+    if (style===3) s += C(X,20,8,hair)+R(X-24,24,48,8,hair);
+    if (look===1) s += R(X-38,22,76,5,"#aa5500")+R(X-22,6,44,17,"#aa5500")+R(X-22,18,44,3,"#550000");
+    // face: sunglasses on while they're incognito, lowered once you name them
+    s += R(X-3,54,6,6,"rgba(0,0,0,.18)")+R(X-8,64,16,2,"#550000");
+    if (shades) s += R(X-20,43,17,9,"#000")+R(X+3,43,17,9,"#000")+R(X-3,45,6,2,"#000")+R(X-18,44,5,2,"#555")+R(X+5,44,5,2,"#555");
+    else s += R(X-14,44,6,4,"#000")+R(X+8,44,6,4,"#000")+R(X-18,51,15,6,"#000")+R(X+3,51,15,6,"#000")+R(X-3,52,6,2,"#000");
+    if (look===4) s += P(`M${X-27} 52 Q${X-36} 86 ${X} 94 Q${X+36} 86 ${X+27} 52`,"","#ffff55",1);
+    if (look===0) s += P(`M${X} 85 L${X-10} 80 L${X-10} 90Z`,"#aa00aa")+P(`M${X} 85 L${X+10} 80 L${X+10} 90Z`,"#aa00aa")+R(X-2,83,4,4,"#ff55ff");
+    // hobby gear
+    s += [
+      P("M150 118 L140 48","","#aaa",2)+R(134,44,9,5,"#aaa")+C(152,112,2,"#fff"),
+      R(X+16,96,22,14,"#fff")+T(X+27,106,7,"26.2","#aa0000"),
+      P(`M${X-14} 84 L${X-8} 98 M${X+14} 84 L${X+8} 98`,"","#000",1)+R(X-12,96,9,9,"#000")+R(X+3,96,9,9,"#000")+R(X-11,97,3,3,"#55ffff")+R(X+4,97,3,3,"#55ffff"),
+      R(134,72,18,22,"#55ff55")+R(140,94,6,14,"#000")+C(124,64,4,"#ffff55"),
+      P("M154 118 L132 26","","#aa5500",2)+P("M132 26 Q104 0 74 14 Q60 22 64 30","","#fff",0.7)+R(62,30,3,3,"#ff5555"),
+    ][hobby];
+    // priority, in a speech bubble
+    const say = ["AAU OR BUST!","ENROLLMENT!","BALANCE IT!","GO BIG RED!","MENTAL HEALTH!"][plan];
+    s += R(4,6,58,16,"#fff")+P("M44 22 L52 30 L50 22Z","#fff")+T(33,17,7,say,"#000");
+    return svg(s);
+  }
+
   // ---------- campus ----------
   const LOC = {
     canfield:{name:"Canfield Admin", map:[78,88],
@@ -540,7 +602,7 @@ footer a{color:var(--red)}
     ]},
   ];
 
-  const NAMES = ["Dr. Patricia Wendell-Ames","Gregory Halvorsen","Dr. Anita Okafor-Bell","Dr. Raymond Quist","Lorraine Petrakis","Dr. Theo Lindqvist","Marcus Delacroix-Hale","Dr. Susan Kowalczyk","Bradley J. Stimmel","Dr. Imani Fairweather","Dr. Harold Nyquist-Bale","Rosalind Achterberg","Dr. Kwame Ellsworth","Jolene Marchetti","Dr. Victor Szabo","Dr. Lucia Fernandez-Hart"];
+  const NAMES = ["Dr. Cornelius Husk","Dr. Platte Rivers","Sandy Hills","Dr. Hilda Crane","Scott S. Bluff","Carl Henge","Dr. Arbor Dey","Meadow Larkin","Rod Golden","Rhonda Runza","Dr. Uni Cameral","Seymour Sower","Dr. Cornelia Cobb","Cy Lowe","Wendell Chill","Dr. Chim Rockwell"];
   // Who the Board picks instead. Made up.
   const PRIORITY = [
     {who:"Chet Brandvold", desc:"a regional bank executive who once donated a scoreboard"},
@@ -980,7 +1042,7 @@ footer a{color:var(--red)}
   // ---------- endings ----------
   function encounter(pre){
     const T_ = S.cands[S.target];
-    sc.innerHTML = portrait("founder", S.seed);
+    sc.innerHTML = candidatePortrait(T_, S.rec !== S.target);
     let html = pre + `<p class="who">!!! Candidate spotted !!!</p><p>Behind a pillar, someone in sunglasses and ${esc(["a bow tie","cowboy boots","a fleece vest","a red blazer","reading glasses on a chain"][T_.t[2]])} is pretending to read a campus map.</p>`;
     if (S.rec === S.target){
       html += `<p>"Hello, ${esc(T_.name)}," you say. They lower their sunglasses. You found them.</p><p class="mag">${TRAITS.map((tr,k) => esc(tr.vals[T_.t[k]][0])).join(" · ")}</p><p>Exactly who campus asked for. You make your pitch, and they agree to stay in the search.</p><p>The committee votes 14-1 to recommend them to the Board. (The lone "no" was the student representative, who was in a midterm and voted by text by accident.)</p>`;
