@@ -304,8 +304,8 @@ footer a{color:var(--red)}
       lawn(100)+R(20,102,30,5,"#aa0000")+R(110,104,24,5,"#0000aa")),
     selleck: () => svg(sky()+
       R(4,40,60,60,"url(#p-brick)")+R(96,40,60,60,"url(#p-brick)")+R(54,52,52,48,"#aaa")+
-      grid(10,46,4,4,8,6,13,12,"#000","#ffff55")+grid(102,46,4,4,8,6,13,12,"#000","#ffff55")+
-      R(58,56,44,9,"#000")+T(80,63,7,"SELLECK DINING","#ffff55")+
+      grid(10,46,4,4,8,6,13,12,"#000")+grid(102,46,4,4,8,6,13,12,"#000")+
+      R(58,56,44,9,"#000")+T(80,63,7,"SELLECK QUAD","#aaa")+
       R(66,72,28,4,"#555")+C(74,70,3,"#aa5500")+C(84,70,3,"#ffff55")+
       R(70,84,20,16,"#000")+walk(100)+lawn(106)),
     capitol: () => svg(sky()+
@@ -364,7 +364,7 @@ footer a{color:var(--red)}
     const skin = SKIN[seed % SKIN.length], hair = HAIR[(seed>>2) % HAIR.length], style = (seed>>4) % 4;
     let s = R(0,0,160,120,"url(#p-sky)")+R(0,0,160,120,"rgba(0,0,0,.35)");
     // body
-    s += P("M30 120 L36 92 Q40 84 60 82 L100 82 Q120 84 124 92 L130 120Z", p.shirt);
+    s += P("M30 120 L36 92 Q40 84 60 82 L100 82 Q120 84 124 92 L130 120Z", p.shirt)+P("M100 82 Q120 84 124 92 L130 120 L110 120 Q112 98 100 82Z","rgba(0,0,0,.2)");
     if (p.acc.includes("coat")) s += P("M30 120 L36 92 Q40 84 60 82 L72 82 L80 120Z","#fff")+P("M130 120 L124 92 Q120 84 100 82 L88 82 L80 120Z","#fff");
     if (p.acc.includes("vest")) s += P("M38 120 L42 92 L66 84 L72 120Z","#0000aa")+P("M122 120 L118 92 L94 84 L88 120Z","#0000aa");
     s += R(70,70,20,14,skin);
@@ -378,7 +378,11 @@ footer a{color:var(--red)}
     if (style===2) s += R(54,22,52,6,hair)+R(54,26,6,10,hair)+R(100,26,6,10,hair);
     if (style===3) s += C(80,20,8,hair)+R(56,24,48,8,hair);
     // face
-    s += R(66,46,6,4,"#000")+R(88,46,6,4,"#000")+R(77,54,6,6,"rgba(0,0,0,.18)")+R(72,64,16,2,"#550000");
+    s += R(96,30,8,44,"rgba(0,0,0,.1)")+R(70,74,20,4,"rgba(0,0,0,.2)");
+    s += R(65,40,9,2,hair==="#ffff55"?"#aa5500":hair)+R(86,40,9,2,hair==="#ffff55"?"#aa5500":hair);
+    s += R(65,45,9,5,"#fff")+R(68,45,4,5,"#000")+R(69,45,1,1,"#fff")+R(86,45,9,5,"#fff")+R(88,45,4,5,"#000")+R(89,45,1,1,"#fff");
+    s += R(78,51,4,8,"rgba(0,0,0,.14)")+R(76,58,8,2,"rgba(0,0,0,.22)")+R(70,64,20,2,"#7a2a2a")+R(72,66,16,1,"rgba(0,0,0,.15)");
+    s += R(61,56,6,4,"rgba(255,80,80,.15)")+R(93,56,6,4,"rgba(255,80,80,.15)");
     const A = p.acc;
     if (A.includes("glasses")) s += `<rect x="63" y="43" width="12" height="9" fill="none" stroke="#fff" stroke-width="1.5"/><rect x="85" y="43" width="12" height="9" fill="none" stroke="#fff" stroke-width="1.5"/>`+R(75,46,10,1.5,"#fff");
     if (A.includes("chain")) s += P("M63 50 Q60 80 80 84 Q100 80 97 50","","#ffff55",1);
@@ -400,66 +404,111 @@ footer a{color:var(--red)}
     return svg(s);
   }
 
-  // A candidate's look comes from their traits: background sets the outfit and wall prop,
-  // plus their hobby gear, signature look, ride and a speech bubble for their priority.
+  // A candidate's look comes from their five traits: background sets the outfit and wall
+  // prop, plus hobby gear, signature look, ride and a speech bubble for their priority.
+  // Drawn smoother and in more colors than the rest of the game so the reveal feels special.
   function candidatePortrait(c, shades){
     let h = 7; for (const ch of c.name) h = (h*31 + ch.charCodeAt(0)) >>> 0;
     const [bg, hobby, look, plan, ride] = c.t;
-    const skin = SKIN[h % SKIN.length], hair = HAIR[(h>>>3) % HAIR.length], style = (h>>>6) % 4;
-    const X = 96; // body center
-    let s = R(0,0,160,120,"url(#p-sky)")+R(0,0,160,120,"rgba(0,0,0,.35)");
-    // wall prop for their background (top right)
+    const SKN = [["#f2c08a","#d79f68","#a8703f"],["#c68642","#a5692f","#74461b"],["#ffdcb8","#ecbb90","#c4936a"],["#8d5524","#704016","#4a2a0c"],["#e0ac69","#c38c4e","#966532"]];
+    const HRS = [["#2a1a10","#5a3a24"],["#3a3a3a","#7a7a7a"],["#7a3d10","#b0622a"],["#d9b04e","#f6e09a"],["#b8b8b8","#ececec"],["#5a1a10","#8f3a20"]];
+    const [sk, skS, skD] = SKN[h % SKN.length], [hr, hrL] = HRS[(h>>>3) % HRS.length], style = (h>>>6) % 5;
+    const X = 98, F = (d,f) => P(d,f), L = (d,c,w) => P(d,"",c,w);
+    const star = (x,y,r,f) => { let d=""; for (let i=0;i<10;i++){ const a=-Math.PI/2+i*Math.PI/5, rr=i%2?r*.45:r; d += (i?"L":"M")+(x+rr*Math.cos(a)).toFixed(1)+" "+(y+rr*Math.sin(a)).toFixed(1); } return F(d+"Z",f); };
+    let s = `<defs><radialGradient id="cpBg" cx="62%" cy="34%" r="70%"><stop offset="0" stop-color="#5b7fb8"/><stop offset=".55" stop-color="#2a3d6b"/><stop offset="1" stop-color="#0d1328"/></radialGradient>
+      <linearGradient id="cpFloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></linearGradient></defs>`;
+    s += R(0,0,160,120,"url(#cpBg)");
+    for (let y=2;y<120;y+=4) s += R(0,y,160,1,"rgba(255,255,255,.035)");
+    s += R(0,70,160,50,"url(#cpFloor)");
+
+    // ---- wall prop (top right) ----
     s += [
-      R(124,6,32,22,"#aa5500")+R(126,8,28,18,"#fff")+T(140,17,6,"Ph.D.","#000")+R(130,20,20,1,"#555"),
-      R(124,6,32,22,"#000")+P("M127 24 L134 18 L140 21 L152 9","","#55ff55",1.5)+T(140,14,5,"Q3","#55ff55"),
-      C(140,17,10,"#aa5500")+R(134,16,12,1,"#fff")+Array.from({length:4},(_,i)=>R(136+i*3,14,1,5,"#fff")).join(""),
-      R(130,4,2,26,"#aaa")+R(132,4,22,13,"#0000aa")+C(143,10,3,"#ffff55"),
-      Array.from({length:3},(_,i)=>P(`M${130+i*9} 8 l2 4 l4 0 l-3 3 l1 4 l-4 -2 l-4 2 l1 -4 l-3 -3 l4 0Z`,"#ffff55")).join(""),
+      R(124,5,32,24,"#b8860b")+R(126,7,28,20,"#fff6dc")+T(140,15,5.5,"DOCTORATE","#4a3a20")+R(130,18,20,.8,"#8a7a5a")+R(130,21,14,.8,"#8a7a5a")+C(150,23,3,"#b01e23")+F("M148 25 l-1 4 l2 -1 l2 1 l-1 -4Z","#b01e23"),
+      R(122,5,34,25,"#0b1a12")+L("M126 8 L126 27 L153 27","#3d6b4f",.8)+L("M127 25 L133 19 L139 22 L151 10","#4dff88",1.5)+F("M151 10 l-4 0 l3 3Z","#4dff88")+T(131,12,5,"Q3 +18%","#4dff88"),
+      `<ellipse cx="140" cy="17" rx="13" ry="8" fill="#8b4513" transform="rotate(-20 140 17)"/>`+L("M131 20 Q140 14 149 13","#fff",1)+Array.from({length:4},(_,i)=>L(`M${135+i*3} ${17.5-i*1.2} l1 2.6`,"#fff",.8)).join("")+L("M128 21 Q140 26 152 12","#5a2a0a",.6),
+      R(129,3,1.5,30,"#ddd")+C(130,3,1.5,"#d9b04e")+F("M131 5 L156 5 L156 20 L131 20 Q136 12 131 5Z","#1a3a8a")+C(144,12.5,4,"#d9b04e")+C(144,12.5,2.5,"#1a3a8a"),
+      star(130,14,6,"#f2d04a")+star(142,14,6,"#f2d04a")+star(154,14,6,"#f2d04a"),
     ][bg];
-    // ride (bottom left)
-    const wheels = (a,b,r=5) => C(a,104,r,"#000")+C(a,104,r/2.5,"#aaa")+C(b,104,r,"#000")+C(b,104,r/2.5,"#aaa");
+
+    // ---- ride (bottom left) ----
+    const wheel = (x,y,r) => C(x,y,r,"#151515")+C(x,y,r*.55,"#9a9a9a")+C(x,y,r*.2,"#444");
     s += [
-      R(4,90,50,11,"#aa0000")+R(28,79,18,12,"#aa0000")+R(31,81,11,7,"url(#p-glass)")+R(6,90,20,2,"#550000")+wheels(14,44),
-      R(6,90,46,10,"#fff")+P("M14 90 Q20 78 34 78 Q46 78 48 90Z","#fff")+R(20,81,10,7,"url(#p-glass)")+R(33,81,10,7,"url(#p-glass)")+P("M30 91 L26 96 L30 96 L27 101","","#ffff55",1.5)+wheels(16,42),
-      `<circle cx="14" cy="102" r="8" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="44" cy="102" r="8" fill="none" stroke="#fff" stroke-width="1.5"/>`+P("M14 102 L24 88 L40 88 L44 102 M24 88 L30 102 L40 88 M38 84 L42 84","","#ff5555",1.5),
-      R(8,74,46,3,"#00aa00")+R(10,77,2,14,"#aaa")+R(50,77,2,14,"#aaa")+R(8,90,46,8,"#fff")+R(12,86,16,4,"#555")+wheels(16,46,4),
-      R(10,102,30,3,"#00aa00")+R(36,78,3,25,"#555")+R(30,77,15,3,"#555")+wheels(13,38,3),
+      F("M4 96 L4 86 L26 86 L28 76 Q30 73 34 73 L46 73 Q50 73 52 78 L56 86 L58 88 L58 98 L4 98Z","#b01e23")+F("M31 76 L46 76 Q48 76 49 79 L52 86 L31 86Z","#9fd8ff")+R(4,86,22,2,"#7e1418")+R(56,89,2.5,3,"#ffe680")+R(2,95,6,3,"#888")+R(54,95,6,3,"#888")+wheel(16,99,6)+wheel(46,99,6),
+      F("M4 96 Q4 84 14 82 L22 74 Q26 71 34 71 L44 71 Q52 72 56 82 Q58 86 58 92 L58 97 L4 97Z","#f4f4f4")+F("M24 75 L33 75 L33 82 L18 82Z","#9fd8ff")+F("M36 75 L44 75 Q49 76 51 82 L36 82Z","#9fd8ff")+F("M30 85 l-4 6 l3 0 l-2 5 l6 -7 l-3 0 l2 -4Z","#3ad1ff")+L("M58 90 Q62 92 60 98","#3ad1ff",1)+wheel(16,98,6)+wheel(46,98,6),
+      `<circle cx="14" cy="100" r="9" fill="none" stroke="#ddd" stroke-width="1.6"/><circle cx="46" cy="100" r="9" fill="none" stroke="#ddd" stroke-width="1.6"/>`+
+        Array.from({length:6},(_,i)=>{const a=i*Math.PI/3;return L(`M${14+8*Math.cos(a)} ${100+8*Math.sin(a)} L${14-8*Math.cos(a)} ${100-8*Math.sin(a)}M${46+8*Math.cos(a)} ${100+8*Math.sin(a)} L${46-8*Math.cos(a)} ${100-8*Math.sin(a)}`,"#888",.4);}).join("")+
+        L("M14 100 L24 86 L40 86 L46 100 M24 86 L30 100 L40 86 M30 100 L14 100","#d8262c",1.8)+L("M22 82 L28 82 M40 86 L38 80 L44 79","#222",1.6),
+      R(6,72,50,3,"#2f8f3a")+R(9,75,1.6,16,"#bbb")+R(52,75,1.6,16,"#bbb")+F("M6 92 L6 88 L44 88 L50 82 L56 82 L58 92 Z","#f4f4f4")+R(12,82,20,6,"#2f8f3a")+R(10,84,4,4,"#24702d")+wheel(16,95,4.5)+wheel(48,95,4.5),
+      R(10,100,32,3,"#2f8f3a")+L("M38 100 L40 76","#555",2.5)+L("M33 76 L47 76","#333",2)+R(36,90,5,2,"#2f8f3a")+wheel(14,105,3.5)+wheel(40,105,3.5),
     ][ride];
-    // outfit by background: provost tweed, CEO suit, AD polo, senator suit, general uniform
-    const suit = ["#aa5500","#000055","#aa0000","#555","#005500"][bg];
-    const jacket = look===3 ? "#ff5555" : suit;
-    s += P(`M${X-50} 120 L${X-44} 92 Q${X-40} 84 ${X-20} 82 L${X+20} 82 Q${X+40} 84 ${X+44} 92 L${X+50} 120Z`, jacket);
-    if (bg!==2) s += P(`M${X-12} 82 L${X+12} 82 L${X+4} 120 L${X-4} 120Z`, "#fff"); // shirt front
-    if (look===2) s += P(`M${X-46} 120 L${X-42} 94 L${X-14} 84 L${X-8} 120Z`,"#0000aa")+P(`M${X+46} 120 L${X+42} 94 L${X+14} 84 L${X+8} 120Z`,"#0000aa");
-    if (bg===4) s += R(X-42,88,14,3,"#ffff55")+R(X+28,88,14,3,"#ffff55")+R(X-28,100,4,6,"#aa0000")+R(X-23,100,4,6,"#0000aa")+R(X-18,100,4,6,"#ffff55");
-    if (bg===3) s += R(X+20,94,5,5,"#ffff55");
-    if (bg===1) s += P(`M${X-3} 84 L${X+3} 84 L${X+2} 90 L${X+4} 110 L${X} 114 L${X-4} 110 L${X-2} 90Z`,"#aa0000");
-    s += R(X-10,70,20,14,skin);
-    if (style===1) s += R(X-28,26,56,56,hair);
-    s += R(X-24,28,48,46,skin)+R(X-28,46,4,10,skin)+R(X+24,46,4,10,skin);
-    if (style===0) s += R(X-26,22,52,12,hair);
-    if (style===1) s += R(X-26,22,52,10,hair);
-    if (style===2) s += R(X-26,22,52,6,hair)+R(X-26,26,6,10,hair)+R(X+20,26,6,10,hair);
-    if (style===3) s += C(X,20,8,hair)+R(X-24,24,48,8,hair);
-    if (look===1) s += R(X-38,22,76,5,"#aa5500")+R(X-22,6,44,17,"#aa5500")+R(X-22,18,44,3,"#550000");
-    // face: sunglasses on while they're incognito, lowered once you name them
-    s += R(X-3,54,6,6,"rgba(0,0,0,.18)")+R(X-8,64,16,2,"#550000");
-    if (shades) s += R(X-20,43,17,9,"#000")+R(X+3,43,17,9,"#000")+R(X-3,45,6,2,"#000")+R(X-18,44,5,2,"#555")+R(X+5,44,5,2,"#555");
-    else s += R(X-14,44,6,4,"#000")+R(X+8,44,6,4,"#000")+R(X-18,51,15,6,"#000")+R(X+3,51,15,6,"#000")+R(X-3,52,6,2,"#000");
-    if (look===4) s += P(`M${X-27} 52 Q${X-36} 86 ${X} 94 Q${X+36} 86 ${X+27} 52`,"","#ffff55",1);
-    if (look===0) s += P(`M${X} 85 L${X-10} 80 L${X-10} 90Z`,"#aa00aa")+P(`M${X} 85 L${X+10} 80 L${X+10} 90Z`,"#aa00aa")+R(X-2,83,4,4,"#ff55ff");
-    // hobby gear
+
+    // ---- outfit by background (red blazer and fleece vest override) ----
+    const OUT = [["#8b5a2b","#6a4220"],["#1c2541","#10162b"],["#b01e23","#7e1418"],["#5a5f66","#3f4349"],["#3b5323","#2a3b18"]];
+    let [jk, jkS] = OUT[bg];
+    if (look===3) [jk, jkS] = ["#d8262c","#a01a1f"];
+    if (look===2) [jk, jkS] = ["#cfe0f5","#a9c0dd"];
+    s += F(`M${X-56} 120 Q${X-55} 94 ${X-34} 87 L${X-11} 79 L${X+11} 79 L${X+34} 87 Q${X+55} 94 ${X+56} 120Z`, jk);
+    s += F(`M${X+20} 82 L${X+34} 87 Q${X+55} 94 ${X+56} 120 L${X+30} 120 Q${X+34} 100 ${X+20} 82Z`, jkS);
+    if (bg===0 && look!==2 && look!==3) for (let i=0;i<40;i++) s += R(X-50+((i*37)%100), 92+((i*53)%26), 1, 1, "rgba(255,255,255,.18)");
+    if (bg===2){ // polo
+      s += F(`M${X-11} 79 L${X} 92 L${X+11} 79 L${X+6} 79 L${X} 86 L${X-6} 79Z`, "#fff")+R(X-1,86,2,10,jkS)+C(X,90,1,"#fff")+C(X,94,1,"#fff");
+    } else {
+      s += F(`M${X-11} 79 L${X} 104 L${X+11} 79Z`, bg===4 ? "#c9b98a" : "#fbfbfb");
+      s += F(`M${X-11} 79 L${X-5} 79 L${X} 88 L${X-3} 92Z`, "#e6e6e6")+F(`M${X+11} 79 L${X+5} 79 L${X} 88 L${X+3} 92Z`, "#e6e6e6");
+      if (look!==2) s += F(`M${X-11} 79 L${X-22} 88 L${X-7} 112 L${X} 104Z`, jkS)+F(`M${X+11} 79 L${X+22} 88 L${X+7} 112 L${X} 104Z`, jkS);
+      if (look!==0 && (bg===1 || bg===3 || bg===4)) s += F(`M${X-3} 88 L${X+3} 88 L${X+2} 92 L${X+4} 104 L${X} 108 L${X-4} 104 L${X-2} 92Z`, bg===4 ? "#222" : bg===1 ? "#1f4fa8" : "#b01e23");
+      if (look!==2) s += C(X-2,108,1,"#222")+C(X-2,114,1,"#222");
+    }
+    if (look===2){ // fleece vest over a button-down
+      s += F(`M${X-50} 120 Q${X-49} 98 ${X-32} 90 L${X-12} 81 L${X-4} 120Z`,"#26324d")+F(`M${X+50} 120 Q${X+49} 98 ${X+32} 90 L${X+12} 81 L${X+4} 120Z`,"#1c263b")+R(X-5,96,1,24,"#bbb")+R(X+4,96,1,24,"#999");
+    }
+    if (bg===4) s += R(X-46,88,16,4,"#d9b04e")+R(X+30,88,16,4,"#d9b04e")+star(X-38,90,1.6,"#fff")+star(X+38,90,1.6,"#fff")+
+      [["#b01e23","#1a3a8a","#f2d04a"],["#2f8f3a","#fff","#b01e23"]].map((row,r)=>row.map((f,i)=>R(X-30+i*5,98+r*4,5,3,f)).join("")).join("");
+    if (bg===3) s += C(X+24,96,2.4,"#d9b04e")+C(X+24,96,1.2,"#1a3a8a");
+
+    // ---- neck and head ----
+    s += R(X-9,68,18,14,sk)+F(`M${X-9} 70 Q${X} 80 ${X+9} 70 L${X+9} 76 Q${X} 82 ${X-9} 76Z`, skS);
+    if (style===1) s += F(`M${X-26} 40 Q${X-30} 74 ${X-20} 84 L${X+20} 84 Q${X+30} 74 ${X+26} 40Z`, hr);
+    s += `<ellipse cx="${X-22}" cy="50" rx="3.5" ry="6" fill="${sk}"/><ellipse cx="${X+22}" cy="50" rx="3.5" ry="6" fill="${skS}"/>`;
+    s += F(`M${X-22} 36 Q${X-23} 64 ${X-12} 74 Q${X} 82 ${X+12} 74 Q${X+23} 64 ${X+22} 36 Q${X+20} 18 ${X} 17 Q${X-20} 18 ${X-22} 36Z`, sk);
+    s += F(`M${X+22} 36 Q${X+23} 64 ${X+12} 74 Q${X+6} 78 ${X+2} 79 Q${X+15} 66 ${X+16} 38 Q${X+16} 26 ${X+10} 19 Q${X+21} 23 ${X+22} 36Z`, skS);
+    s += C(X-12,60,3.5,"rgba(220,90,90,.18)")+C(X+12,60,3.5,"rgba(220,90,90,.14)");
+    // hair
+    if (style===0) s += F(`M${X-23} 44 Q${X-26} 16 ${X} 14 Q${X+26} 16 ${X+23} 44 Q${X+21} 30 ${X+8} 26 Q${X-6} 30 ${X-12} 24 Q${X-17} 34 ${X-23} 44Z`, hr)+L(`M${X-14} 22 Q${X-2} 17 ${X+12} 20`, hrL, 1);
+    if (style===1) s += F(`M${X-25} 52 Q${X-28} 14 ${X} 13 Q${X+28} 14 ${X+25} 52 Q${X+22} 28 ${X+4} 24 Q${X-14} 28 ${X-25} 52Z`, hr)+L(`M${X-18} 22 Q${X} 15 ${X+16} 21`, hrL, 1);
+    if (style===2) s += F(`M${X-23} 32 Q${X-25} 44 ${X-21} 52 L${X-20} 36Z`, hr)+F(`M${X+23} 32 Q${X+25} 44 ${X+21} 52 L${X+20} 36Z`, hr)+`<ellipse cx="${X-6}" cy="24" rx="7" ry="3" fill="#fff" opacity=".25"/>`;
+    if (style===3) s += C(X,11,7,hr)+C(X-2,9,2,hrL)+F(`M${X-23} 42 Q${X-25} 15 ${X} 15 Q${X+25} 15 ${X+23} 42 Q${X+20} 24 ${X} 23 Q${X-20} 24 ${X-23} 42Z`, hr);
+    if (style===4) s += Array.from({length:13},(_,i)=>{const a=Math.PI*(1.05+i*0.075);return C(X+24*Math.cos(a), 34+20*Math.sin(a), 6, hr);}).join("")+C(X-8,18,2,hrL)+C(X+6,16,2,hrL);
+    if (look===1) s += F(`M${X-40} 26 Q${X} 32 ${X+40} 26 Q${X+34} 20 ${X+22} 22 L${X-22} 22 Q${X-34} 20 ${X-40} 26Z`,"#8b5a2b")+F(`M${X-21} 23 Q${X-22} 4 ${X} 6 Q${X+22} 4 ${X+21} 23Z`,"#8b5a2b")+R(X-21,18,42,4,"#4a2a10")+L(`M${X-8} 8 Q${X} 12 ${X+8} 8`,"#6a4220",1);
+    // face
+    s += L(`M${X-16} 39 Q${X-10} 36 ${X-5} 39`, hr, 2)+L(`M${X+5} 39 Q${X+10} 36 ${X+16} 39`, hr, 2);
+    const eyes = `<ellipse cx="${X-10}" cy="45" rx="4.2" ry="2.6" fill="#fff"/><ellipse cx="${X+10}" cy="45" rx="4.2" ry="2.6" fill="#fff"/>`+C(X-10,45,2,"#3b2a1a")+C(X+10,45,2,"#3b2a1a")+C(X-9.3,44.3,.7,"#fff")+C(X+10.7,44.3,.7,"#fff");
+    s += L(`M${X} 46 Q${X-3} 56 ${X-2} 58 Q${X} 60 ${X+3} 58`, skD, 1.2);
+    if (shades){
+      s += F(`M${X-19} 41 L${X-2} 41 L${X-3} 49 Q${X-11} 52 ${X-18} 48Z`,"#111")+F(`M${X+19} 41 L${X+2} 41 L${X+3} 49 Q${X+11} 52 ${X+18} 48Z`,"#111")+
+        R(X-2,42,4,1.5,"#111")+L(`M${X-19} 42 L${X-23} 44 M${X+19} 42 L${X+23} 44`,"#111",1.5)+L(`M${X-16} 43 L${X-12} 43 M${X+6} 43 L${X+10} 43`,"#6a8aaa",1);
+      s += L(`M${X-6} 66 Q${X+1} 68 ${X+7} 65`, "#7a2a2a", 1.5);
+    } else {
+      const gy = look===1 ? 25 : 28; // sunglasses pushed up on the forehead
+      s += eyes+F(`M${X-17} ${gy} L${X-3} ${gy} L${X-4} ${gy+5} Q${X-10} ${gy+7} ${X-16} ${gy+4}Z`,"#111")+F(`M${X+17} ${gy} L${X+3} ${gy} L${X+4} ${gy+5} Q${X+10} ${gy+7} ${X+16} ${gy+4}Z`,"#111")+R(X-3,gy,6,1.5,"#111")+L(`M${X-14} ${gy+1.5} L${X-10} ${gy+1.5} M${X+6} ${gy+1.5} L${X+10} ${gy+1.5}`,"#6a8aaa",1);
+      s += F(`M${X-8} 65 Q${X} 72 ${X+8} 65 Q${X} 68 ${X-8} 65Z`, "#fff")+L(`M${X-8} 65 Q${X} 72 ${X+8} 65`, "#7a2a2a", 1.3);
+    }
+    if (look===4) s += L(`M${X-24} 46 Q${X-34} 84 ${X} 93 Q${X+34} 84 ${X+24} 46`, "#e8c35a", .9);
+    if (look===0) s += F(`M${X} 84 L${X-11} 78 L${X-11} 90Z`,"#7b2a8c")+F(`M${X} 84 L${X+11} 78 L${X+11} 90Z`,"#5e1f6b")+R(X-2.5,81.5,5,5,"#9b3aac")+C(X-6,82,.8,"#fff")+C(X+6,86,.8,"#fff");
+
+    // ---- hobby gear ----
     s += [
-      P("M150 118 L140 48","","#aaa",2)+R(134,44,9,5,"#aaa")+C(152,112,2,"#fff"),
-      R(X+16,96,22,14,"#fff")+T(X+27,106,7,"26.2","#aa0000"),
-      P(`M${X-14} 84 L${X-8} 98 M${X+14} 84 L${X+8} 98`,"","#000",1)+R(X-12,96,9,9,"#000")+R(X+3,96,9,9,"#000")+R(X-11,97,3,3,"#55ffff")+R(X+4,97,3,3,"#55ffff"),
-      R(134,72,18,22,"#55ff55")+R(140,94,6,14,"#000")+C(124,64,4,"#ffff55"),
-      P("M154 118 L132 26","","#aa5500",2)+P("M132 26 Q104 0 74 14 Q60 22 64 30","","#fff",0.7)+R(62,30,3,3,"#ff5555"),
+      L("M151 119 L141 44","#cfcfcf",2)+F("M141 44 L133 42 Q131 46 135 48 L142 47Z","#888")+C(153,114,2.6,"#fff")+C(152.4,113.4,.5,"#ccc"),
+      R(X+14,94,26,17,"#fff")+R(X+14,94,26,3,"#b01e23")+T(X+27,108,9,"26.2","#111")+C(X+16,99,.9,"#999")+C(X+38,99,.9,"#999"),
+      L(`M${X-14} 80 L${X-8} 96 M${X+14} 80 L${X+8} 96`,"#222",1.2)+R(X-13,95,10,12,"#222")+R(X+3,95,10,12,"#222")+R(X-3,98,6,4,"#444")+C(X-8,106,3.5,"#3a5a7a")+C(X+8,106,3.5,"#3a5a7a")+C(X-9,105,1,"#9fd8ff")+C(X+7,105,1,"#9fd8ff"),
+      F("M133 60 Q133 54 141 54 Q149 54 149 60 L149 76 Q149 82 141 82 Q133 82 133 76Z","#2fbf5a")+F("M137 82 L145 82 L144 98 L138 98Z","#111")+C(126,58,4.5,"#f2e64a")+C(125,57,.8,"#c8bc20")+C(127.5,59.5,.8,"#c8bc20"),
+      L("M155 119 L131 24","#7a4a1c",2)+L("M131 24 Q102 -2 72 12 Q58 20 63 30","#fff",.6)+F("M61 30 l4 0 l-2 4Z","#ff5555")+R(150,100,6,6,"#444"),
     ][hobby];
-    // priority, in a speech bubble
+
+    // ---- priority, in a speech bubble ----
     const say = ["AAU OR BUST!","ENROLLMENT!","BALANCE IT!","GO BIG RED!","MENTAL HEALTH!"][plan];
-    s += R(4,6,58,16,"#fff")+P("M44 22 L52 30 L50 22Z","#fff")+T(33,17,7,say,"#000");
-    return svg(s);
+    s += `<rect x="3" y="4" width="62" height="18" rx="5" fill="#fff" stroke="#111" stroke-width="1"/>`+F("M44 21 L54 30 L50 21Z","#fff")+L("M44 21.5 L54 30 L50 21.5","#111",1)+T(34,16,7.5,say,"#111");
+    return `<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="shape-rendering:geometricPrecision">${s}</svg>`;
   }
 
   // ---------- campus ----------
@@ -518,9 +567,9 @@ footer a{color:var(--red)}
     mueller:{name:"Mueller Tower", map:[80,64],
       desc:"The Ralph Mueller Carillon Tower chimes over City Campus. It's also the most popular landmark for telling someone where to meet you.",
       src:[{l:"Ask the carillonneur",w:"docent",k:"talk",n:"The carillonneur"},{l:"Talk to a student napping on the lawn",w:"student",k:"talk",n:"A student, mostly asleep"},{l:"Read the bell schedule",w:"note",k:"read",n:"The bell schedule",v:"Someone scribbled in the margin:"}]},
-    selleck:{name:"Selleck Hall", map:[100,82],
-      desc:"Selleck Quadrangle is a residence hall with one of City Campus' busiest dining centers. Every opinion on campus passes through the dessert line eventually.",
-      src:[{l:"Ask a dining hall worker",w:"scooper",k:"talk",n:"A dining hall worker"},{l:"Talk to a student in line",w:"freshman",k:"talk",n:"A student waiting for chicken strips"},{l:"Read the napkin board",w:"note",k:"read",n:"The napkin board",v:"A napkin taped to the board reads:"}]},
+    selleck:{name:"Selleck Quad", map:[100,82],
+      desc:"Selleck Quadrangle no longer houses students, but its courtyard is still a popular shortcut across City Campus.",
+      src:[{l:"Ask a facilities worker",w:"staff",k:"talk",n:"A facilities worker"},{l:"Talk to a student cutting through",w:"freshman",k:"talk",n:"A student cutting through the quad"},{l:"Read the old napkin board",w:"note",k:"read",n:"The old napkin board",v:"One napkin is still taped up. It reads:"}]},
     capitol:{name:"State Capitol", map:[106,114], far:true,
       desc:"The Nebraska State Capitol towers over downtown Lincoln with the Sower on top. Inside, the Unicameral is the only one-house state legislature in the country.",
       src:[{l:"Ask a state senator",w:"senator",k:"talk",n:"A state senator"},{l:"Ask a lobbyist",w:"founder",k:"talk",n:"A lobbyist"},{l:"Read the legislative journal",w:"note",k:"read",n:"The legislative journal",v:"An entry reads:"}]},
@@ -556,7 +605,7 @@ footer a{color:var(--red)}
     hawks:["The business school wants a say. Look for the people in suits.","Try the building where everyone's practicing their elevator pitch."],
     devaney:["The volleyball fans want to be heard. Go where the team usually plays.","Ask the people who sell out every volleyball match."],
     mueller:["Go to the bell tower. Someone up there hears everything.","Listen for the bells. The carillon player knows a lot."],
-    selleck:["The dining hall staff hear every opinion. Try the residence hall with the big dining center.","Go where the freshmen eat. The quad with the dining center."],
+    selleck:["Try the old quad where nobody lives anymore.","Go to the former residence hall that everybody uses as a shortcut."],
     capitol:["The state senators have opinions. Go downtown, to the tallest building in Lincoln.","Ask the lawmakers. Look for the Sower on top of the tower."],
     haymarket:["The alumni are holding court downtown, near the arena.","Go where the old warehouses turned into bars. The alums are there."],
     oldfather:["The political science department is debating this. Take the elevator, if it's working.","Go to the tall building with the famously unreliable elevators."],
@@ -605,14 +654,14 @@ footer a{color:var(--red)}
   const NAMES = ["Dr. Cornelius Husk","Dr. Platte Rivers","Sandy Hills","Dr. Hilda Crane","Scott S. Bluff","Carl Henge","Dr. Arbor Dey","Meadow Larkin","Rod Golden","Rhonda Runza","Dr. Uni Cameral","Seymour Sower","Dr. Cornelia Cobb","Cy Lowe","Wendell Chill","Dr. Chim Rockwell"];
   // Who the Board picks instead. Made up.
   const PRIORITY = [
-    {who:"Chet Brandvold", desc:"a regional bank executive who once donated a scoreboard"},
-    {who:"Lyle Hagedorn", desc:"a former state senator who has never worked at a university but did give a commencement speech in 2009"},
-    {who:"Kip Thornquist", desc:"a partner at the search firm running the search"},
-    {who:"Duke Rasmussen", desc:"a football coach who just finished 4-8 somewhere else"},
-    {who:"Dale Fenstermacher", desc:"the system's interim vice president for strategic initiatives, whose title nobody can explain"},
-    {who:"Bev Ostrander", desc:"the board chair's former college roommate"},
-    {who:"Rick Vandermolen", desc:"a motivational speaker best known for a viral talk about 'leaning into the wind'"},
-    {who:"Dr. Penny Larkspur", desc:"the president of an online university nobody has heard of"},
+    {who:"Buck Wheaton", desc:"a regional bank executive who once donated a scoreboard"},
+    {who:"Hayden Bale", desc:"a former state senator who has never worked at a university but did give a commencement speech in 2009"},
+    {who:"Barb Wire", desc:"a partner at the search firm running the search"},
+    {who:"Gridley Iron", desc:"a football coach who just finished 4-8 somewhere else"},
+    {who:"Cash Crop", desc:"the system's interim vice president for strategic initiatives, whose title nobody can explain"},
+    {who:"Ella Vator", desc:"the board chair's former college roommate"},
+    {who:"Gale Force", desc:"a motivational speaker best known for a viral talk about 'leaning into the wind'"},
+    {who:"Dr. Ethan Ol", desc:"the president of an online university nobody has heard of"},
   ];
   // What happened to last round's pick, which is why we're searching again.
   const FATES = [
@@ -635,6 +684,18 @@ footer a{color:var(--red)}
     catered:{text:"Good news: listening sessions are catered this round, so people actually show up. They take an hour less."},
     intern:{text:"You've been assigned a student intern. Your notebook now labels which trait each clue is about."},
   };
+  const VOTES = [
+    'The committee votes 14-1 to recommend them. (The lone "no" was the student representative, who was in a midterm and voted by text by accident.)',
+    "The committee votes unanimously, which has never happened before. Two members have to sit down.",
+    "The vote is 9-6 after a 40-minute debate about whether 'synergy' counts as a qualification.",
+    "The committee approves them by voice vote. Someone on Zoom yells 'aye' from a car wash.",
+    "The vote is 12-2-1. The abstention was the parliamentarian, who fell asleep during roll call.",
+    "The committee votes 15-0, then spends an hour arguing over who gets to send the email.",
+    "The vote passes 11-4 after the Faculty Senate rep demands a recount of a show of hands.",
+    "The committee approves them 13-1. The 'no' vote says they just wanted to see what would happen.",
+    "The vote is 10-5. The five 'no' votes are all from people who thought this was the parking committee.",
+    "The committee votes 14-0 by email reply-all. It takes 212 messages.",
+  ];
   const RANKS = ["Faculty Senate Alternate","Ex Officio Observer","Committee Member","Subcommittee Chair","Vice Chair","Search Committee Chair","Honorary Regent (Non-Voting)"];
   const RAMBLES = [
     "This is more of a comment than a question, but parking is bad.",
@@ -752,7 +813,7 @@ footer a{color:var(--red)}
   function newCase(){
     const round = roundNo();
     const stops = Math.min(7, 5 + Math.floor((round-1)/2));
-    const poolSize = Math.min(NAMES.length, 10 + Math.min(round-1, 4));
+    const poolSize = Math.min(NAMES.length, 12 + Math.min(round-1, 4));
     const prev = me.rounds[me.rounds.length-1] || null;
     // twist: none on round 1, never twice in a row
     let twist = "none";
@@ -760,17 +821,24 @@ footer a{color:var(--red)}
       const opts = ["none","shuttle","construction","catered","intern"].concat(stops <= 6 ? ["thursday"] : []).filter(t => !prev || t !== prev.twist || t==="none");
       twist = pick(opts);
     }
-    // candidates + target, guaranteeing any 4 of the 5 traits identify the target
+    // Build the pool so you need 4 of the 5 traits: for every set of 3 traits there's a
+    // decoy who matches the target on exactly those 3. Any 4 traits still pick out the target.
     let cands, target;
+    const other = v => (v + 1 + rnd(4)) % 5;
+    const triples = [];
+    for (let a=0;a<5;a++) for (let b=a+1;b<5;b++) for (let c=b+1;c<5;c++) triples.push([a,b,c]);
     for (let tries=0; tries<800; tries++){
-      cands = shuffle(NAMES).slice(0, poolSize).map(name => ({name, t: TRAITS.map(() => rnd(5))}));
-      target = rnd(cands.length);
-      const tt = cands[target].t;
+      const tt = TRAITS.map(() => rnd(5));
+      const pool = [tt, ...triples.map(tr => tt.map((v,k) => tr.includes(k) ? v : other(v)))];
+      while (pool.length < poolSize) pool.push(TRAITS.map(() => rnd(5)));
       let ok = true;
       for (let skip=0; skip<5 && ok; skip++)
-        for (let c=0;c<cands.length;c++){ if (c===target) continue;
-          if (cands[c].t.every((v,k) => k===skip || v===tt[k])) { ok=false; break; } }
-      if (ok) break;
+        for (let c=1;c<pool.length;c++) if (pool[c].every((v,k) => k===skip || v===tt[k])) { ok=false; break; }
+      if (!ok) continue;
+      const order = shuffle(pool.map((_,i) => i)), names = shuffle(NAMES);
+      cands = order.map((pi,i) => ({name:names[i], t:pool[pi]}));
+      target = order.indexOf(0);
+      break;
     }
     // where you start: Canfield the first time, then wherever the committee got bumped to
     const start = round===1 ? "canfield" : pick(LOC_IDS.filter(id => !LOC[id].far && id!=="morrill"));
@@ -1045,7 +1113,7 @@ footer a{color:var(--red)}
     sc.innerHTML = candidatePortrait(T_, S.rec !== S.target);
     let html = pre + `<p class="who">!!! Candidate spotted !!!</p><p>Behind a pillar, someone in sunglasses and ${esc(["a bow tie","cowboy boots","a fleece vest","a red blazer","reading glasses on a chain"][T_.t[2]])} is pretending to read a campus map.</p>`;
     if (S.rec === S.target){
-      html += `<p>"Hello, ${esc(T_.name)}," you say. They lower their sunglasses. You found them.</p><p class="mag">${TRAITS.map((tr,k) => esc(tr.vals[T_.t[k]][0])).join(" · ")}</p><p>Exactly who campus asked for. You make your pitch, and they agree to stay in the search.</p><p>The committee votes 14-1 to recommend them to the Board. (The lone "no" was the student representative, who was in a midterm and voted by text by accident.)</p>`;
+      html += `<p>"Hello, ${esc(T_.name)}," you say. They push their sunglasses up onto their forehead. You found them.</p><p class="mag">${TRAITS.map((tr,k) => esc(tr.vals[T_.t[k]][0])).join(" · ")}</p><p>Exactly who campus asked for. You make your pitch, and they agree to stay in the search.</p><p>${esc(VOTES[(S.round-1) % VOTES.length])}</p>`;
       typeHTML(html); setMenu([{label:"Send your recommendation to the Board", fn: () => emailEnding("win")}]);
     } else if (S.rec != null){
       html += `<p>"Hello, ${esc(S.cands[S.rec].name)}!" you say.</p><p>They lower their sunglasses and stare at you. "Wrong name," they say coldly. "Come back when you've done your homework."</p><p class="dim">Recheck your notes and the search portal, then try again. The clock is still running.</p>`;
