@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who in the World Is UNL&#39;s Next Chancellor? | The Daily Nebraskan</title>
+<meta name="description" content="A Daily Nebraskan game. Track down UNL's most qualified chancellor candidate by listening to campus. What could go wrong?">
+<meta property="og:title" content="Who in the World Is UNL&#39;s Next Chancellor? | The Daily Nebraskan">
+<meta property="og:description" content="Listen to campus, follow the clues and find UNL's next chancellor before the Board of Regents meets Friday.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Open+Sans:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#ba1f1f; --red-dark:#8f1717;
+  --bg:#f4f4f4; --surface:#fff; --ink:#111; --muted:#515151; --line:#d8d8dc;
+  --bar:#1a1a1a;
+  --logo-filter:none;
+  --head:"Roboto Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Open Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --px:"VT323","Courier New",ui-monospace,monospace;
+  /* game palette (16-color PC style) */
+  --g-black:#000; --g-gray:#aaa; --g-dgray:#555; --g-white:#fff;
+  --g-cyan:#55ffff; --g-mag:#ff55ff; --g-yellow:#ffff55; --g-red:#ff5555;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121212; --surface:#1d1d1d; --ink:#f2f2f2; --muted:#a9a9ae; --line:#333;
+    --bar:#000; --red:#e04545; --logo-filter:invert(1);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121212; --surface:#1d1d1d; --ink:#f2f2f2; --muted:#a9a9ae; --line:#333;
+  --bar:#000; --red:#e04545; --logo-filter:invert(1);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+
+/* ---- DN chrome (matches Car Sweeper) ---- */
+.util{background:var(--surface);border-bottom:1px solid var(--line);font:700 11px var(--head);letter-spacing:.06em;text-transform:uppercase}
+.util .in,.navbar .in,main,footer{max-width:1080px;margin:0 auto;padding-left:16px;padding-right:16px}
+.util .in{display:flex;justify-content:space-between;gap:12px;padding-top:7px;padding-bottom:7px;color:var(--muted)}
+.util a{text-decoration:none}.util a:hover{color:var(--red)}
+.mast{padding:22px 16px 18px;text-align:center;background:var(--surface);border-bottom:1px solid var(--line)}
+.mast img{width:min(340px,70vw);height:auto;filter:var(--logo-filter)}
+.navbar{background:var(--bar);border-bottom:3px solid var(--red)}
+.navbar .in{display:flex;align-items:center;gap:22px;overflow-x:auto}
+.navbar a{color:#fff;font:700 13px var(--head);letter-spacing:.04em;text-transform:uppercase;text-decoration:none;padding:12px 0;white-space:nowrap}
+.navbar a:hover{color:#ff9d9d}
+.navbar a.on{box-shadow:inset 0 -3px 0 #fff}
+main{padding-top:26px;padding-bottom:50px}
+.kicker{font:700 13px var(--head);letter-spacing:.1em;text-transform:uppercase;color:var(--red);margin:0}
+h1{font:700 44px/1.02 var(--head);text-transform:uppercase;letter-spacing:-.01em;margin:4px 0 8px}
+h1 em{font-style:normal;color:var(--red)}
+.dek{color:var(--muted);margin:0 0 4px;max-width:720px}
+.rule{border-top:3px double var(--ink);border-bottom:1px solid var(--line);margin:18px 0 20px;padding:8px 0;font:700 13px var(--head);letter-spacing:.05em;text-transform:uppercase;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px;padding-top:18px;padding-bottom:40px}
+footer a{color:var(--red)}
+@media (max-width:600px){h1{font-size:34px}}
+
+/* ---- The game: an old 16-color PC screen ---- */
+.cs{
+  background:#000;padding:14px;border-radius:6px;
+  display:grid;gap:12px;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  grid-template-areas:"hd tx" "sc tx" "sc mn";
+  grid-template-rows:auto 1fr auto;
+  font-family:var(--px);font-size:25px;line-height:1.08;color:var(--g-white);
+  user-select:none;-webkit-user-select:none;
+}
+.cs:focus{outline:none}
+.cs:focus-visible{box-shadow:0 0 0 3px var(--red)}
+.pan{border:5px solid var(--g-gray);border-radius:16px;background:#000;min-width:0}
+.hd{grid-area:hd;text-align:center;color:var(--g-gray);padding:6px 10px 8px;font-size:28px;line-height:1}
+.hd b{display:block;font-weight:400;letter-spacing:.04em;text-transform:uppercase}
+.sc{grid-area:sc;overflow:hidden;padding:0;align-self:start}
+.sc svg{display:block;width:100%;height:auto;aspect-ratio:4/3;shape-rendering:crispEdges}
+.tx{grid-area:tx;padding:12px 16px;overflow-y:auto;min-height:260px;max-height:440px}
+.tx p{margin:0 0 .55em}
+.tx .who{color:var(--g-cyan);text-transform:uppercase}
+.tx .dim{color:var(--g-gray)}
+.tx .hot{color:var(--g-yellow)}
+.tx .mag{color:var(--g-mag)}
+.tx ul{margin:0;padding:0;list-style:none}
+.tx li{margin:0 0 .35em}
+.mn{grid-area:mn;padding:8px 10px;display:flex;flex-direction:column;gap:2px;min-height:140px;justify-content:center}
+.mn button{
+  font:inherit;color:var(--g-white);background:none;border:0;padding:1px 8px;cursor:pointer;
+  text-align:center;width:100%;line-height:1.05;
+}
+.mn button.sel{background:var(--g-gray);color:#000}
+.mn button:focus{outline:none}
+.login input{
+  font:inherit;color:#000;background:var(--g-gray);border:0;padding:2px 8px;width:100%;margin-top:8px;
+  caret-color:#000;
+}
+.login input:focus{outline:2px solid var(--g-cyan)}
+.portal{width:100%;border-collapse:collapse}
+.portal td{padding:2px 0;vertical-align:top}
+.portal td:first-child{color:var(--g-cyan);padding-right:10px;white-space:nowrap}
+.portal tr.sel td:last-child button{background:var(--g-gray);color:#000}
+.portal button{font:inherit;color:var(--g-white);background:none;border:0;padding:0 6px;cursor:pointer;text-align:left}
+.blink{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.hint{font:600 12px var(--head);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:center;margin-top:10px}
+
+@media (max-width:760px){
+  .cs{grid-template-columns:1fr;grid-template-areas:"hd" "sc" "tx" "mn";grid-template-rows:auto;padding:8px;gap:8px;font-size:21px}
+  .hd{font-size:23px}
+  .tx{min-height:200px;max-height:none}
+  .pan{border-width:4px;border-radius:12px}
+}
+@media (prefers-reduced-motion:reduce){.blink{animation:none}}
+</style>
+</head>
+<body>
+<!-- shared dither patterns for every scene -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="p-sky" width="2" height="1" patternUnits="userSpaceOnUse"><rect width="1" height="1" fill="#aa00aa"/><rect x="1" width="1" height="1" fill="#00aaaa"/></pattern>
+    <pattern id="p-night" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#000"/><rect width="1" height="1" fill="#0000aa"/></pattern>
+    <pattern id="p-gray" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#aaa"/><rect width="1" height="1" fill="#555"/><rect x="1" y="1" width="1" height="1" fill="#555"/></pattern>
+    <pattern id="p-lgray" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#fff"/><rect width="1" height="1" fill="#aaa"/></pattern>
+    <pattern id="p-brick" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#aa0000"/><rect width="4" height="1" fill="#550000"/><rect x="1" y="2" width="1" height="2" fill="#550000"/></pattern>
+    <pattern id="p-red" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#aa0000"/><rect width="1" height="1" fill="#ff5555"/></pattern>
+    <pattern id="p-grass" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#00aa00"/><rect width="1" height="1" fill="#005500"/><rect x="1" y="1" width="1" height="1" fill="#005500"/></pattern>
+    <pattern id="p-glass" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#00aaaa"/><rect width="1" height="1" fill="#55ffff"/></pattern>
+    <pattern id="p-water" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#0000aa"/><rect width="1" height="1" fill="#55ffff"/><rect x="1" y="1" width="1" height="1" fill="#00aaaa"/></pattern>
+    <pattern id="p-cork" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#aa5500"/><rect width="1" height="1" fill="#550000"/></pattern>
+    <pattern id="p-floor" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#555"/><rect width="1" height="1" fill="#000"/><rect x="1" y="1" width="1" height="1" fill="#000"/></pattern>
+    <pattern id="p-cone" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#aa5500"/><rect width="1" height="4" fill="#ffaa55"/><rect width="4" height="1" fill="#ffaa55"/></pattern>
+  </defs>
+</svg>
+
+<div class="util"><div class="in"><span>Student voice of the University of Nebraska–Lincoln since 1901</span><a href="https://www.dailynebraskan.com/" target="_blank" rel="noopener">dailynebraskan.com &rarr;</a></div></div>
+<header class="mast"><a href="https://www.dailynebraskan.com/" target="_blank" rel="noopener"><img src="../assets/dn-logo.png" alt="The Daily Nebraskan" width="340" height="53"></a></header>
+<nav class="navbar" aria-label="Sections"><div class="in">
+  <a href="https://www.dailynebraskan.com/news/" target="_blank" rel="noopener">News</a>
+  <a href="https://www.dailynebraskan.com/sports/" target="_blank" rel="noopener">Sports</a>
+  <a href="https://www.dailynebraskan.com/culture/" target="_blank" rel="noopener">Culture</a>
+  <a href="https://www.dailynebraskan.com/opinion/" target="_blank" rel="noopener">Opinion</a>
+  <a href="#" class="on">UNL&#39;s Next Chancellor</a>
+</div></nav>
+
+<main>
+  <p class="kicker">A Daily Nebraskan Game</p>
+  <h1>Who in the World Is <em>UNL&#39;s Next Chancellor?</em></h1>
+  <p class="dek">UNL needs a new chancellor, and you've been appointed to the search committee. Walk across campus, talk to people and hold listening sessions to find out what kind of leader campus wants and where to look next. Word is the best candidate in the pool is secretly scouting campus before deciding whether to stay in the race. Use the search portal to figure out who it is, then track them down and convince them to stay before the Board of Regents meets Friday at 5 p.m.</p>
+  <p class="dek" style="margin-top:10px">Every action takes time. If nobody at a stop has heard anything about the search, you've wandered off the trail, so head back. When someone tells you to hurry because the candidate is on campus right now, the next stop is the last one. Figure out who you're looking for, go there and investigate to find them.</p>
+  <div class="rule"><span id="rankLabel">Case file · Chancellor search</span><span>Arrow keys + Enter, number keys, or click</span></div>
+
+  <div class="cs" id="game" tabindex="0" aria-label="Who in the World Is UNL&#39;s Next Chancellor? game">
+    <div class="pan hd" id="hd"></div>
+    <div class="pan sc" id="sc"></div>
+    <div class="pan tx" id="tx" aria-live="polite"></div>
+    <div class="pan mn" id="mn" role="menu"></div>
+  </div>
+  <p class="hint">Click the text box or press Enter to skip the typing</p>
+</main>
+
+<footer>
+  Who in the World Is UNL&#39;s Next Chancellor? is a parody game from <a href="https://www.dailynebraskan.com/" target="_blank" rel="noopener">The Daily Nebraskan</a>. Every candidate, quote and email in it is made up. Any resemblance to an actual search process is the point.
+</footer>
+
+<script>
+(() => {
+  // ---------- tiny SVG helpers ----------
+  const R = (x,y,w,h,f) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"/>`;
+  const C = (x,y,r,f) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${f}"/>`;
+  const P = (d,f,s,sw) => `<path d="${d}" fill="${f||"none"}"${s?` stroke="${s}" stroke-width="${sw||1}"`:""}/>`;
+  const T = (x,y,s,t,f="#fff",a="middle") => `<text x="${x}" y="${y}" font-size="${s}" fill="${f}" text-anchor="${a}" font-family="VT323,monospace">${t}</text>`;
+  const grid = (x,y,cols,rows,w,h,gx,gy,f,lit) => { let s=""; for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) s+=R(x+c*gx,y+r*gy,w,h, lit && (r*7+c*3)%11===0 ? lit : f); return s; };
+  const svg = inner => `<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${inner}</svg>`;
+  const sky = () => R(0,0,160,120,"url(#p-sky)");
+  const lawn = (y=100) => R(0,y,160,120-y,"url(#p-grass)");
+  const walk = (y=100) => R(0,y,160,6,"url(#p-lgray)");
+
+  const SCENES = {
+    hq: () => svg(
+      R(0,0,160,120,"#000")+
+      R(14,6,132,74,"#aaa")+R(20,11,120,64,"#000")+
+      T(80,24,9,"SEARCH-NET v1.0","#55ffff")+T(80,36,7,"UNL CHANCELLOR SEARCH","#aaa")+
+      T(80,46,7,"CONFIDENTIAL","#ff5555")+R(26,54,3,6,"#fff")+
+      R(14,82,132,10,"#aaa")+R(20,84,24,2,"#55ffff")+R(20,88,24,2,"#55ffff")+R(50,84,12,6,"#000")+R(66,84,12,6,"#aa00aa")+
+      R(84,83,22,8,"#000")+R(88,85,1,1,"#55ffff")+R(95,87,1,1,"#ff55ff")+R(100,85,1,1,"#fff")+R(116,84,24,2,"#55ffff")+R(116,88,24,2,"#55ffff")+
+      R(8,94,144,22,"#aaa")+grid(14,97,12,3,9,4,11,6,"#555")),
+    canfield: () => svg(sky()+
+      R(18,24,124,6,"#fff")+R(20,30,120,70,"url(#p-gray)")+
+      grid(26,36,10,5,7,6,11,11,"#000","#55ffff")+
+      R(68,82,24,18,"#000")+R(70,84,9,16,"url(#p-glass)")+R(81,84,9,16,"url(#p-glass)")+
+      R(146,14,1,86,"#fff")+R(147,14,10,6,"#aa0000")+
+      T(80,30,6,"CANFIELD ADMINISTRATION","#000")+walk(100)+lawn(106)),
+    love: () => svg(sky()+
+      R(16,40,128,60,"#aaa")+P("M12 40 L80 22 L148 40Z","#fff")+R(12,40,136,5,"#fff")+
+      Array.from({length:8},(_,i)=>R(26+i*15,47,6,45,"#fff")+R(31+i*15,47,1,45,"#555")).join("")+
+      R(73,70,14,22,"#000")+
+      T(80,38,6,"LOVE LIBRARY","#000")+
+      R(22,92,116,4,"#fff")+R(18,96,124,4,"#aaa")+lawn(100)),
+    union: () => svg(sky()+
+      R(10,38,140,62,"url(#p-brick)")+R(8,34,144,5,"#aaa")+
+      R(44,42,72,9,"#000")+T(80,49,8,"NEBRASKA UNION")+
+      grid(18,56,8,2,12,14,16,20,"url(#p-glass)")+
+      R(70,82,20,18,"#000")+R(72,84,7,16,"url(#p-glass)")+R(81,84,7,16,"url(#p-glass)")+
+      R(0,100,160,20,"url(#p-lgray)")),
+    stadium: () => svg(sky()+
+      R(0,28,160,64,"url(#p-red)")+Array.from({length:10},(_,i)=>R(0,32+i*6,160,1,"#550000")).join("")+
+      R(30,12,100,16,"#aaa")+grid(34,16,11,1,6,6,9,0,"url(#p-glass)")+
+      T(80,9,7,"MEMORIAL STADIUM","#fff")+
+      R(0,92,160,28,"url(#p-grass)")+Array.from({length:8},(_,i)=>R(8+i*20,92,1,28,"#fff")).join("")+
+      T(80,115,22,"N","#fff")),
+    morrill: () => svg(
+      R(0,0,160,120,"#000")+P("M50 0 L110 0 L150 100 L10 100Z","#222")+
+      P("M40 54 Q78 28 122 48","","#fff",3)+
+      Array.from({length:8},(_,i)=>P(`M${54+i*8} ${46-Math.sin(i/2.3)*5} q4 14 0 26`,"","#fff",2)).join("")+
+      R(48,60,5,36,"#fff")+R(58,62,5,34,"#fff")+R(104,58,5,38,"#fff")+R(114,56,5,40,"#fff")+
+      R(118,38,18,16,"#fff")+R(127,43,3,3,"#000")+
+      P("M132 54 Q156 78 132 88","","#fff",3)+P("M126 55 Q146 84 120 86","","#aaa",2)+
+      R(30,96,110,6,"#aaa")+R(60,104,40,10,"#aa5500")+T(80,112,8,"ARCHIE","#fff")+
+      R(0,114,160,6,"url(#p-floor)")),
+    sheldon: () => svg(sky()+
+      R(16,26,128,6,"#fff")+R(18,32,124,68,"url(#p-lgray)")+
+      Array.from({length:6},(_,i)=>{const x=28+i*19; return C(x+5,46,5,"#000")+R(x,46,10,48,"#000")+R(x+1,48,8,46,"url(#p-glass)");}).join("")+
+      T(80,31,6,"SHELDON MUSEUM OF ART","#000")+
+      lawn(100)+R(4,78,5,22,"#aa5500")+R(2,74,10,5,"#aa5500")),
+    dairy: () => svg(sky()+
+      P("M10 56 L52 36 L94 56Z","#aa0000")+R(14,56,76,44,"#fff")+R(20,62,64,9,"#000")+T(52,69,8,"DAIRY STORE","#fff")+
+      grid(22,76,3,1,14,12,22,0,"url(#p-glass)")+R(46,80,12,20,"#555")+
+      P("M120 104 L106 62 L134 62Z","url(#p-cone)")+C(120,56,13,"#ff55ff")+C(120,42,11,"#fff")+C(120,31,3,"#aa0000")+
+      lawn(100)),
+    andersen: () => svg(sky()+
+      R(24,30,112,70,"url(#p-brick)")+R(22,26,116,5,"#aaa")+
+      R(46,34,68,9,"#000")+T(80,41,8,"ANDERSEN HALL")+
+      grid(32,48,7,3,8,8,14,13,"url(#p-glass)")+R(72,84,16,16,"#000")+
+      R(6,80,16,20,"#aa0000")+R(8,83,12,8,"#fff")+T(14,90,8,"DN","#000")+
+      walk(100)+lawn(106)),
+    lied: () => svg(sky()+
+      R(8,42,144,58,"url(#p-gray)")+P("M30 100 L30 64 Q80 40 130 64 L130 100Z","url(#p-glass)")+
+      R(24,22,112,20,"#000")+
+      Array.from({length:14},(_,i)=>C(28+i*8,24,1,"#ffff55")+C(28+i*8,40,1,"#ffff55")).join("")+
+      T(80,31,7,"NOW PLAYING:","#ff55ff")+T(80,38,6,"'SHARED GOVERNANCE: A TRAGEDY'","#55ffff")+
+      R(0,100,160,20,"url(#p-lgray)")),
+    rec: () => svg(sky()+
+      R(10,34,140,66,"#aaa")+R(8,30,144,5,"#fff")+T(48,46,9,"CAMPUS REC","#000")+
+      grid(16,54,4,2,12,12,16,18,"url(#p-glass)")+
+      R(92,38,50,62,"url(#p-gray)")+
+      [[98,46,"#ff5555"],[110,52,"#55ffff"],[124,44,"#ffff55"],[134,58,"#ff55ff"],[102,66,"#55ff55"],[118,72,"#ff5555"],[130,80,"#55ffff"],[106,86,"#ffff55"]].map(([x,y,f])=>C(x,y,2,f)).join("")+
+      R(114,58,6,6,"#ffaa55")+R(113,64,8,10,"#aa0000")+R(110,60,3,2,"#ffaa55")+R(121,56,3,2,"#ffaa55")+
+      R(0,100,160,20,"url(#p-lgray)")),
+    abel: () => svg(sky()+
+      R(54,6,52,94,"#aaa")+grid(59,12,5,12,6,4,9,7,"#000","#ffff55")+
+      R(14,58,40,42,"url(#p-gray)")+R(106,58,40,42,"url(#p-gray)")+
+      grid(18,64,4,3,5,5,9,11,"#000")+grid(110,64,4,3,5,5,9,11,"#000")+
+      R(70,90,20,10,"#000")+T(80,98,7,"ABEL HALL","#fff")+walk(100)+lawn(106)),
+    innovation: () => svg(sky()+
+      P("M8 100 L8 56 Q80 8 152 56 L152 100Z","url(#p-brick)")+
+      P("M44 100 L44 62 Q80 34 116 62 L116 100Z","url(#p-glass)")+
+      Array.from({length:5},(_,i)=>R(52+i*14,48,1,52,"#000")).join("")+
+      R(30,90,100,10,"#000")+T(80,97,6,"NEBRASKA INNOVATION CAMPUS","#fff")+
+      R(0,100,160,20,"url(#p-lgray)")),
+    fountain: () => svg(sky()+
+      R(0,36,160,46,"url(#p-brick)")+grid(8,44,9,2,10,10,17,18,"url(#p-glass)")+
+      R(0,82,160,38,"url(#p-lgray)")+
+      P("M80 84 Q62 52 44 86","","#55ffff",2)+P("M80 84 Q98 52 116 86","","#55ffff",2)+P("M80 84 L80 50","","#fff",2)+
+      P("M80 84 Q70 62 60 86","","#fff",1)+P("M80 84 Q90 62 100 86","","#fff",1)+
+      R(36,86,88,10,"#aaa")+R(40,86,80,4,"url(#p-water)")+
+      R(14,96,4,14,"#555")+C(16,93,3,"#ffaa55")+T(140,112,6,"NO NEW SEARCH FIRM","#ff55ff")),
+    session: () => svg(
+      R(0,0,160,120,"#555")+R(0,0,160,70,"url(#p-gray)")+
+      R(30,8,100,16,"#000")+T(80,15,7,"LISTENING SESSION","#ffff55")+T(80,21,6,"YOUR VOICE MATTERS*","#aaa")+
+      R(76,30,2,40,"#000")+R(72,28,10,6,"#000")+
+      Array.from({length:3},(_,r)=>Array.from({length:6},(_,c)=>{const x=14+c*24+(r%2)*10, y=74+r*16;return C(x,y,6,["#550000","#aa5500","#000","#555","#aa5500","#000"][(c+r)%6])+R(x-9,y+5,18,10,["#aa0000","#0000aa","#00aaaa","#aa00aa","#555","#00aa00"][(c*2+r)%6]);}).join("")).join("")+
+      T(150,118,5,"*SUBJECT TO SCHEDULING","#fff","end")),
+    note: () => svg(
+      R(0,0,160,120,"url(#p-cork)")+
+      `<g transform="rotate(-4 80 60)">${R(34,16,92,92,"#fff")+R(34,16,92,8,"#ffff55")+Array.from({length:8},(_,i)=>R(42,32+i*9,60+((i*37)%20),2,"#555")).join("")}</g>`+
+      C(80,18,3,"#aa0000")),
+  };
+
+  // ---------- portraits ----------
+  const SKIN = ["#ffaa55","#aa5500","#ffcc99","#7a3d10","#e0a070"];
+  const HAIR = ["#000","#555","#aa5500","#ffff55","#aaa","#550000"];
+  const PEOPLE = {
+    staff:{shirt:"#0000aa",acc:["lanyard"]}, librarian:{shirt:"#aa00aa",acc:["glasses","chain"]},
+    grad:{shirt:"#555",acc:["glasses","bags"]}, student:{shirt:"#aa0000",acc:["N"]},
+    asun:{shirt:"#0000aa",acc:["tie"]}, booster:{shirt:"#aa0000",acc:["cap","N"]},
+    coach:{shirt:"#aa0000",acc:["cap","whistle"]}, docent:{shirt:"#00aa00",acc:["lanyard","glasses"]},
+    prof:{shirt:"#aa5500",acc:["glasses","tie"]}, artist:{shirt:"#000",acc:["beret"]},
+    scooper:{shirt:"#fff",acc:["hat"]}, farmer:{shirt:"#00aaaa",acc:["cap"]},
+    reporter:{shirt:"#555",acc:["press"]}, usher:{shirt:"#000",acc:["tie"]},
+    actor:{shirt:"#aa00aa",acc:["scarf"]}, trainer:{shirt:"#00aa00",acc:["headband","whistle"]},
+    ra:{shirt:"#00aa00",acc:["lanyard"]}, freshman:{shirt:"#aa0000",acc:["N","bags"]},
+    founder:{shirt:"#555",acc:["vest","lanyard"]}, scientist:{shirt:"#fff",acc:["glasses","coat"]},
+    activist:{shirt:"#ff55ff",acc:["sign"]},
+  };
+  function portrait(type, seed){
+    const p = PEOPLE[type] || PEOPLE.student;
+    const skin = SKIN[seed % SKIN.length], hair = HAIR[(seed>>2) % HAIR.length], style = (seed>>4) % 4;
+    let s = R(0,0,160,120,"url(#p-sky)")+R(0,0,160,120,"rgba(0,0,0,.35)");
+    // body
+    s += P("M30 120 L36 92 Q40 84 60 82 L100 82 Q120 84 124 92 L130 120Z", p.shirt);
+    if (p.acc.includes("coat")) s += P("M30 120 L36 92 Q40 84 60 82 L72 82 L80 120Z","#fff")+P("M130 120 L124 92 Q120 84 100 82 L88 82 L80 120Z","#fff");
+    if (p.acc.includes("vest")) s += P("M38 120 L42 92 L66 84 L72 120Z","#0000aa")+P("M122 120 L118 92 L94 84 L88 120Z","#0000aa");
+    s += R(70,70,20,14,skin);
+    // hair back (long)
+    if (style===1) s += R(52,26,56,56,hair);
+    // head
+    s += R(56,28,48,46,skin)+R(52,46,4,10,skin)+R(104,46,4,10,skin);
+    // hair top
+    if (style===0) s += R(54,22,52,12,hair);
+    if (style===1) s += R(54,22,52,10,hair);
+    if (style===2) s += R(54,22,52,6,hair)+R(54,26,6,10,hair)+R(100,26,6,10,hair);
+    if (style===3) s += C(80,20,8,hair)+R(56,24,48,8,hair);
+    // face
+    s += R(66,46,6,4,"#000")+R(88,46,6,4,"#000")+R(77,54,6,6,"rgba(0,0,0,.18)")+R(72,64,16,2,"#550000");
+    const A = p.acc;
+    if (A.includes("glasses")) s += `<rect x="63" y="43" width="12" height="9" fill="none" stroke="#fff" stroke-width="1.5"/><rect x="85" y="43" width="12" height="9" fill="none" stroke="#fff" stroke-width="1.5"/>`+R(75,46,10,1.5,"#fff");
+    if (A.includes("chain")) s += P("M63 50 Q60 80 80 84 Q100 80 97 50","","#ffff55",1);
+    if (A.includes("bags")) s += R(64,51,10,2,"#aa00aa")+R(86,51,10,2,"#aa00aa");
+    if (A.includes("cap")) s += R(54,18,52,12,"#aa0000")+R(54,28,66,4,"#aa0000")+T(80,28,9,"N","#fff");
+    if (A.includes("hat")) s += R(56,16,48,10,"#fff")+R(56,24,48,3,"#aa0000");
+    if (A.includes("beret")) s += P("M50 26 Q80 6 110 24 Z","#aa0000");
+    if (A.includes("headband")) s += R(56,30,48,5,"#ff5555");
+    if (A.includes("tie")) s += P("M76 84 L84 84 L82 90 L86 112 L80 118 L74 112 L78 90Z","#aa0000");
+    if (A.includes("lanyard")) s += P("M68 84 L78 106 L82 106 L92 84","","#55ffff",2)+R(74,104,12,9,"#fff")+R(76,106,8,2,"#0000aa");
+    if (A.includes("N")) s += T(80,112,22,"N","#fff");
+    if (A.includes("whistle")) s += P("M70 84 Q80 100 90 84","","#fff",1)+R(78,98,6,4,"#aaa");
+    if (A.includes("press")) s += R(92,92,22,10,"#fff")+T(103,100,7,"PRESS","#000");
+    if (A.includes("scarf")) s += R(62,80,36,7,"#ffff55")+R(88,86,8,18,"#ffff55");
+    if (A.includes("sign")) s += R(108,40,48,30,"#fff")+R(130,70,3,40,"#aa5500")+T(132,52,8,"HEAR","#aa0000")+T(132,62,8,"US!","#aa0000");
+    return svg(s);
+  }
+
+  // ---------- campus ----------
+  const LOC = {
+    canfield:{name:"Canfield Admin", map:[78,88],
+      desc:"The Canfield Administration Building houses the chancellor's office, the registrar and a hallway of framed portraits of chancellors past. There's an empty nail at the end.",
+      src:[{l:"Ask the front desk",w:"staff",k:"talk",n:"The receptionist"},{l:"Read the provost's sticky notes",w:"note",k:"read",n:"A sticky note on a monitor",v:"It reads:"},{l:"Hold a listening session",w:"session",k:"session"}]},
+    love:{name:"Love Library", map:[72,58],
+      desc:"Love Library is named for Don L. Love, a former mayor of Lincoln, not the feeling. During finals week it inspires neither.",
+      src:[{l:"Ask a librarian",w:"librarian",k:"talk",n:"The librarian"},{l:"Talk to a grad student",w:"grad",k:"talk",n:"A grad student, from behind a fort of books"},{l:"Check the suggestion box",w:"note",k:"read",n:"The suggestion box",v:"A folded note reads:"}]},
+    union:{name:"Nebraska Union", map:[67,73],
+      desc:"The Nebraska Union is the heart of City Campus: a food court, meeting rooms and a coffee line that moves at the speed of shared governance.",
+      src:[{l:"Talk to a student at the food court",w:"student",k:"talk",n:"A student, mid-chicken strip"},{l:"Drop by student government",w:"asun",k:"talk",n:"A student senator"},{l:"Hold a listening session",w:"session",k:"session"}]},
+    stadium:{name:"Memorial Stadium", map:[40,48],
+      desc:"Memorial Stadium has sold out every home game since 1962, the longest streak in college football. On game days it becomes one of the biggest cities in Nebraska.",
+      src:[{l:"Talk to a season-ticket holder",w:"booster",k:"talk",n:"A season-ticket holder"},{l:"Ask an assistant coach",w:"coach",k:"talk",n:"An assistant coach"},{l:"Hold a listening session in a suite",w:"session",k:"session"}]},
+    morrill:{name:"Morrill Hall", map:[90,70],
+      desc:"Morrill Hall, home of the University of Nebraska State Museum, houses Archie, one of the largest mounted mammoth skeletons in the world. He has outlasted every chancellor.",
+      src:[{l:"Ask a museum docent",w:"docent",k:"talk",n:"The docent"},{l:"Consult Archie the mammoth",w:"archie",k:"archie"},{l:"Read the guest book",w:"note",k:"read",n:"The guest book",v:"Today's entry reads:"}]},
+    sheldon:{name:"Sheldon Museum", map:[55,64],
+      desc:"The Sheldon Museum of Art was designed by architect Philip Johnson and opened in 1963. Its sculpture garden is a fine place to think deep thoughts, or to cut through on the way to class.",
+      src:[{l:"Ask an art professor",w:"prof",k:"talk",n:"An art professor"},{l:"Talk to a student sketching",w:"artist",k:"talk",n:"A student with a sketchbook"},{l:"Read the comment cards",w:"note",k:"read",n:"A comment card",v:"It reads:"}]},
+    dairy:{name:"Dairy Store", map:[148,20], far:true,
+      desc:"The Dairy Store on East Campus has been scooping university-made ice cream for generations. Ag students consider it a sacred site.",
+      src:[{l:"Ask the person scooping ice cream",w:"scooper",k:"talk",n:"The scooper"},{l:"Talk to an ag student",w:"farmer",k:"talk",n:"An ag student"},{l:"Hold a listening session",w:"session",k:"session"}]},
+    andersen:{name:"Andersen Hall", map:[58,86],
+      desc:"Andersen Hall is home to the College of Journalism and Mass Communications, where student reporters have already filed three public records requests about this search.",
+      src:[{l:"Ask a student reporter",w:"reporter",k:"talk",n:"A student reporter, on deadline"},{l:"Ask a journalism professor",w:"prof",k:"talk",n:"A journalism professor"},{l:"Check the anonymous tip line",w:"note",k:"read",n:"The tip line voicemail",v:"A muffled voice says:"}]},
+    lied:{name:"Lied Center", map:[44,92],
+      desc:"The Lied Center for Performing Arts opened in 1990. It hosts touring Broadway shows, orchestras and, this week, a student production about the search.",
+      src:[{l:"Ask an usher",w:"usher",k:"talk",n:"An usher"},{l:"Talk to a theater major",w:"actor",k:"talk",n:"A theater major, dramatically"},{l:"Hold a listening session in the lobby",w:"session",k:"session"}]},
+    rec:{name:"Campus Rec", map:[96,40],
+      desc:"The Campus Recreation Center has a climbing wall, an indoor track and dozens of students pretending they didn't see their professor on the next treadmill.",
+      src:[{l:"Ask a trainer",w:"trainer",k:"talk",n:"A personal trainer"},{l:"Talk to someone on the treadmill",w:"student",k:"talk",n:"A student, panting"},{l:"Read the whiteboard",w:"note",k:"read",n:"The whiteboard",v:"Someone wrote:"}]},
+    abel:{name:"Abel Hall", map:[114,46],
+      desc:"Abel Hall's tower looms over the northeast corner of City Campus. Its residents will be seniors by the time the new chancellor learns their names.",
+      src:[{l:"Ask an RA",w:"ra",k:"talk",n:"A resident assistant"},{l:"Talk to a freshman",w:"freshman",k:"talk",n:"A freshman"},{l:"Read the floor bulletin board",w:"note",k:"read",n:"The bulletin board",v:"A flyer says:"}]},
+    innovation:{name:"Innovation Campus", map:[18,24], far:true,
+      desc:"Nebraska Innovation Campus rose on the old State Fair grounds next to City Campus. Today it's full of labs, startups and corporate partners in lanyards.",
+      src:[{l:"Ask a startup founder",w:"founder",k:"talk",n:"A startup founder"},{l:"Ask a researcher in the lab",w:"scientist",k:"talk",n:"A researcher"},{l:"Hold a listening session",w:"session",k:"session"}]},
+    fountain:{name:"Broyhill Fountain", map:[74,80],
+      desc:"Broyhill Fountain splashes on the plaza by the Nebraska Union. It's the traditional site of first dates, protests and, apparently, search committee business.",
+      src:[{l:"Talk to a student protester",w:"activist",k:"talk",n:"A student protester"},{l:"Ask a couple on a first date",w:"student",k:"talk",n:"Someone on a first date"},{l:"Read the sidewalk chalk",w:"note",k:"read",n:"The sidewalk chalk",v:"In pink chalk:"}]},
+  };
+  const LOC_IDS = Object.keys(LOC);
+
+  // Hints that point to the NEXT stop.
+  const DEST = {
+    canfield:["Somebody in the administration building knows more than they're saying.","Go ask the provost's office. They're pretending not to know anything."],
+    love:["Try the library. The grad students basically live in the stacks now.","Go somewhere quiet with a lot of books and a lot of overdue fines."],
+    union:["You should hear from student government. They meet in the Union.","Go where the students are: the food court."],
+    stadium:["The boosters want a say. Try the place with all the red seats.","Talk to the people who care about Saturdays."],
+    morrill:["Go ask Archie. He's been on campus longer than any chancellor.","Go see the mammoth. Trust me."],
+    sheldon:["The arts faculty are meeting somewhere with a lot of travertine.","Check with the museum crowd. The one with the sculpture garden."],
+    dairy:["East Campus wants to be heard. Bring a spoon.","The ag students have opinions. Find them where the ice cream is."],
+    andersen:["The student journalists already know everything. Go to the J-school.","Ask the reporters. They've filed records requests on this whole search."],
+    lied:["The theater kids are staging a musical about this. Go to the performing arts center.","Ask someone who works where the touring Broadway shows play."],
+    rec:["Half the Faculty Senate is at the rec center right now.","Ask the people on the treadmills. They can't get away."],
+    abel:["Talk to the freshmen. They're up in the big dorm tower.","The RAs hear everything. Try the tallest residence hall on campus."],
+    innovation:["The corporate partners want a say. Try the old State Fair grounds.","Go ask the startup founders. They wear their lanyards to bed."],
+    fountain:["There's a protest about the search going on by the fountain.","Go where people splash their feet on the first warm day of spring."],
+  };
+
+  const TRAITS = [
+    {key:"bg", label:"Background", vals:[
+      ["Former provost",["We want someone who's already run academic affairs somewhere. A provost, ideally.","I heard the candidate everyone likes was the No. 2 at their last university. A provost."]],
+      ["Corporate CEO",["Run it like a business! I want a real CEO from the private sector.","Word is the best candidate used to run a Fortune 500 company."]],
+      ["Athletic director",["Honestly? We need someone who's hired a football coach before. An athletic director.","I hear the favorite ran an athletic department somewhere down South."]],
+      ["State senator",["We need someone who knows their way around the Unicameral. A former state senator.","Rumor is the top candidate spent years in a state legislature."]],
+      ["Retired general",["What this place needs is discipline. Somebody with stars on their shoulders.","I heard one of them is a retired general. Salutes and everything."]],
+    ]},
+    {key:"hobby", label:"Hobby", vals:[
+      ["Golf",["My dream chancellor would join the donors for 18 holes.","The good one supposedly has a single-digit handicap. In golf, I mean."]],
+      ["Marathons",["We need someone with stamina. Like, 26.2 miles of stamina.","I heard one candidate ran the Lincoln Marathon last spring."]],
+      ["Birdwatching",["I want somebody who'd drive out to see the sandhill cranes in March.","Somebody saw the candidate with binoculars, birding out at Holmes Lake."]],
+      ["Pickleball",["Whoever it is had better play pickleball. Everyone important plays pickleball now.","I heard the favorite asked where the pickleball courts are."]],
+      ["Fly fishing",["I want someone patient. The kind of person who fly-fishes.","Word is the candidate packed a fly rod for their trip to Lincoln."]],
+    ]},
+    {key:"look", label:"Signature look", vals:[
+      ["Bow tie",["A bow tie says 'I have a Ph.D. and I'm fun.' That's who I want.","The person I saw touring campus was wearing a bow tie."]],
+      ["Cowboy boots",["We need a chancellor in cowboy boots. This is Nebraska.","I heard the visitor's cowboy boots clicking down the hallway."]],
+      ["Fleece vest",["Give me someone in a fleece vest over a button-down. That's leadership.","They were wearing one of those fleece vests. Very 'investor meeting.'"]],
+      ["Red blazer",["I want someone who'd wear Husker red to a budget hearing.","The candidate had on a bright red blazer. Scarlet, not cream."]],
+      ["Glasses on a chain",["Someone with reading glasses on a chain. That's a person who reads the whole report.","I saw the visitor with reading glasses on a little chain."]],
+    ]},
+    {key:"plan", label:"Big priority", vals:[
+      ["Rejoin the AAU",["They'd better get us back into the AAU. We left in 2011 and I'm still not over it.","The candidate supposedly wants research to be job one. AAU or bust."]],
+      ["Grow enrollment",["We need more students. Way more. Enrollment, enrollment, enrollment.","I heard the frontrunner has a plan to fill every dorm on campus."]],
+      ["Balance the budget",["The budget hole isn't going to fill itself. We need someone who loves a spreadsheet.","Word is the candidate's whole pitch is 'fiscal sustainability.'"]],
+      ["Win football games",["Honestly, just win football games. Everything else follows.","The candidate asked more questions about the football program than the library."]],
+      ["Mental health",["Students wait weeks for a counseling appointment. Fix that first.","I heard the candidate's big idea is student mental health."]],
+    ]},
+    {key:"ride", label:"Gets around by", vals:[
+      ["Pickup truck",["I want a chancellor who drives a pickup. Farm credibility.","They pulled up in a pickup truck with a dented tailgate."]],
+      ["Electric car",["Someone who drives electric. We have sustainability goals, you know.","The candidate's car didn't make a sound. Electric, I think."]],
+      ["Bicycle",["Parking is a nightmare. I want a chancellor who bikes to work.","I saw the candidate lock up a bicycle outside."]],
+      ["Golf cart",["Someone who zips around in a golf cart like the facilities crew. Efficient.","The visitor was riding around campus in a golf cart."]],
+      ["Rental scooter",["I want someone who rides those rental scooters, like a real student.","I saw a very well-dressed person on a rental scooter."]],
+    ]},
+  ];
+
+  const NAMES = ["Dr. Patricia Wendell-Ames","Gregory Halvorsen","Dr. Anita Okafor-Bell","Dr. Raymond Quist","Lorraine Petrakis","Dr. Theo Lindqvist","Marcus Delacroix-Hale","Dr. Susan Kowalczyk","Bradley J. Stimmel","Dr. Imani Fairweather"];
+  const PRIORITY = [
+    "Chet Brandvold, a regional bank executive who once donated a scoreboard",
+    "Lyle Hagedorn, a former state senator who has never worked at a university but did give a commencement speech in 2009",
+    "Kip Thornquist, a partner at Prestige & Pinnacle, the search firm running the search",
+    "Duke Rasmussen, a football coach who just finished 4-8 somewhere else",
+    "the system's interim vice president for strategic initiatives, whose title nobody can explain",
+    "Bev Ostrander, the board chair's former college roommate",
+  ];
+  const RANKS = ["Faculty Senate Alternate","Ex Officio Observer","Committee Member","Subcommittee Chair","Vice Chair","Search Committee Chair","Honorary Regent (Non-Voting)"];
+  const RAMBLES = [
+    "This is more of a comment than a question, but parking is bad.",
+    "Will the new chancellor fix parking?",
+    "I'd like to yield my time to talk about the dining hall chicken strips.",
+    "I came for the free cookies. Are there more cookies?",
+    "Why was this session scheduled during my lab?",
+    "I just want someone who answers emails.",
+    "Is this being recorded? Good. Hi, Mom.",
+    "I've been to four of these and nobody ever reads the notes.",
+  ];
+  const DUD = {
+    talk:["Chancellor search? Nobody told me there was a chancellor search.","Sorry, I'm late for class.","I filled out the online survey. Twice. Never heard back.","No idea. I'm still mad about the last search.","Haven't heard a thing. Is it true the finalists get free parking?","Can't help you. I only read the emails with 'free food' in the subject line."],
+    session:["Your listening session drew three people. All three came for the free cookies.","The session ran 90 minutes. Every single comment was about parking.","Nobody came. The calendar invite went to everyone's spam folder.","Two people showed up. They were looking for a different meeting."],
+    read:["It's a gum wrapper and an old parking ticket.","Somebody drew a very detailed corn cob. Nothing about the search.","'Bring back the old dining hall pizza.' That's it.","It's blank. Somehow that feels like a statement."],
+    archie:["Archie stares into the middle distance, as he has since the Pleistocene.","Archie says nothing. He's a skeleton. Nobody has tucked a note under his tusk today."],
+  };
+
+  // ---------- utils ----------
+  const rnd = n => Math.floor(Math.random()*n);
+  const pick = a => a[rnd(a.length)];
+  const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];} return a; };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+  const DEADLINE = 4*24 + 17; // Friday 5 p.m.
+  function fmtTime(t){
+    const d = Math.floor(t/24), h = t%24;
+    const hs = h===0 ? "midnight" : h===12 ? "noon" : (h%12) + (h<12 ? " a.m." : " p.m.");
+    return `${DAYS[d]}, ${hs}`;
+  }
+  const store = {
+    get(){ try { return JSON.parse(localStorage.getItem("dnSearchCommittee.v1")) || {}; } catch(e){ return {}; } },
+    set(v){ try { localStorage.setItem("dnSearchCommittee.v1", JSON.stringify(v)); } catch(e){} },
+  };
+
+  // ---------- DOM + rendering ----------
+  const $ = id => document.getElementById(id);
+  const game = $("game"), hd = $("hd"), sc = $("sc"), tx = $("tx"), mn = $("mn");
+  const reduceMotion = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let typer = null, menuItems = [], sel = 0, menuMode = "list", portalState = null;
+
+  function finishTyping(){ if (typer){ typer.finish(); return true; } return false; }
+  function typeHTML(html){
+    if (typer) typer.finish();
+    tx.innerHTML = html; tx.scrollTop = 0;
+    if (reduceMotion) return;
+    const nodes = [], w = document.createTreeWalker(tx, NodeFilter.SHOW_TEXT);
+    let n; while ((n = w.nextNode())) { nodes.push([n, n.nodeValue]); n.nodeValue = ""; }
+    let i = 0, j = 0;
+    const id = setInterval(() => {
+      for (let k=0;k<3;k++){
+        if (i >= nodes.length) { done(); return; }
+        const [node, full] = nodes[i]; j++; node.nodeValue = full.slice(0,j);
+        if (j >= full.length){ i++; j = 0; }
+      }
+    }, 18);
+    function done(){ clearInterval(id); nodes.forEach(([nd,f]) => nd.nodeValue = f); typer = null; }
+    typer = { finish: done };
+  }
+  function setHead(title, t){ hd.innerHTML = `<b>${esc(title)}</b>${t!=null ? esc(fmtTime(t)) : "&nbsp;"}`; }
+  function setMenu(items){
+    menuItems = items; sel = 0; menuMode = "list";
+    mn.innerHTML = "";
+    items.forEach((it, i) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.setAttribute("role","menuitem"); b.textContent = it.label;
+      b.addEventListener("click", () => { finishTyping(); sel = i; paintSel(); it.fn(); game.focus({preventScroll:true}); });
+      b.addEventListener("mouseenter", () => { sel = i; paintSel(); });
+      mn.appendChild(b);
+    });
+    paintSel();
+  }
+  function paintSel(){ [...mn.children].forEach((b,i) => b.classList.toggle("sel", i===sel)); }
+
+  game.addEventListener("keydown", e => {
+    if (e.target.tagName === "INPUT") return;
+    if (portalState && (e.key==="ArrowLeft" || e.key==="ArrowRight")) { e.preventDefault(); portalCycle(e.key==="ArrowRight"?1:-1); return; }
+    if (portalState && (e.key==="ArrowUp" || e.key==="ArrowDown") && portalState.focusRows) {
+      e.preventDefault(); portalMove(e.key==="ArrowDown"?1:-1); return;
+    }
+    if (e.key==="ArrowDown"){ e.preventDefault(); sel = (sel+1)%menuItems.length; paintSel(); }
+    else if (e.key==="ArrowUp"){ e.preventDefault(); sel = (sel-1+menuItems.length)%menuItems.length; paintSel(); }
+    else if (e.key==="Enter" || e.key===" "){
+      e.preventDefault();
+      if (finishTyping()) return;
+      if (portalState && portalState.focusRows) { portalCycle(1); return; }
+      menuItems[sel] && menuItems[sel].fn();
+    }
+    else if (/^[1-9]$/.test(e.key)){ const i = +e.key-1; if (menuItems[i]) { finishTyping(); sel=i; paintSel(); menuItems[i].fn(); } }
+    else if (e.key==="Tab" && portalState){ e.preventDefault(); portalState.focusRows = !portalState.focusRows; renderPortal(); }
+  });
+  tx.addEventListener("click", () => finishTyping());
+
+  // ---------- game state ----------
+  let S = null, player = "", saves = store.get();
+
+  function newCase(){
+    // candidates + target, guaranteeing any 4 of the 5 traits identify the target
+    let cands, target;
+    for (let tries=0; tries<500; tries++){
+      cands = shuffle(NAMES).map(name => ({name, t: TRAITS.map(() => rnd(5))}));
+      target = rnd(cands.length);
+      const tt = cands[target].t;
+      let ok = true;
+      for (let skip=0; skip<5 && ok; skip++)
+        for (let c=0;c<cands.length;c++){ if (c===target) continue;
+          if (cands[c].t.every((v,k) => k===skip || v===tt[k])) { ok=false; break; } }
+      if (ok) break;
+    }
+    const others = shuffle(LOC_IDS.filter(id => id!=="canfield"));
+    const trail = ["canfield", ...others.slice(0,5)];
+    const traitOrder = shuffle([0,1,2,3,4]);
+    // pre-write every clue so asking twice gives the same answer
+    const lines = trail.slice(0,5).map((loc, i) => {
+      const next = trail[i+1], tk = traitOrder[i];
+      const tv = TRAITS[tk].vals[cands[target].t[tk]][1];
+      const kinds = shuffle(["dest","trait","both"]);
+      const dv = shuffle([0,1]), tvv = shuffle([0,1]);
+      let di=0, ti=0;
+      return kinds.map(kd => {
+        const parts = [];
+        if (kd!=="trait") parts.push(DEST[next][dv[di++ % 2]]);
+        if (kd!=="dest") parts.push(tv[tvv[ti++ % 2]]);
+        if (i===4 && kd!=="trait") parts.unshift("Hurry! The candidate is sneaking around campus right now.");
+        return parts.join(" ");
+      });
+    });
+    S = { t:9, cands, target, trail, traitOrder, lines, progress:0, cur:"canfield", inv:0, conns:[], notes:[], rec:null, portalVals:TRAITS.map(() => -1), seed:rnd(9999), over:false };
+    S.conns = makeConns();
+  }
+
+  function makeConns(){
+    const fin = S.progress===5 && S.cur===S.trail[5];
+    let key = null;
+    if (S.cur === S.trail[S.progress]) key = fin ? null : S.trail[S.progress+1];
+    else key = S.trail[S.progress];
+    const pool = shuffle(LOC_IDS.filter(id => id!==S.cur && id!==key));
+    const list = key ? [key, ...pool.slice(0,3)] : pool.slice(0,4);
+    return shuffle(list);
+  }
+  function walkHours(a, b){
+    const [x1,y1] = LOC[a].map, [x2,y2] = LOC[b].map;
+    return Math.min(6, 2 + Math.round(Math.hypot(x2-x1, y2-y1)/32) + ((LOC[a].far||LOC[b].far)?1:0));
+  }
+  // returns {slept, out}
+  function spend(h){
+    let slept = false;
+    S.t += h;
+    const hr = S.t % 24;
+    if (hr >= 23 || hr < 7){ const day = Math.floor(S.t/24) + (hr>=23?1:0); S.t = day*24 + 7; slept = true; }
+    return { slept, out: S.t >= DEADLINE };
+  }
+  const SLEEP = `<p class="dim">It got late. You went home, answered 41 emails from bed and slept.</p>`;
+  const rank = () => RANKS[Math.min((saves[player]||0), RANKS.length-1)];
+
+  // ---------- screens ----------
+  function screenLogin(){
+    portalState = null;
+    setHead("Search Committee", null);
+    sc.innerHTML = SCENES.hq();
+    tx.innerHTML = `<div class="login"><p>SEARCH-NET TERMINAL</p><p class="dim">University of Nebraska–Lincoln<br>Office of the Board of Regents</p><p>Committee member at keyboard, please identify yourself:</p><input id="who" maxlength="24" autocomplete="off" spellcheck="false" aria-label="Your name"></div>`;
+    setMenu([{label:"Log in", fn: doLogin}]);
+    const inp = $("who");
+    inp.focus({preventScroll:true});
+    inp.addEventListener("keydown", e => { if (e.key==="Enter"){ e.preventDefault(); doLogin(); } });
+  }
+  function doLogin(){
+    const v = ($("who") && $("who").value.trim()) || "Anonymous Faculty Member";
+    player = v.slice(0,24);
+    game.focus({preventScroll:true});
+    newCase(); screenBriefing();
+  }
+  function screenBriefing(){
+    setHead("Canfield Admin", S.t);
+    sc.innerHTML = SCENES.hq();
+    $("rankLabel").textContent = `${rank()} ${player}`;
+    const back = saves[player] ? `<p>Welcome back, ${esc(player)}. The Board appreciated your last recommendation. They did not use it.</p>` : `<p>Welcome, ${esc(player)}.</p>`;
+    typeHTML(`${back}<p class="dim">Your rank: <span class="hot">${esc(rank())}</span></p>
+      <p class="who">*** Bulletin from the Board of Regents ***</p>
+      <p>UNL's chancellor has announced plans to step down and "spend more time with family."</p>
+      <p>Prestige &amp; Pinnacle Executive Search has delivered a pool of 10 candidates and a 40-page leadership profile that uses the word "visionary" 31 times.</p>
+      <p>Your assignment:</p>
+      <p>1. Investigate each stop. People will tell you what campus wants in a chancellor and where to go next.</p>
+      <p>2. Enter what you learn in the search portal until only one candidate matches. That's who you're looking for.</p>
+      <p>3. Rumor has it that candidate is scouting campus incognito, deciding whether they even want the job. When the trail runs out, investigate the last stop to find them and talk them into staying in the search.</p>
+      <p>The committee's recommendation is due to the Board by <span class="hot">Friday at 5 p.m.</span> Good luck.</p>`);
+    setMenu([{label:"Begin the search", fn: () => screenLoc()}]);
+  }
+  function locMenu(){
+    return [
+      {label:"Walk to...", fn: screenWalk},
+      {label:"Investigate", fn: screenInvestigate},
+      {label:"Search portal", fn: () => screenPortal()},
+      {label:"Notebook", fn: screenNotes},
+    ];
+  }
+  function screenLoc(extra=""){
+    portalState = null;
+    const L = LOC[S.cur];
+    setHead(L.name, S.t);
+    sc.innerHTML = SCENES[S.cur]();
+    const fin = S.progress===5 && S.cur===S.trail[5];
+    const tip = fin ? `<p class="hot">Someone in sunglasses is quietly taking photos of everything and asking strangers about parking. That has to be the candidate, scouting campus!</p><p class="dim">${S.rec==null ? "You don't know who you're looking for yet. Use the search portal before you investigate." : "Investigate to go talk to them."}</p>` : "";
+    typeHTML(extra + tip + `<p>${L.desc}</p>`);
+    setMenu(locMenu());
+  }
+  function screenWalk(){
+    portalState = null;
+    sc.innerHTML = SCENES[S.cur]();
+    const items = S.conns.map(id => ({label:`${LOC[id].name} (${walkHours(S.cur,id)} hr)`, fn: () => travel(id)}));
+    items.push({label:"Never mind", fn: () => { typeHTML(`<p>${LOC[S.cur].desc}</p>`); setMenu(locMenu()); }});
+    typeHTML(`<p class="who">Where to?</p><p>From ${LOC[S.cur].name} you can walk to:</p><ul>${S.conns.map(id => `<li>${LOC[id].name}${LOC[id].far?' <span class="dim">(campus shuttle)</span>':''}</li>`).join("")}</ul>`);
+    setMenu(items);
+  }
+  function travel(id){
+    const from = S.cur, h = walkHours(from, id);
+    const r = spend(h);
+    if (r.out) return endTimeout();
+    setMenu([]);
+    setHead("En route", S.t);
+    animateMap(from, id, () => {
+      if (S.trail[S.progress+1] === id) S.progress++;
+      S.cur = id; S.inv = 0; S.conns = makeConns();
+      screenLoc(r.slept ? SLEEP : "");
+    });
+  }
+  function mapSVG(from, to){
+    let s = R(0,0,160,120,"#000");
+    for (let x=8;x<160;x+=16) s += R(x,0,1,120,"#003333");
+    for (let y=8;y<120;y+=16) s += R(0,y,160,1,"#003333");
+    s += R(28,30,100,72,"rgba(170,0,0,.25)")+T(78,110,6,"CITY CAMPUS","#aa0000")+T(140,36,6,"EAST CAMPUS","#00aa00")+T(18,40,6,"INNOVATION","#aaa");
+    s += P("M0 18 L160 10","","#555",2)+T(150,6,5,"RAILROAD","#555","end");
+    LOC_IDS.forEach(id => { const [x,y] = LOC[id].map; s += R(x-1,y-1,3,3, id===from||id===to ? "#ffff55" : "#aaa"); });
+    const [x1,y1] = LOC[from].map, [x2,y2] = LOC[to].map;
+    s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ff55ff" stroke-width="1" stroke-dasharray="2 2"/>`;
+    s += T(x1, y1-4, 6, LOC[from].name, "#fff")+T(x2, y2+9, 6, LOC[to].name, "#55ffff");
+    s += `<circle id="mover" cx="${x1}" cy="${y1}" r="3" fill="#ff55ff"/>`;
+    return svg(s);
+  }
+  function animateMap(from, to, done){
+    sc.innerHTML = mapSVG(from, to);
+    typeHTML(`<p>Walking to ${LOC[to].name}...</p><p class="dim">${pick(["You dodge three scooters and a campus tour.","You get stopped twice by people asking if you're on 'the committee.'","You take the long way to avoid a professor you owe an email.","A squirrel watches you with open suspicion.","You check your phone. The search firm has sent another survey."])}</p>`);
+    const m = sc.querySelector("#mover"), [x1,y1] = LOC[from].map, [x2,y2] = LOC[to].map;
+    const dur = reduceMotion ? 0 : 1300, t0 = performance.now();
+    let finished = false;
+    function finish(){ if (finished) return; finished = true; game.removeEventListener("keydown", skip); sc.removeEventListener("click", skip); done(); }
+    function skip(e){ if (!e.key || e.key==="Enter" || e.key===" ") { finishTyping(); finish(); } }
+    game.addEventListener("keydown", skip); sc.addEventListener("click", skip);
+    (function step(now){
+      if (finished) return;
+      const k = Math.min(1, (now - t0)/Math.max(1,dur));
+      m.setAttribute("cx", x1 + (x2-x1)*k); m.setAttribute("cy", y1 + (y2-y1)*k);
+      if (k < 1) requestAnimationFrame(step); else setTimeout(finish, 350);
+    })(performance.now());
+  }
+  function screenInvestigate(){
+    portalState = null;
+    const L = LOC[S.cur];
+    const items = L.src.map((s,i) => ({label:s.l, fn: () => ask(i)}));
+    items.push({label:"Never mind", fn: () => screenLoc()});
+    typeHTML(`<p class="who">Investigate ${esc(L.name)}</p><p>Who do you want to hear from?</p><p class="dim">The longer you hang around, the more time each conversation takes.</p>`);
+    setMenu(items);
+  }
+  function ask(i){
+    const L = LOC[S.cur], src = L.src[i];
+    S.inv++;
+    const cost = 1 + Math.floor(S.inv/2) + (src.k==="session" ? 1 : 0);
+    const r = spend(cost);
+    if (r.out) return endTimeout();
+    setHead(L.name, S.t);
+    const pre = r.slept ? SLEEP : "";
+    // final stop: the candidate is here
+    if (S.progress===5 && S.cur===S.trail[5]) return encounter(pre);
+    const stop = S.trail.indexOf(S.cur);
+    const onTrail = stop >= 0 && stop <= S.progress && stop < 5;
+    const seed = S.seed + i*31 + S.trail.indexOf(S.cur)*7 + LOC_IDS.indexOf(S.cur);
+    const line = onTrail ? S.lines[stop][i] : null;
+    // picture
+    if (src.k==="talk") sc.innerHTML = portrait(src.w, seed);
+    else if (src.k==="session") sc.innerHTML = SCENES.session();
+    else if (src.k==="archie") sc.innerHTML = SCENES.morrill();
+    else sc.innerHTML = SCENES.note();
+    let html = pre;
+    if (src.k==="talk"){
+      html += `<p class="who">${esc(src.n)} says:</p><p>"${esc(line || pick(DUD.talk))}"</p>`;
+    } else if (src.k==="read"){
+      html += `<p class="who">${esc(src.n)}</p>` + (line ? `<p>${esc(src.v)}</p><p>"${esc(line)}"</p>` : `<p>${esc(pick(DUD.read))}</p>`);
+    } else if (src.k==="archie"){
+      html += `<p class="who">Archie the mammoth</p>` + (line ? `<p>Archie says nothing. He's a skeleton. But someone has tucked a note under his tusk:</p><p>"${esc(line)}"</p>` : `<p>${esc(pick(DUD.archie))}</p>`);
+    } else {
+      if (line){
+        const ram = shuffle(RAMBLES).slice(0,2), pos = rnd(3), voices = [];
+        let ri = 0; for (let k=0;k<3;k++) voices.push(k===pos ? line : ram[ri++]);
+        html += `<p class="who">Listening session · ${3 + rnd(9)} attendees</p>` + voices.map((v,k) => `<p><span class="mag">Attendee ${k+1}:</span> "${esc(v)}"</p>`).join("");
+      } else html += `<p class="who">Listening session</p><p>${esc(pick(DUD.session))}</p>`;
+    }
+    if (line && !S.notes.some(n => n.text===line)) S.notes.push({loc:L.name, text:line});
+    typeHTML(html);
+    setMenu(locMenu());
+  }
+  function screenNotes(){
+    portalState = null;
+    sc.innerHTML = SCENES.note();
+    const rec = S.rec!=null ? `<p class="hot">Looking for: ${esc(S.cands[S.rec].name)}</p>` : `<p class="dim">You don't know who you're looking for yet.</p>`;
+    const body = S.notes.length ? S.notes.map(n => `<p><span class="who">${esc(n.loc)}:</span> "${esc(n.text)}"</p>`).join("") : `<p class="dim">Nothing useful yet. Go investigate.</p>`;
+    typeHTML(`<p class="who">Your notebook</p>${rec}${body}`);
+    setMenu([{label:"Close notebook", fn: () => screenLoc()}]);
+  }
+
+  // ---------- search portal (narrow the pool) ----------
+  function screenPortal(){
+    portalState = portalState || { vals: S.portalVals, row: 0, focusRows: true, msg: "" };
+    portalState.msg = "";
+    sc.innerHTML = SCENES.hq();
+    renderPortal(true);
+    setMenu([
+      {label:"Run search", fn: runSearch},
+      {label:"Clear all", fn: () => { S.portalVals.fill(-1); S.rec = null; portalState.msg=""; renderPortal(); }},
+      {label:"Back", fn: () => { portalState = null; screenLoc(); }},
+    ]);
+    portalState.focusRows = true;
+  }
+  function renderPortal(){
+    const ps = portalState;
+    const rows = TRAITS.map((tr,i) => `<tr class="${ps.focusRows && i===ps.row ? "sel":""}"><td>${tr.label}:</td><td><button type="button" data-r="${i}">&lt; ${ps.vals[i]<0 ? "?" : esc(tr.vals[ps.vals[i]][0])} &gt;</button></td></tr>`).join("");
+    tx.innerHTML = `<p class="who">Prestige &amp; Pinnacle candidate portal</p>
+      <table class="portal">${rows}</table>
+      <p class="dim" style="margin-top:.5em">${ps.focusRows ? "Up/down picks a row, left/right changes it. Tab jumps to the menu." : "Tab jumps back to the traits."}</p>
+      ${ps.msg}`;
+    tx.querySelectorAll("button[data-r]").forEach(b => b.addEventListener("click", () => { ps.row = +b.dataset.r; ps.focusRows = true; portalCycle(1); }));
+  }
+  function portalMove(d){ const ps = portalState; ps.row = (ps.row + d + TRAITS.length) % TRAITS.length; renderPortal(); }
+  function portalCycle(d){ const ps = portalState; let v = ps.vals[ps.row] + d; if (v > 4) v = -1; if (v < -1) v = 4; ps.vals[ps.row] = v; ps.msg=""; renderPortal(); }
+  function runSearch(){
+    const ps = portalState;
+    const m = S.cands.map((c,i) => i).filter(i => ps.vals.every((v,k) => v<0 || S.cands[i].t[k]===v));
+    S.rec = null;
+    if (ps.vals.every(v => v<0)) ps.msg = `<p class="dim">You need at least one trait. The search firm suggests "visionary."</p>`;
+    else if (m.length===0) ps.msg = `<p class="hot">No candidate in the pool matches. Have you considered the Board's preferred candidate?</p>`;
+    else if (m.length===1){ S.rec = m[0]; ps.msg = `<p class="hot">Only one match: ${esc(S.cands[m[0]].name)}.</p><p>That's who you're looking for. Now find them before they leave town.</p>`; }
+    else ps.msg = `<p>${m.length} possible candidates:</p><p class="mag">${m.map(i => esc(S.cands[i].name)).join(", ")}</p><p class="dim">Keep listening to narrow it down.</p>`;
+    renderPortal();
+    sel = 0; paintSel();
+  }
+
+  // ---------- endings ----------
+  function encounter(pre){
+    const T_ = S.cands[S.target];
+    sc.innerHTML = portrait("founder", S.seed);
+    let html = pre + `<p class="who">!!! Candidate spotted !!!</p><p>Behind a pillar, someone in sunglasses and ${esc(["a bow tie","cowboy boots","a fleece vest","a red blazer","reading glasses on a chain"][T_.t[2]])} is pretending to read a campus map.</p>`;
+    if (S.rec === S.target){
+      html += `<p>"Hello, ${esc(T_.name)}," you say. They lower their sunglasses. You found them.</p><p class="mag">${TRAITS.map((tr,k) => esc(tr.vals[T_.t[k]][0])).join(" · ")}</p><p>Exactly who campus asked for. You make your pitch, and they agree to stay in the search.</p><p>The committee votes 14-1 to recommend them to the Board. (The lone "no" was the student representative, who was in a midterm and voted by text by accident.)</p>`;
+      typeHTML(html); setMenu([{label:"Send your recommendation to the Board", fn: () => emailEnding("win")}]);
+    } else if (S.rec != null){
+      html += `<p>"Hello, ${esc(S.cands[S.rec].name)}!" you say.</p><p>They lower their sunglasses and stare at you. "Wrong name," they say coldly. "Come back when you've done your homework."</p><p class="dim">Recheck your notes and the search portal, then try again. The clock is still running.</p>`;
+      typeHTML(html); setMenu(locMenu());
+    } else {
+      html += `<p>You don't know who you're looking for, so you just stand there and wave. The stranger slowly backs away.</p><p class="dim">Use the search portal to figure out who this is, then investigate again. The clock is still running.</p>`;
+      typeHTML(html); setMenu(locMenu());
+    }
+  }
+  function endTimeout(){
+    S.t = DEADLINE;
+    setHead("Canfield Admin", S.t);
+    sc.innerHTML = SCENES.canfield();
+    typeHTML(`<p class="who">Time's up</p><p>It's Friday at 5 p.m., and the Board of Regents is in session. Your recommendation is not.</p>
+      <p>The board chair calls you to the front of the room. "We gave you one job," they say into a microphone that is somehow much too loud.</p>
+      <p>A regent reads your entire committee attendance record aloud. Another asks whether you "even like the university." The livestream has 1,400 viewers.</p>
+      <p>You are formally thanked for your service, which in this room is the worst thing that can happen to a person.</p>`);
+    setMenu([{label:"Leave the meeting", fn: () => finalScreen("time")}]);
+  }
+  function emailEnding(kind){
+    S.t = Math.max(S.t, DEADLINE - 1);
+    setHead("Canfield Admin", kind==="time" ? DEADLINE : DEADLINE - 1);
+    sc.innerHTML = SCENES.hq();
+    typeHTML(`<p class="who">New message · Board of Regents</p><p class="dim">Subject: Update</p>
+      <p>Dear Search Committee,</p>
+      <p>Thank you for your tireless service and for the many hours you spent listening to our campus community. Your input has been invaluable.</p>
+      <p>After careful consideration, the University has decided to go in a different direction.</p>
+      <p class="dim">This inbox is not monitored.</p>`);
+    setMenu([{label:"Continue", fn: () => finalScreen(kind)}]);
+  }
+  function finalScreen(kind){
+    const pri = pick(PRIORITY);
+    let promo = "";
+    if (kind==="win"){
+      const before = rank();
+      saves[player] = (saves[player]||0) + 1; store.set(saves);
+      const after = rank();
+      promo = before!==after
+        ? `<p>In recognition of your service, you've been promoted to <span class="hot">${esc(after)}</span>. You get to keep the lanyard.</p>`
+        : `<p>You've already reached the highest rank there is. It comes with a lanyard and no vote.</p>`;
+      $("rankLabel").textContent = `${after} ${player}`;
+    } else {
+      let demo = "";
+      if ((saves[player]||0) > 0){ saves[player]--; store.set(saves); demo = ` You've been demoted to <span class="hot">${esc(rank())}</span>.`; $("rankLabel").textContent = `${rank()} ${player}`; }
+      promo = `<p>The Board has removed you from the search committee, effective immediately. Your lanyard has been deactivated.${demo}</p><p class="dim">(Find the right candidate and send your recommendation before Friday at 5 p.m. to earn a promotion.)</p>`;
+    }
+    sc.innerHTML = SCENES.canfield();
+    typeHTML(`<p class="who">Breaking news</p><p>The Board of Regents has named a sole priority candidate for chancellor: <span class="hot">${esc(pri)}</span>.</p>
+      <p>Nobody on the search committee has met them. You learn the news the same way everyone else does: by reading The Daily Nebraskan.</p>${promo}
+      <p class="mag">THE END</p>`);
+    setMenu([{label:"Start a new search", fn: () => { newCase(); screenBriefing(); }}, {label:"Log out", fn: screenLogin}]);
+  }
+
+  screenLogin();
+})();
+</script>
+</body>
+</html>
