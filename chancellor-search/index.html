@@ -407,7 +407,7 @@ footer a{color:var(--red)}
   // A candidate's look comes from their five traits: background sets the outfit and wall
   // prop, plus hobby gear, signature look, ride and a speech bubble for their priority.
   // Drawn smoother and in more colors than the rest of the game so the reveal feels special.
-  function candidatePortrait(c, shades){
+  function candidatePortrait(c, shades, sayOverride){
     let h = 7; for (const ch of c.name) h = (h*31 + ch.charCodeAt(0)) >>> 0;
     const [bg, hobby, look, plan, ride] = c.t;
     const SKN = [["#f2c08a","#d79f68","#a8703f"],["#c68642","#a5692f","#74461b"],["#ffdcb8","#ecbb90","#c4936a"],["#8d5524","#704016","#4a2a0c"],["#e0ac69","#c38c4e","#966532"]];
@@ -506,7 +506,7 @@ footer a{color:var(--red)}
     ][hobby];
 
     // ---- priority, in a speech bubble ----
-    const say = ["AAU OR BUST!","ENROLLMENT!","BALANCE IT!","GO BIG RED!","MENTAL HEALTH!"][plan];
+    const say = sayOverride || ["AAU OR BUST!","ENROLLMENT!","BALANCE IT!","GO BIG RED!","MENTAL HEALTH!"][plan];
     s += `<rect x="3" y="4" width="62" height="18" rx="5" fill="#fff" stroke="#111" stroke-width="1"/>`+F("M44 21 L54 30 L50 21Z","#fff")+L("M44 21.5 L54 30 L50 21.5","#111",1)+T(34,16,7.5,say,"#111");
     return `<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="shape-rendering:geometricPrecision">${s}</svg>`;
   }
@@ -808,19 +808,22 @@ footer a{color:var(--red)}
   let S = null, DB = store.load(), me = null;
   const rank = () => RANKS[Math.min(me ? me.wins : 0, RANKS.length-1)];
   const roundNo = () => (me ? me.rounds.length : 0) + 1;
-  function updateRule(){ $("rankLabel").textContent = me ? `Round ${roundNo()} · ${rank()} ${me.name}` : "Case file · Chancellor search"; }
+  function updateRule(){ $("rankLabel").textContent = !me ? "Case file · Chancellor search" : me.chancellor ? `Chancellor ${me.name}` : `Round ${roundNo()}${S && S.final ? " · Final search" : ""} · ${rank()} ${me.name}`; }
 
   // The intern perk, once earned, stays for every later round.
   const hasIntern = () => !!me && me.rounds.some(r => r.twist==="intern");
-  const internOn = () => S.twist==="intern" || hasIntern();
+  const internOn = () => !S.final && (S.twist==="intern" || hasIntern());
   function newCase(){
     const round = roundNo();
-    const stops = Math.min(7, 5 + Math.floor((round-1)/2));
-    const poolSize = Math.min(NAMES.length, 12 + Math.min(round-1, 4));
+    // Once you're at the top rank, the next search is the final one, and the hardest:
+    // the longest trail, the biggest pool, no intern, one trait clue per stop, more wrong turns.
+    const final = me.wins >= RANKS.length-1;
+    const stops = final ? 7 : Math.min(7, 5 + Math.floor((round-1)/2));
+    const poolSize = final ? NAMES.length : Math.min(NAMES.length, 12 + Math.min(round-1, 4));
     const prev = me.rounds[me.rounds.length-1] || null;
     // twist: none on round 1, never twice in a row
     let twist = "none";
-    if (round > 1){
+    if (round > 1 && !final){
       const opts = ["none","shuttle","construction","catered","intern"].concat(stops <= 6 ? ["thursday"] : []).filter(t => (!prev || t !== prev.twist || t==="none") && !(t==="intern" && hasIntern()));
       twist = pick(opts);
     }
@@ -852,7 +855,7 @@ footer a{color:var(--red)}
     const lines = trail.slice(0, stops).map((loc, i) => {
       const next = trail[i+1], tk = traitOrder[i];
       const tv = TRAITS[tk].vals[cands[target].t[tk]][1];
-      const kinds = shuffle(["dest","trait","both"]);
+      const kinds = shuffle(final ? ["dest","dest","trait"] : ["dest","trait","both"]);
       const dv = shuffle([0,1]), tvv = shuffle([0,1]);
       let di=0, ti=0;
       return kinds.map(kd => {
@@ -863,8 +866,9 @@ footer a{color:var(--red)}
         return { text: parts.join(" "), trait: kd==="dest" ? -1 : tk };
       });
     });
-    const deadline = (twist==="thursday" ? 3 : 4)*24 + 17;
-    S = { round, t:9, deadline, twist, stops, last:stops, cands, target, trail, traitOrder, lines, progress:0, cur:start, inv:0, conns:[], notes:[], rec:null,
+    // the final search is long enough that the Board gives you until a special Saturday meeting
+    const deadline = (final ? 5 : twist==="thursday" ? 3 : 4)*24 + 17;
+    S = { final, round, t:9, deadline, twist, stops, last:stops, cands, target, trail, traitOrder, lines, progress:0, cur:start, inv:0, conns:[], notes:[], rec:null,
           portalVals:TRAITS.map(() => -1), seed:rnd(9999), firm: FIRMS[(round-1) % FIRMS.length], buzz: pick(BUZZ), buzzN: 20 + rnd(40),
           prev, fate: pick(FATES) };
     S.conns = makeConns();
@@ -876,7 +880,8 @@ footer a{color:var(--red)}
     if (S.cur === S.trail[S.progress]) key = atFinal() ? null : S.trail[S.progress+1];
     else key = S.trail[S.progress];
     const pool = shuffle(LOC_IDS.filter(id => id!==S.cur && id!==key));
-    const list = key ? [key, ...pool.slice(0,3)] : pool.slice(0,4);
+    const extra = S.final ? 4 : 3; // the final search offers more places to go wrong
+    const list = key ? [key, ...pool.slice(0,extra)] : pool.slice(0,extra+1);
     return shuffle(list);
   }
   function walkHours(a, b){
@@ -903,7 +908,9 @@ footer a{color:var(--red)}
     setHead("Search Committee", null);
     sc.innerHTML = SCENES.hq();
     const known = DB.last && DB.players[DB.last];
-    const hello = known
+    const hello = known && known.chancellor
+      ? `<p>Welcome back, <span class="hot">Chancellor ${esc(known.name)}</span>.</p><p class="dim">Press Enter to go to your office, or type a different name.</p>`
+      : known
       ? `<p>Welcome back, <span class="hot">${esc(known.name)}</span>. You've worked ${known.rounds.length} search${known.rounds.length===1?"":"es"} so far.</p><p class="dim">Press Enter to pick up where you left off, or type a different name.</p>`
       : `<p>Committee member at keyboard, please identify yourself:</p>`;
     tx.innerHTML = `<div class="login"><p>SEARCH-NET TERMINAL</p><p class="dim">University of Nebraska–Lincoln<br>Office of the Board of Regents</p>${hello}<input id="who" maxlength="24" autocomplete="off" spellcheck="false" aria-label="Your name" value="${known ? esc(known.name) : ""}"></div>`;
@@ -920,6 +927,7 @@ footer a{color:var(--red)}
     if (!DB.players[k]) DB.players[k] = { name, wins:0, rounds:[] };
     me = DB.players[k]; DB.last = k; store.save(DB);
     game.focus({preventScroll:true});
+    if (me.chancellor) return screenOffice();
     newCase(); screenBriefing();
   }
   function screenBriefing(){
@@ -929,7 +937,7 @@ footer a{color:var(--red)}
     updateRule();
     let html = `<p class="dim">Round ${S.round} · Your rank: <span class="hot">${esc(rank())}</span></p>`;
     if (S.round===1){
-      html += `<p>Welcome, ${esc(me.name)}.</p>
+      html += `<p>Welcome, ${esc(me.name)}.</p>${me.terms ? `<p class="dim">You were chancellor once. Nobody seems to remember.</p>` : ""}
       <p class="who">*** Bulletin from the Board of Regents ***</p>
       <p>UNL's chancellor has announced plans to step down and "spend more time with family."</p>
       <p>${esc(S.firm)} Executive Search has delivered a pool of ${S.cands.length} candidates and a 40-page leadership profile that uses the word "visionary" 31 times.</p>
@@ -948,8 +956,9 @@ footer a{color:var(--red)}
       <p>${esc(p.firm || FIRMS[0])} has been fired. The new firm, ${esc(S.firm)}, has delivered a pool of ${S.cands.length} candidates and a leadership profile that uses the word "${esc(S.buzz)}" ${S.buzzN} times.</p>
       ${S.cur!=="canfield" ? `<p>The committee lost its conference room in Canfield to a "space utilization study," so this round starts at ${esc(startName)}.</p>` : ""}
       <p>Same drill: listen to campus, narrow the pool in the search portal, then find the candidate before they leave town. This trail is ${S.stops} stops long.</p>`;
-      if (TWISTS[S.twist].text) html += `<p class="hot">This round: ${esc(TWISTS[S.twist].text)}</p>`;
-      if (hasIntern()) html += `<p class="dim">Your student intern is still here, labeling which trait each clue in your notebook is about.</p>`;
+      if (S.final) html += `<p class="who">*** Final search ***</p><p class="hot">The Board says this is the last search it will ever need. It's also the hardest: the longest trail, the biggest pool, only one person at each stop will say what they want in a chancellor, and there are more places to wander off to. The Board scheduled a special Saturday meeting to give you a little extra time.</p>${hasIntern() ? `<p class="dim">Your student intern quit to go work for the search firm. You're on your own.</p>` : ""}<p class="dim">Calling the candidate by the wrong name this time costs you half a day while they cool off.</p>`;
+      else if (TWISTS[S.twist].text) html += `<p class="hot">This round: ${esc(TWISTS[S.twist].text)}</p>`;
+      if (hasIntern() && !S.final) html += `<p class="dim">Your student intern is still here, labeling which trait each clue in your notebook is about.</p>`;
     }
     html += `<p>The committee's recommendation is due to the Board by <span class="hot">${dueText()}</span> Good luck.</p>`;
     typeHTML(html);
@@ -1120,7 +1129,14 @@ footer a{color:var(--red)}
       html += `<p>"Hello, ${esc(T_.name)}," you say. They push their sunglasses up onto their forehead. You found them.</p><p class="mag">${TRAITS.map((tr,k) => esc(tr.vals[T_.t[k]][0])).join(" · ")}</p><p>Exactly who campus asked for. You make your pitch, and they agree to stay in the search.</p><p>${esc(VOTES[(S.round-1) % VOTES.length])}</p>`;
       typeHTML(html); setMenu([{label:"Send your recommendation to the Board", fn: () => emailEnding("win")}]);
     } else if (S.rec != null){
-      html += `<p>"Hello, ${esc(S.cands[S.rec].name)}!" you say.</p><p>They lower their sunglasses and stare at you. "Wrong name," they say coldly. "Come back when you've done your homework."</p><p class="dim">Recheck your notes and the search portal, then try again. The clock is still running.</p>`;
+      html += `<p>"Hello, ${esc(S.cands[S.rec].name)}!" you say.</p><p>They lower their sunglasses and stare at you. "Wrong name," they say coldly. "Come back when you've done your homework."</p>`;
+      if (S.final){
+        const r2 = spend(4);
+        if (r2.out) return endTimeout();
+        setHead(LOC[S.cur].name, S.t);
+        html += `<p class="hot">They storm off to cool down. It takes four hours to coax them back to the same pillar.</p>`;
+      }
+      html += `<p class="dim">Recheck your notes and the search portal, then try again. The clock is still running.</p>`;
       typeHTML(html); setMenu(locMenu());
     } else {
       html += `<p>You don't know who you're looking for, so you just stand there and wave. The stranger slowly backs away.</p><p class="dim">Use the search portal to figure out who this is, then investigate again. The clock is still running.</p>`;
@@ -1138,7 +1154,69 @@ footer a{color:var(--red)}
       <p>You are formally thanked for your service, which in this room is the worst thing that can happen to a person.</p>`);
     setMenu([{label:"Leave the meeting", fn: () => finalScreen("time")}]);
   }
+  // ---------- finale: the Board finally goes in a different direction: you ----------
+  function finaleEmail(){
+    setHead("Canfield Admin", S.deadline - 1);
+    sc.innerHTML = SCENES.hq();
+    typeHTML(`<p class="who">New message · Board of Regents</p><p class="dim">Subject: Update (final)</p>
+      <p>Dear ${esc(me.name)},</p>
+      <p>Thank you for your tireless service across ${S.round} search${S.round===1?"":"es"}. Your input has been invaluable.</p>
+      <p>After careful consideration, the University has decided to go in a different direction.</p>
+      <p class="hot">That direction is you.</p>
+      <p class="dim">This inbox is monitored. By you. Starting Monday.</p>`);
+    setMenu([{label:"Wait, what?", fn: finaleNews}]);
+  }
+  function finaleNews(){
+    me.wins++;
+    me.rounds.push({ outcome:"chancellor", pri:-1, target:S.cands[S.target].name, firm:S.firm, twist:S.twist });
+    me.chancellor = { round:S.round };
+    me.terms = (me.terms||0) + 1;
+    store.save(DB);
+    updateRule();
+    sc.innerHTML = candidatePortrait({ name: me.name, t:[0,0,0,0,0].map((_,k) => (me.name.length*7 + k*3) % 5) }, false, "WAIT, WHAT?");
+    typeHTML(`<p class="who">Breaking news</p>
+      <p>The Board of Regents has named <span class="hot">${esc(me.name)}</span> the sole priority candidate for chancellor.</p>
+      <p>${esc(me.name)} did not apply. Nobody on the search committee was consulted, including ${esc(me.name)}.</p>
+      <p>The candidate you found, ${esc(S.cands[S.target].name)}, sends a fruit basket and a note that just says "Good luck."</p>
+      <p>You learn the news the same way everyone else does: by reading The Daily Nebraskan.</p>`);
+    setMenu([{label:"Go to your first day", fn: finaleEpilogue}]);
+  }
+  function finaleEpilogue(){
+    hd.innerHTML = `<b>Canfield Admin</b>Monday, 9 a.m.`;
+    sc.innerHTML = SCENES.canfield();
+    typeHTML(`<p class="who">Your first day</p>
+      <p>At the end of the hallway of chancellor portraits, the empty nail finally has something on it. It's you, in the sunglasses.</p>
+      <p>Your first official act is to appoint a search committee for a new parking director. You do not attend a single listening session.</p>
+      <p>Somewhere on City Campus, a Faculty Senate Alternate is just getting started.</p>
+      <p class="mag">THE END</p><p class="dim">Thanks for playing.</p>
+      <p class="hot">Play again? You'll start a new career as a Faculty Senate Alternate.</p>`);
+    setMenu([{label:"Play again", fn: startOver}, {label:"Go to your office", fn: screenOffice}, {label:"Log out", fn: screenLogin}]);
+  }
+  // Where a finished player lands from now on. No more searches.
+  function screenOffice(){
+    portalState = null;
+    updateRule();
+    hd.innerHTML = `<b>Chancellor's Office</b>Canfield Admin`;
+    sc.innerHTML = SCENES.canfield();
+    typeHTML(`<p class="who">Office of the Chancellor</p>
+      <p>Welcome back, Chancellor ${esc(me.name)}. There are no more searches. The Board is very happy with its choice.</p>
+      <p class="dim">(For now.)</p>
+      <p class="hot">Play again? You can start a new career at the bottom, as a Faculty Senate Alternate.</p>`);
+    setMenu([
+      {label:"Log out", fn: screenLogin},
+      {label:"Play again", fn: confirmNewCareer},
+    ]);
+  }
+  function startOver(){ me.wins = 0; me.rounds = []; delete me.chancellor; store.save(DB); newCase(); screenBriefing(); }
+  function confirmNewCareer(){
+    typeHTML(`<p class="who">Start over?</p><p>This resets your rank and search history, and you'll go back to Faculty Senate Alternate. You can't undo it.</p>`);
+    setMenu([
+      {label:"Never mind", fn: screenOffice},
+      {label:"Yes, start over", fn: startOver},
+    ]);
+  }
   function emailEnding(kind){
+    if (kind==="win" && S.final) return finaleEmail();
     setHead("Canfield Admin", S.deadline - 1);
     sc.innerHTML = SCENES.hq();
     typeHTML(`<p class="who">New message · Board of Regents</p><p class="dim">Subject: ${S.round > 1 ? "Update (again)" : "Update"}</p>
@@ -1160,6 +1238,7 @@ footer a{color:var(--red)}
       promo = before!==after
         ? `<p>In recognition of your service, you've been promoted to <span class="hot">${esc(after)}</span>. You get to keep the lanyard.</p>`
         : `<p>You've already reached the highest rank there is. It comes with a lanyard and no vote.</p>`;
+      if (after === RANKS[RANKS.length-1]) promo += `<p class="dim">The Board has started saying your name in meetings. That can't be good.</p>`;
     } else {
       let demo = "";
       if (me.wins > 0){ me.wins--; demo = ` You've been demoted to <span class="hot">${esc(rank())}</span>.`; }
