@@ -118,17 +118,19 @@ footer a{color:var(--red)}
 <!-- shared dither patterns for every scene -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <pattern id="p-sky" width="2" height="1" patternUnits="userSpaceOnUse"><rect width="1" height="1" fill="#aa00aa"/><rect x="1" width="1" height="1" fill="#00aaaa"/></pattern>
-    <pattern id="p-night" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#000"/><rect width="1" height="1" fill="#0000aa"/></pattern>
-    <pattern id="p-gray" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#aaa"/><rect width="1" height="1" fill="#555"/><rect x="1" y="1" width="1" height="1" fill="#555"/></pattern>
-    <pattern id="p-lgray" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#fff"/><rect width="1" height="1" fill="#aaa"/></pattern>
-    <pattern id="p-brick" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#aa0000"/><rect width="4" height="1" fill="#550000"/><rect x="1" y="2" width="1" height="2" fill="#550000"/></pattern>
-    <pattern id="p-red" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#aa0000"/><rect width="1" height="1" fill="#ff5555"/></pattern>
-    <pattern id="p-grass" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#00aa00"/><rect width="1" height="1" fill="#005500"/><rect x="1" y="1" width="1" height="1" fill="#005500"/></pattern>
-    <pattern id="p-glass" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#00aaaa"/><rect width="1" height="1" fill="#55ffff"/></pattern>
-    <pattern id="p-water" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#0000aa"/><rect width="1" height="1" fill="#55ffff"/><rect x="1" y="1" width="1" height="1" fill="#00aaaa"/></pattern>
-    <pattern id="p-cork" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#aa5500"/><rect width="1" height="1" fill="#550000"/></pattern>
-    <pattern id="p-floor" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="2" height="2" fill="#555"/><rect width="1" height="1" fill="#000"/><rect x="1" y="1" width="1" height="1" fill="#000"/></pattern>
+    <!-- Clean, mostly flat fills. The sky is a soft gradient. -->
+    <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b9bd5"/><stop offset="1" stop-color="#bcdcf2"/></linearGradient>
+    <pattern id="p-sky" width="160" height="120" patternUnits="userSpaceOnUse"><rect width="160" height="120" fill="url(#g-sky)"/></pattern>
+    <pattern id="p-night" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#0b1030"/></pattern>
+    <pattern id="p-gray" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#767b82"/></pattern>
+    <pattern id="p-lgray" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#dedad2"/></pattern>
+    <pattern id="p-brick" width="8" height="4" patternUnits="userSpaceOnUse"><rect width="8" height="4" fill="#a8442f"/><rect width="8" height=".4" fill="#94392a"/><rect width=".4" height="2" fill="#94392a"/><rect x="4" y="2" width=".4" height="2" fill="#94392a"/><rect y="2" width="8" height=".4" fill="#94392a"/></pattern>
+    <pattern id="p-red" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#b8302a"/></pattern>
+    <pattern id="p-grass" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#4c9a3f"/></pattern>
+    <pattern id="p-glass" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#4f6f86"/></pattern>
+    <pattern id="p-water" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#4aa3d8"/></pattern>
+    <pattern id="p-cork" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#b07a45"/></pattern>
+    <pattern id="p-floor" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#3a3a3a"/></pattern>
     <pattern id="p-cone" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#aa5500"/><rect width="1" height="4" fill="#ffaa55"/><rect width="4" height="1" fill="#ffaa55"/></pattern>
   </defs>
 </svg>
@@ -185,150 +187,541 @@ footer a{color:var(--red)}
       R(14,82,132,10,"#aaa")+R(20,84,24,2,"#55ffff")+R(20,88,24,2,"#55ffff")+R(50,84,12,6,"#000")+R(66,84,12,6,"#aa00aa")+
       R(84,83,22,8,"#000")+R(88,85,1,1,"#55ffff")+R(95,87,1,1,"#ff55ff")+R(100,85,1,1,"#fff")+R(116,84,24,2,"#55ffff")+R(116,88,24,2,"#55ffff")+
       R(8,94,144,22,"#aaa")+grid(14,97,12,3,9,4,11,6,"#555")),
-    canfield: () => svg(sky()+
-      R(18,24,124,6,"#fff")+R(20,30,120,70,"url(#p-gray)")+
-      grid(26,36,10,5,7,6,11,11,"#000","#55ffff")+
-      R(68,82,24,18,"#000")+R(70,84,9,16,"url(#p-glass)")+R(81,84,9,16,"url(#p-glass)")+
-      R(146,14,1,86,"#fff")+R(147,14,10,6,"#aa0000")+
-      T(80,30,6,"CANFIELD ADMINISTRATION","#000")+walk(100)+lawn(106)),
-    love: () => svg(sky()+
-      R(16,40,128,60,"#aaa")+P("M12 40 L80 22 L148 40Z","#fff")+R(12,40,136,5,"#fff")+
-      Array.from({length:8},(_,i)=>R(26+i*15,47,6,45,"#fff")+R(31+i*15,47,1,45,"#555")).join("")+
-      R(73,70,14,22,"#000")+
-      T(80,38,6,"LOVE LIBRARY","#000")+
-      R(22,92,116,4,"#fff")+R(18,96,124,4,"#aaa")+lawn(100)),
-    union: () => { // brick wings, limestone center, three arched doors (matches the real facade)
-      const ST="#d8c8a0", LT="#ece2c4";
-      const win = (x,y,h=8) => R(x,y,7,h,"#fff")+R(x+1,y+1,5,h-2,"#0000aa")+R(x+3,y+1,1,h-2,"#fff");
-      let s = sky()+R(14,16,132,8,"#555");
-      for (let i=0;i<5;i++) s += R(55+i*11,10,7,7,"#aaa")+R(56+i*11,12,5,4,"#000");
-      s += R(4,26,152,64,"url(#p-brick)")+R(10,23,140,4,LT)+R(4,27,152,2,LT);
-      s += R(48,29,64,33,ST)+R(44,29,4,61,LT)+R(112,29,4,61,LT);
-      for (let i=0;i<5;i++) s += R(50+i*12.5,29,3,33,LT);
-      for (let i=0;i<4;i++){ s += win(55+i*12.5,32,9)+R(55+i*12.5,42,7,5,"#fff")+win(55+i*12.5,48,10); }
-      s += R(4,46,40,1,LT)+R(116,46,40,1,LT);
-      [[10,32],[24,32],[10,50],[24,50],[10,70],[24,70],[122,32],[136,32],[122,50],[136,50],[128,70],[142,70]].forEach(([x,y]) => s += win(x,y,9));
-      s += R(36,62,88,28,ST)+R(4,61,152,1,LT)+T(80,67,5,"NEBRASKA  UNION","#555");
-      [62,77,92].forEach(x => s += C(x+3.5,75,4,"#555")+R(x-0.5,75,8,14,"#555")+C(x+3.5,75,3,"#aaa")+R(x+0.5,76,6,13,"#000"));
-      s += win(40,72,9)+win(113,72,9);
-      s += R(46,89,68,3,"#aaa")+R(40,92,80,3,LT)+R(34,95,92,5,"#aaa")+R(0,100,160,20,"url(#p-lgray)");
+    canfield: () => { // symmetric three-story brick block with a stone frieze and arched entry
+      const BR="url(#p-brick)", ST="#d8c8a0", LT="#ece2c4", GL="url(#p-glass)", G=96;
+      const win = (x,y) => R(x-6,y-1,12,13,LT)+R(x-5,y,10,11,GL);
+      const tree = x => R(x-1,G-14,2,14,"#6b4a2b")+C(x,G-20,11,"#3f7f35");
+      let s = sky();
+      s += R(2,46,40,G-46,"#d8d0b8")+R(2,45,40,2,"#f2efe6");
+      [52,64,76].forEach(y => s += R(6,y,32,6,"#5f6b78"));
+      s += R(44,16,72,5,BR)+R(36,21,88,4,"#5a5a5a");
+      s += R(40,25,80,7,ST)+T(80,30.5,5,"TEACHERS COLLEGE","#8a7a58");
+      s += R(40,32,80,58,BR)+R(40,88,80,G-88,ST);
+      [56,104].forEach(x => [36,52,68].forEach(y => s += win(x,y)));
+      s += R(72,49,16,18,LT)+win(80,52)+win(80,36);
+      s += R(70,68,20,G-68,LT)+P("M70 70 Q80 61 90 70Z",LT)+R(75,76,10,G-76,"#5a3a22")+R(79.5,76,1,G-76,"#3a2414");
+      s += R(42,90,26,G-90,"#3f7f35")+R(92,90,26,G-90,"#3f7f35");
+      s += tree(20)+tree(140);
+      s += R(0,G,160,120-G,"url(#p-grass)")+R(68,G,24,2,"#cfcfcf")+R(66,G+2,28,2,"#bdbdbd")+P(`M68 ${G+4} L92 ${G+4} L104 120 L56 120Z`,"#d6d0c4");
       return svg(s);
     },
-    stadium: () => svg(sky()+
-      R(0,28,160,64,"url(#p-red)")+Array.from({length:10},(_,i)=>R(0,32+i*6,160,1,"#550000")).join("")+
-      R(30,12,100,16,"#aaa")+grid(34,16,11,1,6,6,9,0,"url(#p-glass)")+
-      T(80,9,7,"MEMORIAL STADIUM","#fff")+
-      R(0,92,160,28,"url(#p-grass)")+Array.from({length:8},(_,i)=>R(8+i*20,92,1,28,"#fff")).join("")+
-      T(80,115,22,"N","#fff")),
-    morrill: () => svg(
-      R(0,0,160,120,"#000")+P("M50 0 L110 0 L150 100 L10 100Z","#222")+
-      P("M40 54 Q78 28 122 48","","#fff",3)+
-      Array.from({length:8},(_,i)=>P(`M${54+i*8} ${46-Math.sin(i/2.3)*5} q4 14 0 26`,"","#fff",2)).join("")+
-      R(48,60,5,36,"#fff")+R(58,62,5,34,"#fff")+R(104,58,5,38,"#fff")+R(114,56,5,40,"#fff")+
-      R(118,38,18,16,"#fff")+R(127,43,3,3,"#000")+
-      P("M132 54 Q156 78 132 88","","#fff",3)+P("M126 55 Q146 84 120 86","","#aaa",2)+
-      R(30,96,110,6,"#aaa")+R(60,104,40,10,"#aa5500")+T(80,112,8,"ARCHIE","#fff")+
-      R(0,114,160,6,"url(#p-floor)")),
-    sheldon: () => svg(sky()+
-      R(16,26,128,6,"#fff")+R(18,32,124,68,"url(#p-lgray)")+
-      Array.from({length:6},(_,i)=>{const x=28+i*19; return C(x+5,46,5,"#000")+R(x,46,10,48,"#000")+R(x+1,48,8,46,"url(#p-glass)");}).join("")+
-      T(80,31,6,"SHELDON MUSEUM OF ART","#000")+
-      lawn(100)+R(4,78,5,22,"#aa5500")+R(2,74,10,5,"#aa5500")),
-    dairy: () => svg(sky()+
-      P("M10 56 L52 36 L94 56Z","#aa0000")+R(14,56,76,44,"#fff")+R(20,62,64,9,"#000")+T(52,69,8,"DAIRY STORE","#fff")+
-      grid(22,76,3,1,14,12,22,0,"url(#p-glass)")+R(46,80,12,20,"#555")+
-      P("M120 104 L106 62 L134 62Z","url(#p-cone)")+C(120,56,13,"#ff55ff")+C(120,42,11,"#fff")+C(120,31,3,"#aa0000")+
-      lawn(100)),
-    andersen: () => svg(sky()+
-      R(24,30,112,70,"url(#p-brick)")+R(22,26,116,5,"#aaa")+
-      R(46,34,68,9,"#000")+T(80,41,8,"ANDERSEN HALL")+
-      grid(32,48,7,3,8,8,14,13,"url(#p-glass)")+R(72,84,16,16,"#000")+
-      R(6,80,16,20,"#aa0000")+R(8,83,12,8,"#fff")+T(14,90,8,"DN","#000")+
-      walk(100)+lawn(106)),
-    lied: () => svg(sky()+
-      R(8,42,144,58,"url(#p-gray)")+P("M30 100 L30 64 Q80 40 130 64 L130 100Z","url(#p-glass)")+
-      R(24,22,112,20,"#000")+
-      Array.from({length:14},(_,i)=>C(28+i*8,24,1,"#ffff55")+C(28+i*8,40,1,"#ffff55")).join("")+
-      T(80,31,7,"NOW PLAYING:","#ff55ff")+T(80,38,6,"'SHARED GOVERNANCE: A TRAGEDY'","#55ffff")+
-      R(0,100,160,20,"url(#p-lgray)")),
-    rec: () => svg(sky()+
-      R(10,34,140,66,"#aaa")+R(8,30,144,5,"#fff")+T(48,46,9,"CAMPUS REC","#000")+
-      grid(16,54,4,2,12,12,16,18,"url(#p-glass)")+
-      R(92,38,50,62,"url(#p-gray)")+
-      [[98,46,"#ff5555"],[110,52,"#55ffff"],[124,44,"#ffff55"],[134,58,"#ff55ff"],[102,66,"#55ff55"],[118,72,"#ff5555"],[130,80,"#55ffff"],[106,86,"#ffff55"]].map(([x,y,f])=>C(x,y,2,f)).join("")+
-      R(114,58,6,6,"#ffaa55")+R(113,64,8,10,"#aa0000")+R(110,60,3,2,"#ffaa55")+R(121,56,3,2,"#ffaa55")+
-      R(0,100,160,20,"url(#p-lgray)")),
-    abel: () => svg(sky()+
-      R(54,6,52,94,"#aaa")+grid(59,12,5,12,6,4,9,7,"#000","#ffff55")+
-      R(14,58,40,42,"url(#p-gray)")+R(106,58,40,42,"url(#p-gray)")+
-      grid(18,64,4,3,5,5,9,11,"#000")+grid(110,64,4,3,5,5,9,11,"#000")+
-      R(70,90,20,10,"#000")+T(80,98,7,"ABEL HALL","#fff")+walk(100)+lawn(106)),
-    innovation: () => svg(sky()+
-      P("M8 100 L8 56 Q80 8 152 56 L152 100Z","url(#p-brick)")+
-      P("M44 100 L44 62 Q80 34 116 62 L116 100Z","url(#p-glass)")+
-      Array.from({length:5},(_,i)=>R(52+i*14,48,1,52,"#000")).join("")+
-      R(30,90,100,10,"#000")+T(80,97,6,"NEBRASKA INNOVATION CAMPUS","#fff")+
-      R(0,100,160,20,"url(#p-lgray)")),
-    fountain: () => svg(sky()+
-      R(0,36,160,46,"url(#p-brick)")+grid(8,44,9,2,10,10,17,18,"url(#p-glass)")+
-      R(0,82,160,38,"url(#p-lgray)")+
-      P("M80 84 Q62 52 44 86","","#55ffff",2)+P("M80 84 Q98 52 116 86","","#55ffff",2)+P("M80 84 L80 50","","#fff",2)+
-      P("M80 84 Q70 62 60 86","","#fff",1)+P("M80 84 Q90 62 100 86","","#fff",1)+
-      R(36,86,88,10,"#aaa")+R(40,86,80,4,"url(#p-water)")+
-      R(14,96,4,14,"#555")+C(16,93,3,"#ffaa55")+T(140,112,6,"NO NEW SEARCH FIRM","#ff55ff")),
-    kauffman: () => svg(sky()+
-      R(14,36,132,64,"url(#p-brick)")+R(12,32,136,5,"#aaa")+
-      R(70,44,66,40,"url(#p-glass)")+grid(72,48,6,3,9,1,11,13,"#000")+
-      grid(20,44,4,4,7,6,11,12,"#000","#55ffff")+
-      R(30,20,100,10,"#000")+T(80,28,7,"KAUFFMAN CENTER · RAIKES","#55ffff")+walk(100)+lawn(106)),
-    westbrook: () => svg(sky()+
-      R(16,38,128,62,"url(#p-brick)")+R(14,34,132,5,"#aaa")+
-      R(46,42,68,9,"#000")+T(80,49,7,"WESTBROOK MUSIC")+
-      grid(24,56,8,2,8,10,15,16,"url(#p-glass)")+R(70,84,20,16,"#000")+
-      [[24,8],[48,14],[108,10],[130,16]].map(([x,y])=>C(x,y+12,3,"#ffff55")+R(x+2,y,1,12,"#ffff55")+R(x+2,y,6,2,"#ffff55")).join("")+
-      walk(100)+lawn(106)),
-    hawks: () => svg(sky()+
-      R(20,16,120,84,"url(#p-glass)")+Array.from({length:7},(_,i)=>R(20+i*20,16,1,84,"#555")).join("")+
-      Array.from({length:9},(_,i)=>R(20,16+i*9,120,1,"#555")).join("")+R(18,12,124,5,"#aaa")+
-      R(0,58,160,9,"#000")+T(4,65,7,"UNL +2.1   HUSKERS +4.0   PARKING -9.9   MORALE -3.2","#55ff55","start")+
-      R(70,84,20,16,"#000")+T(80,9,7,"HOWARD L. HAWKS HALL","#fff")+walk(100)+lawn(106)),
-    devaney: () => svg(sky()+
-      P("M6 100 L6 60 Q80 22 154 60 L154 100Z","url(#p-gray)")+R(6,60,148,4,"#aa0000")+
-      R(36,68,88,14,"#000")+T(80,78,9,"DEVANEY CENTER")+
-      C(130,26,9,"#fff")+P("M121 26 Q130 20 139 26","","#0000aa",1.5)+P("M130 17 Q124 26 130 35","","#ffff55",1.5)+
-      grid(14,88,6,1,10,12,24,0,"url(#p-glass)")+R(0,100,160,20,"url(#p-lgray)")),
-    mueller: () => svg(sky()+
-      R(68,24,24,76,"#aaa")+R(66,20,28,6,"#fff")+P("M66 20 L80 4 L94 20Z","#aa0000")+
-      R(72,28,16,20,"#000")+C(80,40,5,"#ffff55")+R(79,30,2,6,"#aa5500")+
-      grid(74,56,2,4,4,6,8,10,"#555")+
-      lawn(100)+R(20,102,30,5,"#aa0000")+R(110,104,24,5,"#0000aa")),
-    selleck: () => svg(sky()+
-      R(4,40,60,60,"url(#p-brick)")+R(96,40,60,60,"url(#p-brick)")+R(54,52,52,48,"#aaa")+
-      grid(10,46,4,4,8,6,13,12,"#000")+grid(102,46,4,4,8,6,13,12,"#000")+
-      R(58,56,44,9,"#000")+T(80,63,7,"SELLECK DINING","#ffff55")+
-      R(66,72,28,4,"#555")+C(74,70,3,"#aa5500")+C(84,70,3,"#ffff55")+
-      R(70,84,20,16,"#000")+walk(100)+lawn(106)),
-    capitol: () => svg(sky()+
-      R(10,74,140,26,"#aaa")+R(8,70,144,5,"#fff")+
-      R(64,26,32,48,"#aaa")+grid(68,32,3,4,6,8,9,10,"#555")+
-      P("M64 26 Q80 4 96 26Z","#ffff55")+R(79,0,2,8,"#aa5500")+
-      grid(16,80,10,2,6,6,13,10,"#555")+
-      R(0,100,160,20,"url(#p-lgray)")+T(80,112,7,"NEBRASKA STATE CAPITOL","#000")),
-    haymarket: () => svg(sky()+
-      R(0,40,54,60,"url(#p-brick)")+R(54,30,52,70,"#aa5500")+R(106,46,54,54,"url(#p-brick)")+
-      [[8,52],[30,52],[62,42],[86,42],[114,58],[136,58]].map(([x,y])=>C(x+6,y,6,"#000")+R(x,y,12,14,"#000")+R(x+1,y,10,14,"url(#p-glass)")).join("")+
-      R(60,76,40,10,"#000")+T(80,84,8,"BREWERY","#ff55ff")+
-      R(0,100,160,20,"url(#p-floor)")),
-    oldfather: () => svg(sky()+
-      R(50,4,60,96,"#aaa")+grid(54,8,6,9,6,4,9,8,"#000")+
-      R(66,82,28,18,"#555")+R(68,84,11,16,"#aaa")+R(81,84,11,16,"#aaa")+
-      R(62,74,36,7,"#fff")+T(80,80,6,"OUT OF ORDER","#aa0000")+
-      walk(100)+lawn(106)),
-    eastunion: () => svg(sky()+
-      R(16,50,112,50,"#aaa")+R(14,46,116,5,"#fff")+R(28,56,88,9,"#000")+T(72,63,7,"NEBRASKA EAST UNION")+
-      grid(22,70,6,1,10,14,17,0,"url(#p-glass)")+R(64,86,16,14,"#000")+
-      R(134,36,14,64,"#aa0000")+P("M134 36 Q141 26 148 36Z","#aaa")+
-      lawn(100)),
+    love: () => { // long stone front with window strips, brick end wings, hipped roofs, red cupola
+      const BR="url(#p-brick)", ST="#d8c8a0", LT="#ece2c4", GL="url(#p-glass)";
+      const win = (x,y) => R(x-1,y-1,8,10,"#fff")+R(x,y,6,8,GL)+R(x,y+4,6,1,"#fff");
+      let s = sky();
+      // cupola
+      s += R(79.5,0,1,8,"#555")+P("M75 14 Q80 6 85 14Z","#aa0000")+R(76,14,8,12,"#fff")+R(78,16,4,7,"#555")+R(75,25,10,2,LT);
+      // hipped roofs on the end pavilions
+      s += P("M8 30 L18 18 L38 18 L48 30Z","url(#p-gray)")+P("M112 30 L122 18 L142 18 L152 30Z","url(#p-gray)");
+      // cornice and body
+      s += R(4,28,152,4,LT)+R(4,31,152,1,"#aaa");
+      s += R(6,32,30,52,BR)+R(124,32,30,52,BR)+R(36,32,14,52,ST)+R(110,32,14,52,ST)+R(50,32,60,52,ST);
+      s += R(35,32,1,52,LT)+R(124,32,1,52,LT)+R(49,32,1,52,"#bba")+R(110,32,1,52,"#bba");
+      [[10,38],[19,38],[28,38],[10,52],[19,52],[28,52],[10,66],[19,66],[28,66],[126,38],[135,38],[144,38],[126,52],[135,52],[144,52],[126,66],[135,66],[144,66],[40,38],[114,38],[40,52],[114,52]].forEach(([x,y]) => s += win(x,y));
+      // the center's tall window strips with red spandrels
+      for (let i=0;i<13;i++){ const x = 53+i*4.4; s += R(x,36,2.4,40,"#aa0000"); for (let r=0;r<5;r++) s += R(x,37+r*8,2.4,5,GL); }
+      s += T(80,35,4.5,"LOVE LIBRARY","#9a8a68");
+      // doors in the stone pavilions
+      s += R(38,70,10,14,LT)+R(40,73,6,11,"#7a4a1c")+R(112,70,10,14,LT)+R(114,73,6,11,"#7a4a1c");
+      s += R(4,82,152,4,ST)+R(4,82,152,1,LT);
+      // lawn, hedges and flowering trees
+      s += R(0,86,160,34,"url(#p-grass)")+R(0,84,30,5,"#3f7f35")+R(130,84,30,5,"#3f7f35")+R(36,85,88,2,"#3f7f35");
+      [58,68,78,88,98].forEach(x => s += R(x-.5,77,1,9,"#6b4a2b")+C(x,74,4,"#f4f1ea"));
+      s += R(17,80,2,8,"#6b4a2b")+C(18,76,9,"#b8459a")+C(21,73,5,"#d468b6");
+      s += R(139,80,2,8,"#6b4a2b")+C(140,75,10,"#b8459a")+C(143,72,5,"#d468b6");
+      return svg(s);
+    },
+    union: () => { // brick wings, limestone center, three arched doors, wide front steps
+      const ST="#d8c8a0", LT="#ece2c4", G=92;
+      const win = (x,y,h=9) => R(x,y,8,h,"#fff")+R(x+1,y+1,6,h-2,"#4f6f86");
+      let s = sky()+R(16,14,128,10,"#6b6f75");
+      for (let i=0;i<5;i++) s += R(57+i*10,9,6,6,"#8a8f96")+R(58+i*10,11,4,4,"#3a3f45");
+      s += R(8,24,144,G-24,"url(#p-brick)")+R(6,22,148,3,LT);
+      s += R(46,25,68,G-25,ST)+R(46,25,3,G-25,LT)+R(111,25,3,G-25,LT);
+      for (let i=0;i<4;i++) s += win(54+i*14,30,12)+win(54+i*14,46,10);
+      [[16,30],[30,30],[16,48],[30,48],[16,68],[30,68],[122,30],[136,30],[122,48],[136,48],[122,68],[136,68]].forEach(([x,y]) => s += win(x,y,11));
+      s += R(46,62,68,1,LT)+T(80,68,5,"NEBRASKA UNION","#6a5a3a");
+      [62,76,90].forEach(x => s += P(`M${x} ${G} L${x} 77 Q${x+4} 71 ${x+8} 77 L${x+8} ${G}Z`,"#3a2a1a")+P(`M${x+1} 79 Q${x+4} 74 ${x+7} 79Z`,"#4f6f86"));
+      s += R(0,G,160,120-G,"#c9c2b5")+R(0,G,160,1,"#a39c8f");
+      s += R(52,G,56,3,"#e2ddd2")+R(48,G+3,64,3,"#d4cec2")+R(44,G+6,72,3,"#e2ddd2");
+      return svg(s);
+    },
+    stadium: () => { // main entrance at dusk: brick arcade, stone portal, twin towers, light towers, plaza
+      const BR="url(#p-brick)", ST="#d8c8a0", LT="#ece2c4", LIT="#ffe680";
+      let s = `<defs><linearGradient id="stSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a6fd0"/><stop offset=".7" stop-color="#7ab8f0"/><stop offset="1" stop-color="#f0c080"/></linearGradient></defs>`+R(0,0,160,120,"url(#stSky)");
+      // the upper deck behind
+      s += P("M12 46 Q80 22 148 46 L148 52 L12 52Z",ST)+P("M18 44 Q80 26 142 44 L142 48 Q80 32 18 48Z","#333");
+      s += R(10,40,12,22,ST)+R(138,40,12,22,ST)+R(12,44,2,6,"#555")+R(17,44,2,6,"#555")+R(141,44,2,6,"#555")+R(146,44,2,6,"#555");
+      // middle band with windows and the red N's
+      s += R(22,48,116,14,LT)+T(37,59,10,"N","#d8262c")+T(123,59,10,"N","#d8262c");
+      // twin towers and the glass center
+      [[52,70],[90,108]].forEach(([x0,x1]) => { s += P(`M${x0} 62 L${x0} 14 L${x0+3} 9 L${x1-3} 9 L${x1} 14 L${x1} 62Z`,ST)+R(x0,9,x1-x0,2,LT); for (let r=0;r<6;r++) s += R(x0+4,14+r*8,4,5,"#4a5560")+R(x1-8,14+r*8,4,5,"#4a5560"); });
+      s += R(70,18,20,44,LT)+[71,77.5,84].map(x => P(`M${x} 36 L${x} 27 Q${x+2.5} 23 ${x+5} 27 L${x+5} 36Z`,LIT)).join("")+R(70,38,20,4,"#4a5560");
+      // brick arcade
+      s += R(8,62,144,36,BR)+R(8,62,144,2,LT)+R(8,96,144,2,ST);
+      // arcade bays, mirrored around the center portal
+      [13,23,33,43,53].forEach(x0 => [x0, 154-x0].forEach(x => {
+        s += R(x+7,64,1.2,34,LT)+R(x+1,67,4,3,LIT)+P(`M${x} 90 L${x} 82 Q${x+3} 78 ${x+6} 82 L${x+6} 90Z`,LIT)+R(x,90,6,6,"#6a5a3a"); }));
+      // stone portal
+      s += R(63,58,34,40,ST)+R(63,58,34,2,LT)+T(80,65,3.8,"MEMORIAL STADIUM","#333")+P("M71 98 L71 74 Q80 64 89 74 L89 98Z",LT)+P("M73 98 L73 75 Q80 68 87 75 L87 98Z",LIT)+R(79.5,72,1,26,"#aa8a40")+R(75,90,10,8,"#aa8a40");
+      // plaza, brick pattern, small lights and trees
+      s += R(0,98,160,22,"#aaa")+P("M44 120 L72 100 L88 100 L116 120Z","#aa5544")+P("M80 100 L80 120 M64 120 L76 100 M96 120 L84 100","","#ccc",1)+R(70,98,20,2,"#888");
+      return svg(s);
+    },
+    morrill: () => { // columned limestone front with the bronze mammoth on his pedestal
+      const ST="#d8c8a0", LT="#ece2c4", BZ="#3d4248", BZL="#5b626b", G=96;
+      let s = sky();
+      // brick side wings and limestone center with a six-column portico
+      s += R(6,34,24,G-34,"url(#p-brick)")+R(130,34,24,G-34,"url(#p-brick)")+R(4,32,28,3,LT)+R(128,32,28,3,LT);
+      [[12,42],[20,42],[12,60],[20,60],[132,42],[140,42],[132,60],[140,60]].forEach(([x,y]) => s += R(x,y,6,9,"#fff")+R(x+1,y+1,4,7,"#4f6f86"));
+      s += R(30,22,100,G-22,ST)+R(26,20,108,4,LT)+R(30,24,100,8,LT)+R(30,31,100,1,"#b8a882");
+      s += R(36,34,88,48,"#a89a78");
+      for (let i=0;i<6;i++){ const x = 37+i*16.2; s += R(x,34,7,48,LT)+R(x+5,34,2,48,"#cfc09a")+R(x-1,33,9,2,"#fff")+R(x-1,81,9,2,"#fff"); }
+      s += R(28,82,104,3,LT)+R(32,85,96,3,"#e2ddd2")+R(36,88,88,3,"#d4cec2")+R(40,91,80,G-91,"#e2ddd2");
+      // ground: plaza with lawn at the edges
+      s += R(0,G,160,120-G,"#c9c2b5")+R(0,G,26,120-G,"url(#p-grass)")+R(134,G,26,120-G,"url(#p-grass)");
+      // pedestal
+      s += R(58,86,44,22,LT)+R(56,84,48,3,"#fff")+R(72,92,16,9,"#2a2a2a")+R(74,94,12,1,"#777")+R(74,97,8,1,"#777");
+      // the bronze mammoth, rearing with trunk up and tusks curling
+      s += P("M62 84 L64 70 L70 70 L70 84Z",BZ)+P("M72 84 L73 72 L78 72 L77 84Z",BZ)+P("M84 84 L86 72 L91 72 L90 84Z",BZ);
+      s += P("M92 70 Q100 72 104 78 L101 81 Q96 76 90 76Z",BZ);
+      s += P("M58 70 Q56 54 70 48 Q80 44 90 48 Q98 52 96 66 Q94 74 84 74 L66 74 Q58 74 58 70Z",BZ)+P("M62 56 Q72 47 86 48","",BZL,1.2);
+      s += P("M90 50 Q94 40 102 40 Q108 42 106 50 Q104 56 98 58 Q92 58 90 50Z",BZ)+P("M94 44 Q90 46 92 52 Q96 50 94 44Z",BZL)+C(101,45,1,"#111");
+      s += P("M104 46 Q112 40 112 30 Q112 24 116 22","",BZ,3)+P("M114 22 Q118 20 118 24","",BZ,2);
+      s += P("M100 54 Q118 54 124 40 Q128 28 120 24","",BZL,2.4)+P("M99 56 Q122 58 132 42 Q138 30 130 25","",BZ,2.4);
+      return svg(s);
+    },
+    sheldon: () => { // flat travertine box, five tall arches: glass in the middle three, stone at the ends
+      const TV="#e8e1d1", TL="#f3eee3", TD="#d6cdb9", G=94;
+      let s = sky();
+      s += R(10,22,140,G-22,TV)+R(10,22,140,10,TL)+R(10,31,140,1,TD);
+      for (let i=0;i<5;i++){
+        const x = 10+i*28, glass = i>=1 && i<=3;
+        const arch = `M${x+5} ${G-3} L${x+5} 44 Q${x+5} 35 ${x+14} 35 Q${x+23} 35 ${x+23} 44 L${x+23} ${G-3}Z`;
+        s += P(`M${x} 32 Q${x+4} 33 ${x+5} 40 L${x+5} ${G} L${x} ${G}Z`,TL)+P(`M${x+28} 32 Q${x+24} 33 ${x+23} 40 L${x+23} ${G} L${x+28} ${G}Z`,TL);
+        s += P(arch, glass ? "#2b333b" : TD);
+        if (glass) s += R(x+5,56,18,1,"#56626e")+R(x+5,74,18,1,"#56626e")+R(x+13.5,36,1,G-39,"#56626e");
+      }
+      s += R(10,G-3,140,3,TD);
+      s += R(0,G,160,120-G,"url(#p-grass)");
+      s += R(36,G,88,3,"#ece6d8")+R(32,G+3,96,3,"#ddd6c6")+R(28,G+6,104,3,"#ece6d8")+P(`M60 ${G+9} L100 ${G+9} L108 120 L52 120Z`,"#d6d0c4");
+      // sculptures: an open bronze ring on the left lawn, two leaning steel slabs on the right, a dark round form on the steps
+      s += R(10,112,16,3,"#bdb6a8")+`<circle cx="18" cy="100" r="11" fill="none" stroke="#6b4a2b" stroke-width="2"/>`+P("M10 106 L14 102 L13 108Z","#3a2a1a")+P("M24 92 L28 90 L27 95Z","#3a2a1a")+P("M14 112 Q18 104 22 112","","#3a2a1a",2);
+      s += R(134,112,16,3,"#bdb6a8")+P("M136 112 L141 112 L146 88 L143 87Z","#5a626b")+P("M149 112 L144 112 L139 92 L142 91Z","#3d444b")+R(140,96,6,2,"#b8302a");
+      s += `<ellipse cx="80" cy="${G+4}" rx="5" ry="3.5" fill="#1e1e1e"/>`+C(78.5,G+2.5,1,"#555");
+      return svg(s);
+    },
+    dairy: () => { // inside: red wall with the round logo, menu boards, ice cream case, tables and white chairs
+      const RED="#c8232c";
+      let s = R(0,0,160,120,"#f2efe6");
+      s += R(0,0,160,12,"#3a3f45")+R(30,8,24,2,"#fff8d8")+R(106,8,24,2,"#fff8d8");
+      s += R(0,12,160,34,RED)+R(0,46,160,4,"#e6e2d8");
+      s += C(80,29,13,"#fff")+`<circle cx="80" cy="29" r="11" fill="none" stroke="${RED}" stroke-width="1.5"/>`+T(80,23,5,"N",RED)+T(80,29.5,5.2,"Dairy",RED)+T(80,34.5,5.2,"Store",RED);
+      [44,68,92].forEach(x => s += R(x,52,22,10,"#23312a")+R(x+2,54,10,1,"#9fd8a0")+R(x+2,57,14,1,"#d8d8c8")+R(x+2,59,8,1,"#d8d8c8"));
+      for (let i=0;i<54;i++) s += R(i*3,66,3,3,(i%2)?RED:"#fff");
+      s += R(36,70,88,10,"#cfe6ee")+R(36,70,88,1,"#fff");
+      ["#f2e0c0","#c8706a","#5a3a22","#f6c8d8","#e8d870","#c8e0b0","#f2e0c0","#8a5a3a"].forEach((c,i) => s += R(40+i*10.5,74,8,5,c));
+      s += R(28,80,104,2,"#2a2a2a")+R(28,82,104,12,"#5a4a3c")+R(28,82,104,1,"#6e5c4a");
+      s += R(0,94,160,26,"#b5583a");
+      for (let x=0;x<160;x+=10) s += R(x,94,.6,26,"#a24d33");
+      for (let y=100;y<120;y+=6) s += R(0,y,160,.6,"#a24d33");
+      // matching tables, each with a white chair on either side
+      const chair = (x, back) => R(back==="L"?x:x+8,86,2,16,"#f4f4f4")+R(x,100,10,2.5,"#f4f4f4")+R(x+.5,102.5,1.5,13,"#e2e2e2")+R(x+8,102.5,1.5,13,"#e2e2e2");
+      [4,118].forEach(x => s += chair(x,"L")+R(x+11,93,16,4,"#c49a66")+R(x+11,97,16,1,"#6e5236")+R(x+13,98,2,18,"#222")+R(x+23,98,2,18,"#222")+chair(x+28,"R"));
+      return svg(s);
+    },
+    andersen: () => { // long glass curtain wall in a stone frame, flat entry canopy, paver plaza
+      const ST="#ddd6c6", LT="#ece6d8", DK="#3e4650", TE="#5fb3c8", G=92;
+      let s = sky();
+      s += R(58,16,44,8,ST);
+      s += R(14,24,132,G-24,ST)+R(12,22,136,4,LT);
+      const bands = [[28,8,DK],[36,4,TE],[40,10,DK],[50,4,TE],[54,10,DK],[64,4,TE],[68,12,DK],[80,8,TE]];
+      bands.forEach(([y,h,c]) => s += R(17,y,126,h,c));
+      for (let i=0;i<=20;i++) s += R(17+i*6.3-.3,28,.6,60,"#e8eef0");
+      s += R(57,74,46,3,"#f4f4f4")+R(57,77,46,1,"#b8b8b8")+R(65,78,30,G-78,"#2a3038")+R(61,77,1.5,G-77,"#888")+R(97.5,77,1.5,G-77,"#888");
+      s += R(0,G,160,120-G,"#c9a898")+R(0,G,160,1,"#a88a7a");
+      for (let x=0;x<160;x+=8) s += R(x,G,.5,120-G,"#b8988a");
+      const cube = (x,y) => R(x,y,16,3,"#f2ede2")+R(x,y+3,16,6,"#ddd6c6");
+      s += cube(22,102)+cube(52,108)+cube(92,108)+cube(122,102);
+      return svg(s);
+    },
+    lied: () => { // tan banded block with the tall stage tower behind, window ribbon and a show banner
+      const TN="#cdbfa6", TL="#ddd1bb", TD="#b3a58b", G=94;
+      const tree = x => R(x-1,G-12,2,12,"#6b4a2b")+C(x,G-18,10,"#3f7f35");
+      let s = sky();
+      s += R(52,8,56,40,TN)+R(52,8,56,2,TL);
+      s += R(64,14,32,24,"#2a2440")+R(64,14,32,1.5,"#b8302a")+T(80,22,4,"SHARED","#fff")+T(80,27,4,"GOVERNANCE","#fff")+T(80,33,4,"A TRAGEDY","#ffcf5a");
+      s += R(10,40,140,G-40,TN)+R(8,38,144,3,TL);
+      for (let y=48; y<80; y+=8) s += R(10,y,140,.8,TD);
+      s += R(28,43,104,4,"#4f6f86")+R(28,43,104,.6,"#fff");
+      s += T(80,62,6,"LIED CENTER","#3a3428")+T(80,67,3.5,"FOR PERFORMING ARTS","#3a3428");
+      s += R(24,80,112,G-80,"#4a4436")+R(24,80,112,1.5,TD)+R(62,83,36,5,"#e86a2a")+T(80,87,3.5,"NOW PLAYING","#fff");
+      for (let i=0;i<5;i++) s += R(34+i*22,89,10,G-89,"#2a2a2a");
+      s += R(0,G,160,120-G,"#c9c2b5")+R(0,G,160,1,"#a39c8f");
+      s += tree(8)+tree(152);
+      return svg(s);
+    },
+    rec: () => { // the gym, looking down the court: arched truss ceiling, brick sides, bleachers, hoop
+      const RED="#c8232c";
+      let s = R(0,0,160,120,"#454b53");
+      [[44,4],[36,10],[30,16],[26,22]].forEach(([y,d]) => s += P(`M0 ${y} Q80 ${y-34+d} 160 ${y}`,"","#6a727c",1.2));
+      for (let r=0;r<3;r++) for (let i=0;i<6;i++) s += C(30+i*20,10+r*9,1.3,"#fff8d8");
+      // far wall: bleachers, dark band, padded wall
+      s += R(36,34,88,28,"#7a6650");
+      for (let y=37;y<54;y+=3) s += R(36,y,88,.7,"#5e4e3e");
+      s += R(36,54,88,2,"#1f2a44")+R(36,56,88,6,"#e8e2d6");
+      [42,58,94,110].forEach(x => s += R(x,57,8,5,RED));
+      // hoop centered on the far wall
+      s += R(79.5,26,1,14,"#222")+R(72,40,16,10,"#f4f4f4")+`<rect x="72" y="40" width="16" height="10" fill="none" stroke="${RED}" stroke-width=".8"/>`+R(77,45,6,4,"none")+`<rect x="77" y="45" width="6" height="4" fill="none" stroke="${RED}" stroke-width=".5"/>`+R(77,50,6,1,"#e86a2a");
+      // brick side walls with arches, and red banners
+      s += P("M0 18 L36 34 L36 62 L0 84Z","url(#p-brick)")+P("M160 18 L124 34 L124 62 L160 84Z","url(#p-brick)");
+      // arched passageways that sit on the floor line of each side wall (floor runs from y=84 at the edge to y=62 at the far wall)
+      const fy = x => 84 - x*22/36;
+      [[5,6,18],[16,5,13],[26,4,9]].forEach(([x,w,h]) => {
+        const arch = (x0,x1) => { const y0 = fy(x0 < 80 ? x0 : 160-x0), y1 = fy(x1 < 80 ? x1 : 160-x1), t0 = y0-h, t1 = y1-h*.9;
+          return P(`M${x0} ${y0} L${x0} ${t0+w/2} Q${(x0+x1)/2} ${Math.min(t0,t1)-w/2} ${x1} ${t1+w/2} L${x1} ${y1}Z`,"#2a1e18"); };
+        s += arch(x, x+w)+arch(160-x, 160-x-w);
+      });
+      [[8,24,5,12],[20,29,4,10],[29,32,3,8]].forEach(([x,y,w,h]) => s += R(x,y,w,h,RED)+R(x,y+h-2,w,1,"#fff")+R(160-x-w,y,w,h,RED)+R(160-x-w,y+h-2,w,1,"#fff"));
+      // hardwood floor with court lines
+      s += P("M0 84 L36 62 L124 62 L160 84 L160 120 L0 120Z","#d9a967")+P("M0 84 L36 62 L124 62 L160 84","","#b8884e",.6);
+      s += P("M20 120 L52 66 L108 66 L140 120","","#f4f4f4",.8)+P("M8 120 L46 70 L114 70 L152 120","","#1e1e1e",.8);
+      s += R(30,84,100,.8,"#f4f4f4")+`<ellipse cx="80" cy="84" rx="12" ry="3.5" fill="none" stroke="#1e1e1e" stroke-width=".8"/>`;
+      s += P("M68 120 L74 96 L86 96 L92 120","","#f4f4f4",.8)+P("M60 120 Q80 92 100 120","","#1e1e1e",.8);
+      return svg(s);
+    },
+    abel: () => { // tall cream residence tower: even window grid, corner parapet bumps, glass ground floor
+      const CR="#e9dcc2", CL="#f4ecdb", G=100;
+      let s = sky();
+      s += R(30,8,100,G-8,CR)+R(28,6,104,3,CL);
+      [[28,2],[36,3],[118,3],[126,2]].forEach(([x,y]) => s += R(x,y,6,4,CL));
+      for (let r=0;r<12;r++) for (let c=0;c<10;c++) s += R(36+c*9.4,12+r*6.4,4,4,"#6b7784");
+      s += R(26,88,108,2,CL)+R(30,90,100,G-90,"#4f6f86");
+      for (let i=0;i<=10;i++) s += R(30+i*10-.3,90,.6,G-90,"#e8eef0");
+      s += R(62,90,36,4.5,CL)+T(80,93.6,4,"ABEL HALL","#3a3428")+R(72,94.5,16,G-94.5,"#2a3038");
+      s += R(0,G,160,120-G,"#c9c2b5")+R(0,G,160,1,"#a39c8f");
+      return svg(s);
+    },
+    innovation: () => { // the entrance monument in front of the red brick building and the Scarlet Hotel, side by side
+      const G=72;
+      let s = sky();
+      // red brick building with arched windows (left)
+      s += R(6,40,72,G-40,"url(#p-brick)")+R(4,37,76,3,"#8a8f96");
+      for (let i=0;i<5;i++){ const x = 11+i*13.5; s += P(`M${x} 62 L${x} 50 Q${x+4} 45 ${x+8} 50 L${x+8} 62Z`,"#fff")+P(`M${x+1} 61 L${x+1} 51 Q${x+4} 47 ${x+7} 51 L${x+7} 61Z`,"#4f6f86"); }
+      // The Scarlet Hotel (right): dark brick and light panel sections, sign on the tall end block
+      [[84,14,16,"#6b3a30"],[100,14,16,"#c9ccd2"],[116,14,16,"#7a3e32"],[132,6,24,"#5a302a"]].forEach(([x,y,w,c]) => {
+        s += R(x,y,w,G-y,c);
+        for (let r=y+(c==="#5a302a"?14:4); r<G-4; r+=6.5) for (let cx=x+3; cx+3<=x+w-2; cx+=5.5) s += R(cx,r,3,4,"#2f3540");
+      });
+      s += T(144,12,4.6,"SCARLET","#e8333a")+T(144,16.5,3,"Hotel","#fff");
+      // lawn
+      s += R(0,G,160,120-G,"url(#p-grass)");
+      // the monument: base, sign panel and steel arcs
+      s += R(26,100,108,8,"#8a8f96")+R(26,100,108,1.5,"#a8adb3");
+      s += R(58,70,64,30,"#eceeed")+R(58,70,64,2,"#fff")+R(118,70,4,30,"#d0d4d6");
+      s += T(88,80,6,"NEBRASKA","#5a6068")+T(88,87,6,"INNOVATION","#5a6068")+T(88,94,6,"CAMPUS","#5a6068");
+      s += R(36,82,22,18,"#d8dcdf");
+      [[34,72],[40,68],[46,66]].forEach(([x,y],i) => s += P(`M${x} 100 Q${x-6} ${y} ${x+12} ${y-2} Q${x+22} ${y+4} ${x+18+i*3} 100`,"","#b9bec4",2.2));
+      return svg(s);
+    },
+    fountain: () => { // Broyhill Fountain on the plaza behind the Nebraska Union
+      const ST="#d8cfbd", LT="#ece4d3", RED="#c8232c", GR="#a08a88", GRL="#b8a2a0", G=68;
+      const win = (x,y) => R(x-1,y-1,9,12,"#fff")+R(x,y,7,10,"#4f6f86")+R(x,y+5,7,.8,"#fff");
+      let s = sky();
+      // back of the Union: brick wings with a stone arcade at ground level
+      s += R(2,30,50,G-30,"url(#p-brick)")+R(108,30,50,G-30,"url(#p-brick)")+R(2,28,50,3,LT)+R(108,28,50,3,LT);
+      s += R(2,45,50,G-45,ST)+R(108,45,50,G-45,ST)+R(2,45,50,1.2,LT)+R(108,45,50,1.2,LT);
+      [9,25,41].forEach((cx,i) => [cx, 153-cx].forEach(x => {
+        s += win(x,32)+P(`M${x-2} ${G} L${x-2} 53 Q${x+3.5} 47 ${x+9} 53 L${x+9} ${G}Z`,"#8a3a2a");
+        if (i!==1) s += R(x-1,53,9,10,RED)+T(x+3.5,57,2.6,"GO BIG","#fff")+T(x+3.5,60.5,2.6,"RED","#fff");
+      }));
+      // stone towers framing the recessed center
+      s += R(52,20,12,G-20,ST)+R(96,20,12,G-20,ST)+R(51,18,14,3,LT)+R(95,18,14,3,LT)+R(55,22,6,8,"#8a3a2a")+R(99,22,6,8,"#8a3a2a");
+      // recessed center: curved glass above a stone balcony, portico and doors below
+      s += R(64,24,32,G-24,"#cfc5b1")+P("M64 26 Q80 22 96 26 L96 28 Q80 24 64 28Z",LT);
+      s += R(66,29,28,13,"#4f6f86")+[73,80,87].map(x => R(x-.4,29,.8,13,"#fff")).join("")+R(66,35,28,.8,"#fff");
+      s += R(64,42,32,3,LT)+R(64,45,32,3,ST)+T(80,47.6,2.6,"NEBRASKA UNION","#5a4a32");
+      s += R(67,49,26,G-49,"#2f3540")+R(69,51,22,G-51,"#4f6f86")+R(79.6,51,.8,G-51,"#2f3540");
+      s += R(64,48,3,G-48,LT)+R(93,48,3,G-48,LT)+R(70,50,5,8,RED)+T(72.5,56.5,5,"N","#fff")+R(85,50,5,8,RED)+T(87.5,56.5,5,"N","#fff");
+      // plaza and the fountain pool
+      s += R(0,G,160,120-G,"#d6d0c4")+R(0,G,160,1,"#b8b2a6");
+      s += `<ellipse cx="80" cy="96" rx="72" ry="14" fill="#c9c2b5"/><ellipse cx="80" cy="96" rx="68" ry="12" fill="#3f9db8"/>`;
+      // jets: a tall one in the center with two beside it, one in each gap between rocks, and a row in the open water in front
+      const jet = (x,y,h) => R(x-.6,y,1.2,h,"#eaf6fb")+C(x,y,1.2,"#eaf6fb");
+      s += jet(80,70,24)+jet(75,80,13)+jet(85,80,13)+jet(49,86,10)+jet(111,86,10);
+      // granite boulders, mirrored
+      const rock = (pts,c) => P("M"+pts.map(p=>p.join(" ")).join(" L")+"Z",c);
+      s += rock([[18,100],[22,72],[34,66],[40,74],[42,100]],GR)+rock([[22,72],[34,66],[36,70],[26,76]],GRL);
+      s += rock([[142,100],[138,72],[126,66],[120,74],[118,100]],GR)+rock([[138,72],[126,66],[124,70],[134,76]],GRL);
+      s += rock([[56,100],[60,84],[68,80],[72,100]],GR)+rock([[104,100],[100,84],[92,80],[88,100]],GR);
+      [48,64,80,96,112].forEach(x => s += jet(x,101.5,3.5));
+      s += R(0,110,160,10,"url(#p-grass)");
+      return svg(s);
+    },
+    kauffman: () => { // courtyard view: brick wings with gray roofs, gabled center building, white arched colonnades, lawn
+      const BR="url(#p-brick)", RF="#6b6f75", WT="#f4f2ec", GL="#4f6f86", G=82;
+      const tall = (x,y) => R(x,y,8,22,WT)+R(x+1,y+1,6,20,GL)+R(x+1,y+8,6,.8,WT)+R(x+1,y+15,6,.8,WT)+R(x+3.6,y+1,.8,20,WT);
+      let s = sky();
+      // center building at the back of the courtyard
+      s += P("M54 44 L60 36 L100 36 L106 44Z",RF)+R(56,44,48,G-44,BR)+R(54,43,52,1.5,WT);
+      s += P("M70 44 L80 34 L90 44Z",BR)+P("M69 44 L80 33 L91 44","",WT,1);
+      s += R(73,47,14,10,WT)+R(74,48,12,8,GL)+R(79.6,48,.8,8,WT);
+      [[60,48],[94,48],[60,60],[94,60]].forEach(([x,y]) => s += R(x,y,6,7,WT)+R(x+.8,y+.8,4.4,5.4,GL));
+      s += R(72,62,16,G-62,WT)+R(74,64,12,G-64,"#2f3540");
+      // side wings receding toward the center, mirrored
+      const wing = m => {
+        const X = x => m ? 160-x : x, pts = a => a.map(([x,y]) => X(x)+" "+y).join(" L");
+        let w = P("M"+pts([[0,18],[28,18],[56,40],[56,44],[28,24],[0,24]])+"Z",RF);
+        w += P("M"+pts([[28,24],[56,44],[56,G],[28,G]])+"Z",BR)+P("M"+pts([[0,24],[28,24],[28,G],[0,G]])+"Z",BR);
+        w += P("M"+pts([[0,23],[28,23],[56,43],[56,44.5],[28,24.5],[0,24.5]])+"Z",WT);
+        // dormers in perspective: faces lie in the receding roof plane, shrink with distance, and their roofs run back toward the center
+        const top = x => 18+(x-28)*22/28, bot = x => 24+(x-28)*20/28, slope = 21/28;
+        [[32,4.4,4.2],[40,3.6,3.5],[47.5,2.9,2.8]].forEach(([x,wd,h]) => {
+          const x2 = x+wd, b1 = bot(x)-1, b2 = bot(x2)-1, t1 = b1-h, t2 = b2-h*.92, ax = x+wd/2, ay = (t1+t2)/2-wd*.6, d = wd*.7;
+          w += P("M"+pts([[ax,ay],[x2,t2],[x2+d,t2+d*slope],[ax+d,ay+d*slope]])+"Z","#55595f");
+          w += P("M"+pts([[x,b1],[x,t1],[ax,ay],[x2,t2],[x2,b2]])+"Z","#f4f2ec");
+          w += P("M"+pts([[x-.4,t1+.2],[ax,ay-.4],[x2+.4,t2+.2]]),"","#55595f",.8);
+          const ix = x+wd*.28, ix2 = x2-wd*.28;
+          w += P("M"+pts([[ix,t1+1.2],[ix2,t2+1.1],[ix2,bot(ix2)-1.6],[ix,bot(ix)-1.6]])+"Z",GL);
+        });
+        w += tall(m ? 160-4-8 : 4, 30)+tall(m ? 160-16-8 : 16, 30);
+        return w;
+      };
+      s += wing(false)+wing(true);
+      // lawn
+      s += R(0,G,160,120-G,"url(#p-grass)");
+      // white arched colonnades in front of each wing
+      const colonnade = (x0,x1) => { let c = R(x0,55,x1-x0,4,WT); const n = 5, step = (x1-x0-3)/n;
+        for (let i=0;i<=n;i++){ const x = x0+i*step; c += R(x,58,3,26,WT)+R(x-.5,82,4,4,"#a8442f"); if (i<n) c += P(`M${x+2} 66 Q${x+1.5+step/2} 57 ${x+step+1} 66`,"",WT,2.2); }
+        return c; };
+      s += colonnade(0,64)+colonnade(96,160);
+      s += R(0,86,64,2,"#3f7f35")+R(96,86,64,2,"#3f7f35");
+      return svg(s);
+    },
+    westbrook: () => { // faceted black box with slot windows floating over a lit glass ground floor on round concrete columns
+      const BK="#2a2c30", BK2="#3a3d42", G=96;
+      let s = sky();
+      // lit ground floor behind the columns
+      s += R(18,70,124,G-70,"#f2c66a")+R(18,70,124,3,"#c08a4a");
+      for (let i=0;i<=24;i++) s += R(18+i*5.15-.3,73,.6,G-73,"#3a2a1a");
+      s += R(18,84,124,.6,"#3a2a1a")+R(74,80,12,G-80,"#2a2a2a");
+      // the black box with faceted panels and slot windows
+      s += R(8,14,144,56,BK)+R(8,68,144,2,"#1e2023");
+      for (let r=0;r<2;r++) for (let c=0;c<9;c++){
+        const x = 12.7+c*16.5, y = 20+r*24;
+        s += P(`M${x-5} ${y+16} L${x} ${y-2} L${x+3} ${y-2} L${x+3} ${y+16}Z`,BK2)+R(x,y,2.6,13,"#e8d9a8")+R(x+.6,y+.6,1.4,11.8,"#f6efd6");
+      }
+      // round concrete columns, evenly spaced
+      [30,63,97,130].forEach(x => s += R(x-3,70,6,G-70,"#c9c6bf")+R(x+1,70,2,G-70,"#aeaba4"));
+      // walk and lawn
+      s += R(0,G,160,120-G,"url(#p-grass)")+P(`M18 ${G} L142 ${G} L150 108 L10 108Z`,"#d6d0c4");
+      return svg(s);
+    },
+    hawks: () => { // glass atrium tower centered between limestone wings, glass ground floor, entry canopy
+      const LS="#e2cfbd", LL="#ecdccc", LD="#cdb8a5", GL="#4f6f86", G=96;
+      let s = `<defs><linearGradient id="hwAtr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a86b0"/><stop offset=".55" stop-color="#9fb8c8"/><stop offset="1" stop-color="#f2c66a"/></linearGradient></defs>`+sky();
+      // limestone wings, mirrored, with big gridded windows and louvered upper windows
+      [[8,56],[96,56]].forEach(([x,w]) => {
+        s += R(x,26,w,G-26,LS)+R(x,24,w,2.5,LL);
+        for (let r=0;r<4;r++) s += R(x,26+r*13,w,.6,LD);
+        [x+10,x+32].forEach(wx => {
+          s += R(wx,30,14,11,"#7e868e")+Array.from({length:6},(_,i)=>R(wx,31+i*1.8,14,.6,"#5e666e")).join("");
+          [44,58].forEach(y => s += R(wx,y,14,10,GL)+R(wx+4.6,y,.6,10,LL)+R(wx+9.3,y,.6,10,LL)+R(wx,y+5,14,.6,LL));
+        });
+      });
+      // glass ground floor along both wings
+      s += R(8,72,152-8,G-72,"#f2c66a");
+      for (let i=0;i<=24;i++) s += R(8+i*6,72,.6,G-72,"#3a3a3a");
+      s += R(8,72,144,1.2,"#3a3a3a")+R(8,84,144,.6,"#3a3a3a");
+      // the atrium tower, rising above the wings
+      // the tower's top slopes up from left to right, like the real atrium
+      s += R(62,3,36,G-3,"url(#hwAtr)");
+      for (let i=0;i<=6;i++) s += R(62+i*6-.4,3,.8,G-3,"#2f3540");
+      for (let y=12;y<G;y+=7) s += R(62,y,36,.8,"#2f3540");
+      s += P("M61 2 L99 2 L99 3 L61 12Z","url(#p-sky)")+P("M61 12.5 L99 2.5","","#2f3540",1.8);
+      // entry canopy with the college name
+      s += R(52,74,56,5,"#eef0f1")+R(52,79,56,.8,"#8a8f96")+T(80,77.9,3.6,"COLLEGE OF BUSINESS","#3a3428");
+      s += R(72,80,16,G-80,"#2f3540")+R(73,81,6.5,G-81,"#9fb8c8")+R(80.5,81,6.5,G-81,"#9fb8c8");
+      s += R(0,G,160,120-G,"#d6d0c4")+R(0,G,160,1,"#b8b2a6")+R(0,108,48,12,"url(#p-grass)")+R(112,108,48,12,"url(#p-grass)");
+      return svg(s);
+    },
+    devaney: () => { // silver arena with a red top band, glass front, red lettering, red entrance frame and the big N
+      const SV="#b9bcc2", SVD="#a3a7ae", RED="#c8232c", GLS="#9fc0d0", G=92;
+      let s = sky();
+      s += R(4,18,152,G-18,SV)+R(2,14,156,5,RED);
+      for (let y=22;y<G;y+=3) s += R(4,y,152,.5,SVD);
+      // glass curtain wall
+      s += R(36,44,86,G-44,GLS);
+      for (let i=0;i<=12;i++) s += R(36+i*7.17-.3,44,.6,G-44,"#6f8a98");
+      for (let y=50;y<G;y+=6) s += R(36,y,86,.5,"#6f8a98");
+      s += R(34,42,90,2,RED)+T(79,38.5,6.5,"BOB DEVANEY SPORTS CENTER",RED);
+      // red entrance frame with doors
+      s += R(38,68,82,4,RED)+T(79,66.5,5,"JOHN COOK ARENA","#fff");
+      for (let i=0;i<=6;i++) s += R(38+i*13.3,72,2.4,G-72,RED);
+      for (let i=0;i<6;i++) s += R(42+i*13.3,76,8,G-76,"#d8dcdf")+R(45.6+i*13.3,76,.6,G-76,"#8a8f96");
+      // checkered panel with the big N
+      [[124,46],[130,52],[136,46],[142,52],[148,46],[124,58],[136,58],[148,58],[130,64],[142,64],[124,70],[136,70],[148,70],[130,76],[142,76]].forEach(([x,y]) => s += R(x,y,6,6,"#e6e7e9"));
+      s += R(122,44,34,G-44,"rgba(255,255,255,.25)");
+      s += P("M126 50 L134 50 L146 70 L146 50 L152 50 L152 82 L144 82 L132 62 L132 82 L126 82Z",RED)+P("M126 50 L134 50 L146 70 L146 50 L152 50 L152 82 L144 82 L132 62 L132 82 L126 82Z","","#fff",.8);
+      // plaza
+      s += R(0,G,160,120-G,"#d9cdb8")+R(0,G,160,1,"#b8ad98");
+      return svg(s);
+    },
+    mueller: () => { // slender limestone carillon tower centered on the green, magnolias on each side
+      const LS="#ddd3c0", LL="#ebe3d3", LD="#c8bca6", G=92;
+      const magnolia = x => R(x-1.5,G-14,3,14,"#5a3a2a")+C(x,G-22,12,"#e6a8c4")+C(x-7,G-18,7,"#f2c6da")+C(x+7,G-18,7,"#d88fb2")+C(x,G-30,7,"#f6d6e4");
+      let s = sky();
+      // the tower
+      s += R(72,10,16,G-10,LS)+R(71,8,18,3,LL)+R(72,11,16,4,LD)+R(86,15,2,G-15,LD);
+      [74.5,78.8,83.1].forEach(x => { s += R(x,19,2.4,20,"#2f3540"); for (let y=21;y<39;y+=2.5) s += R(x,y,2.4,.6,"#8a8f96"); });
+      s += R(72,42,16,1,LD)+R(77,G-8,6,8,"#3a302a");
+      // trees and lawn
+      s += C(8,G-26,14,"#3f7f35")+C(152,G-26,14,"#3f7f35");
+      s += magnolia(20)+magnolia(140);
+      s += R(0,G,160,120-G,"url(#p-grass)")+R(0,G+8,160,2,"#d6d0c4");
+      return svg(s);
+    },
+    selleck: () => { // curved brick entrance with the name in stone letters, curved canopy, glass doors, stone side canopies, steps
+      const ST="#e2dccf", SL="#efeae0", G=94;
+      let s = sky();
+      // brick building behind and stone side canopies, mirrored
+      s += R(2,30,156,G-30,"url(#p-brick)")+R(0,28,160,2,SL);
+      [[2,38],[120,38]].forEach(([x,w]) => {
+        const gx = x===2 ? 6 : 128;
+        s += R(x,46,w,6,ST)+R(x,52,w,1,"#c9c2b5")+R(gx,53,26,G-53,"#4f6f86");
+        for (let i=0;i<=4;i++) s += R(gx+i*6.5,53,.6,G-53,"#e8eef0");
+      });
+      s += R(2,52,4,G-52,ST)+R(154,52,4,G-52,ST);
+      // curved brick header with the name, curved stone canopy beneath
+      s += P("M38 40 L38 26 Q80 16 122 26 L122 40Z","url(#p-brick)")+P("M38 26 Q80 16 122 26","","#e2dccf",1.5);
+      s += `<path id="slkArc" d="M44 33 Q80 24 116 33" fill="none"/><text font-size="6" fill="#efeae0" font-family="VT323,monospace" text-anchor="middle"><textPath href="#slkArc" startOffset="50%">SELLECK QUADRANGLE</textPath></text>`;
+      s += P("M36 40 Q80 34 124 40 L124 47 Q80 41 36 47Z",ST)+P("M36 47 Q80 41 124 47 L124 49 Q80 43 36 49Z","#c9c2b5");
+      // brick piers and glass doors
+      s += R(38,46,9,G-46,"url(#p-brick)")+R(113,46,9,G-46,"url(#p-brick)");
+      s += R(47,52,66,G-52,"#4f6f86");
+      for (let i=0;i<=6;i++) s += R(47+i*11-.4,52,.8,G-52,"#e8eef0");
+      s += R(47,62,66,.8,"#e8eef0");
+      // wide front steps and plaza
+      s += R(0,G,160,120-G,"#d6d0c4")+R(30,G,100,3,"#ece6d8")+R(24,G+3,112,3,"#ddd6c6")+R(18,G+6,124,3,"#ece6d8");
+      return svg(s);
+    },
+    capitol: () => { // the tall, slender limestone tower with gold dome and the Sower, on its wide low base, lawn in front
+      const LS="#dcd2bf", LL="#e9e1d1", LD="#c4b8a2", GD="#c9a24a", G=96;
+      const fir = x => P(`M${x} ${G-20} L${x-5} ${G} L${x+5} ${G}Z`,"#2f6b3a")+R(x-.8,G,1.6,2,"#5a3a2a");
+      let s = sky();
+      // wide low base with a row of windows, mirrored
+      s += R(8,80,144,G-80,LS)+R(6,78,148,2.5,LL);
+      [14,22,30,38,46,110,118,126,134,142].forEach(x => s += R(x,84,4,6,"#4f6f86"));
+      // central pavilion with the arched window and door
+      s += R(60,66,40,G-66,LS)+R(58,64,44,2.5,LL)+R(60,66,3,G-66,LD)+R(97,66,3,G-66,LD);
+      s += P("M73 77 L73 72 Q80 67 87 72 L87 77Z","#4f6f86")+R(79.6,68,.8,9,LL)+R(73,74,14,.8,LL);
+      s += R(76,84,8,G-84,"#2f3540")+R(71,81,18,2,LD);
+      // the tower: shoulders, vertical window strips, lantern, gold dome, the Sower
+      s += R(68,22,24,42,LS)+R(66,20,28,3,LL)+R(68,22,2,42,LD)+R(90,22,2,42,LD);
+      [72,76,80,84,88].forEach(x => s += R(x-.6,25,1.2,36,"#5d6b78"));
+      s += R(72,12,16,8,LS)+R(71,11,18,1.5,LL);
+      [74,77,80,83,86].forEach(x => s += R(x-.7,13,1.4,6,"#4a5560"));
+      s += R(74,8,12,3,LS)+P("M73 8 Q80 -2 87 8Z",GD)+P("M76.5 6 Q80 1.5 83.5 6","","#e8c86a",.7);
+      s += R(79.5,0,1,2,"#5a6068")+P("M80 0 L82.5 -1.5 L81 1Z","#5a6068");
+      // steps, lawn and walk, evergreens
+      s += R(0,G,160,120-G,"url(#p-grass)")+R(64,G,32,2,"#ece6d8")+R(60,G+2,40,2,"#ddd6c6");
+      s += P(`M66 ${G+4} L94 ${G+4} L102 120 L58 120Z`,"#d6d0c4");
+      s += fir(16)+fir(28)+fir(132)+fir(144);
+      return svg(s);
+    },
+    haymarket: () => { // looking down the street at sunset: brick warehouses on each side, Lincoln Station at the end, market banner
+      const ST="#e2dccf", GL="#4f6f86";
+      let s = `<defs><linearGradient id="hmSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f8fbf"/><stop offset=".55" stop-color="#e8b07a"/><stop offset="1" stop-color="#f6c66a"/></linearGradient></defs>`+R(0,0,160,120,"url(#hmSky)");
+      // Lincoln Station at the end of the street
+      s += R(56,50,48,26,"url(#p-brick)")+R(54,48,52,2,ST)+R(72,44,16,32,ST)+R(71,42,18,2,"#f2ede2");
+      s += R(73,46,14,3,"#3a302a")+T(80,48.4,2.4,"LINCOLN STATION","#f2ede2");
+      [[59,54],[64,54],[92,54],[97,54],[59,61],[64,61],[92,61],[97,61],[75,52],[81,52],[75,59],[81,59]].forEach(([x,y]) => s += R(x,y,4,5,GL));
+      s += R(57,68,13,2,"#2f6b4a")+R(90,68,13,2,"#2f6b4a")+R(76,68,8,8,"#2f3540");
+      // three distinct buildings on each side of the street, in perspective
+      const top = x => 6 + x*42/50, bot = x => 106 - x*30/50, H = x => bot(x)-top(x);
+      const at = (x,f) => top(x)+H(x)*f;
+      const quad = (X,x0,x1,f0,f1,c) => P(`M${X(x0)} ${at(x0,f0)} L${X(x1)} ${at(x1,f0)} L${X(x1)} ${at(x1,f1)} L${X(x0)} ${at(x0,f1)}Z`,c);
+      const building = (X, b) => {
+        const {x0,x1,off,wall,trim,rows,cols,style} = b;
+        let w = quad(X,x0,x1,off,1,wall)+quad(X,x0,x1,off,off+.04,trim)+quad(X,x0,x1,off+.04,off+.06,"rgba(0,0,0,.18)");
+        const span = (x1-x0)/cols;
+        for (let c=0;c<cols;c++) for (let r=0;r<rows;r++){
+          const xa = x0+c*span+span*.22, xb = x0+(c+1)*span-span*.22, f = off+.1+r*((.66-off)/rows), h = style==="tall" ? .13 : .09;
+          w += quad(X,xa,xb,f,f+h,trim)+quad(X,xa+span*.06,xb-span*.06,f+.012,f+h-.012,GL);
+          if (style==="arch") w += quad(X,xa,xb,f-.02,f,trim);
+        }
+        if (b.awning) w += quad(X,x0+.5,x1-.5,.72,.77,b.awning)+quad(X,x0+.5,x1-.5,.77,.785,"rgba(0,0,0,.25)");
+        w += quad(X,x0+(x1-x0)*.35,x0+(x1-x0)*.6,.8,1,"#2a2420");
+        return w; };
+      const LEFT = [
+        {x0:0,x1:20,off:0,wall:"#8a5a3a",trim:"#e2d6c2",rows:4,cols:2,style:"tall"},
+        {x0:20,x1:36,off:.22,wall:"url(#p-brick)",trim:"#f2ede2",rows:3,cols:2,style:"arch",awning:"#2f8f8f"},
+        {x0:36,x1:50,off:.12,wall:"#cfc2a6",trim:"#f4efe4",rows:3,cols:2,style:"rect"},
+      ];
+      const RIGHT = [
+        {x0:0,x1:22,off:.02,wall:"url(#p-brick)",trim:"#f2ede2",rows:4,cols:2,style:"tall"},
+        {x0:22,x1:38,off:.16,wall:"#6e3a2e",trim:"#d9c9b0",rows:3,cols:2,style:"rect",awning:"#b8302a"},
+        {x0:38,x1:50,off:.26,wall:"#9a6a4a",trim:"#efe6d6",rows:2,cols:2,style:"arch"},
+      ];
+      const XL = x => x, XR = x => 160-x;
+      LEFT.forEach(b => s += building(XL,b));
+      RIGHT.forEach(b => s += building(XR,b));
+      // character: a vertical SHOPS sign on the left, a hanging round café sign on the right
+      s += R(41,46,3.2,13,"#2a2a32")+["S","H","O","P","S"].map((c,i) => T(42.6,49+i*2.4,2.4,c,"#f2ede2")).join("");
+      // a round café sign hanging from a bracket on the wall
+      s += P("M131 49 L123 49 M131 49 L127 52","","#2a2a2a",.7)+P("M123.6 49 L123.6 51.6 M125.4 49 L125.4 51.6","","#2a2a2a",.4);
+      s += C(124.5,56,4.4,"#c8232c")+C(124.5,56,3.4,"#f2ede2")+T(124.5,57.2,3.2,"EAT","#c8232c");
+      // the street, with a brick crosswalk at the end
+      s += P("M0 106 L50 76 L110 76 L160 106 L160 120 L0 120Z","#5a5c60")+P("M50 76 L110 76 L114 79 L46 79Z","#9a5a4a");
+      s += P("M80 80 L80 120","","#d8c86a",.6);
+      // the market banner, spanning the street with its ropes tied to the buildings on each side
+      s += P("M11 25 L20 29.5 M11 40 L20 36.5 M149 25 L140 29.5 M149 40 L140 36.5","","#2a2a2a",.6);
+      s += R(20,29.5,120,7,"#2a2a32")+R(20,29.5,120,.8,"#8a8a92")+R(20,35.7,120,.8,"#8a8a92")+T(80,34.9,4.6,"HAYMARKET FARMERS' MARKET","#f2ede2");
+      return svg(s);
+    },
+    oldfather: () => { // tall slab tower: cream vertical piers full height, red-brown panels and windows between, glass entrance
+      const CR="#ece4d3", CD="#d6ccb8", RB="#9a4a3a", G=98;
+      let s = sky();
+      s += R(44,6,72,G-6,RB)+R(42,4,76,3,CR);
+      const bays = 10, bw = 72/bays;
+      for (let c=0;c<bays;c++) for (let r=0;r<11;r++) s += R(44+c*bw+1.6,10+r*7.4,bw-3.2,3.6,"#4f6f86");
+      for (let c=0;c<=bays;c++) s += R(44+c*bw-1,6,2,G-6,CR)+R(44+c*bw+.6,6,.4,G-6,CD);
+      s += R(44,88,72,G-88,CR)+R(48,89,64,G-89,"#4f6f86");
+      for (let i=0;i<=8;i++) s += R(48+i*8-.3,89,.6,G-89,"#e8eef0");
+      s += R(58,84,44,5,CR)+T(80,87.9,4,"OLDFATHER HALL","#3a3428");
+      s += R(72,90,16,G-90,"#2f3540");
+      s += R(0,G,160,120-G,"#d6d0c4")+R(0,G,160,1,"#b8b2a6")+R(0,G+2,36,120-G-2,"url(#p-grass)")+R(124,G+2,36,120-G-2,"url(#p-grass)");
+      return svg(s);
+    },
+    eastunion: () => { // tan brick union with a metal box on the roof, red N over the entrance, patio umbrellas, steel clock tower
+      const TB="#c9b18e", TD="#b39a78", RED="#c8232c", RU="#6b3a2a", G=94;
+      let s = sky();
+      // metal penthouse with louvers
+      s += R(48,16,64,14,"#aeb2b8")+R(46,14,68,2.5,"#c4c8cd")+R(65,20,30,6,"#7e848b");
+      for (let x=66;x<95;x+=2) s += R(x,20,.6,6,"#6a7077");
+      // the tan brick building
+      s += R(6,30,148,G-30,TB)+R(4,28,152,2.5,"#ddd0b8");
+      for (let y=34;y<G;y+=3) s += R(6,y,148,.4,TD);
+      [[12,44],[28,44],[124,44],[140,44]].forEach(([x,y]) => s += R(x,y,10,12,"#2f3540")+R(x+1,y+1,8,10,"#4f6f86"));
+      // entrance with the N and the name
+      s += T(80,70,10,"N",RED)+R(56,72,48,5,"#2f3540")+T(80,75.8,3.8,"NEBRASKA EAST UNION","#f2ede2");
+      s += R(58,77,44,G-77,"#4f6f86");
+      for (let i=0;i<=6;i++) s += R(58+i*7.33-.3,77,.6,G-77,"#e8eef0");
+      // patio with red umbrellas
+      s += R(0,G,160,120-G,"#d6d0c4")+R(0,G,160,1,"#b8b2a6")+R(0,108,160,12,"url(#p-grass)");
+      [52,80,108].forEach(x => s += R(x-.5,88,1,12,"#555")+P(`M${x-9} 89 Q${x} 81 ${x+9} 89Z`,RED)+R(x-6,99,12,1.5,"#555"));
+      // the steel clock tower on the left: open frame, pointed top, one big clock face, crisscrossing cables
+      const cx0 = 11, cw = 22, cbot = G+8, cmid = cx0+cw/2;
+      s += R(cmid-.5,22,1,cbot-22,"#4a2a1e");
+      s += R(cx0,20,2,cbot-20,RU)+R(cx0+cw-2,20,2,cbot-20,RU);
+      s += P(`M${cx0} 21 L${cmid} 2 L${cx0+cw} 21`,"",RU,2);
+      for (let y=20;y<cbot;y+=12) s += R(cx0,y,cw,1.4,RU);
+      for (let y=32;y<cbot-4;y+=12) s += P(`M${cx0+2} ${y} L${cx0+cw-2} ${y+12} M${cx0+cw-2} ${y} L${cx0+2} ${y+12}`,"","#b8a89e",.35);
+      s += `<circle cx="${cmid}" cy="14" r="6.5" fill="#fff" stroke="#222" stroke-width="1.1"/>`+P(`M${cmid} 14 L${cmid} 9.8 M${cmid} 14 L${cmid+3} 15.2`,"","#222",.8)+C(cmid,14,.7,"#222");
+      // a tree on the right to balance it
+      s += R(141,80,2,G+6-80,"#6b4a2b")+C(142,74,11,"#3f7f35")+C(146,70,6,"#58a04a");
+      return svg(s);
+    },
     session: () => svg(
       R(0,0,160,120,"#555")+R(0,0,160,70,"url(#p-gray)")+
       R(30,8,100,16,"#000")+T(80,15,7,"LISTENING SESSION","#ffff55")+T(80,21,6,"YOUR VOICE MATTERS*","#aaa")+
@@ -517,7 +910,7 @@ footer a{color:var(--red)}
   // ---------- campus ----------
   const LOC = {
     canfield:{name:"Canfield Admin", map:[78,88],
-      desc:"The Canfield Administration Building houses the chancellor's office, the registrar and a hallway of framed portraits of chancellors past. There's an empty nail at the end.",
+      desc:"The Canfield Administration Building houses the chancellor's office, the registrar and a hallway of framed portraits of chancellors past. There's an empty nail at the end. The carving across the top still says 'Teachers College.' Nobody has found the budget to change it.",
       src:[{l:"Ask the front desk",w:"staff",k:"talk",n:"The receptionist"},{l:"Read the provost's sticky notes",w:"note",k:"read",n:"A sticky note on a monitor",v:"It reads:"},{l:"Hold a listening session",w:"session",k:"session"}]},
     love:{name:"Love Library", map:[72,58],
       desc:"Love Library is named for Don L. Love, a former mayor of Lincoln, not the feeling. During finals week it inspires neither.",
@@ -529,7 +922,7 @@ footer a{color:var(--red)}
       desc:"Memorial Stadium has sold out every home game since 1962, the longest streak in college football. On game days it becomes one of the biggest cities in Nebraska.",
       src:[{l:"Talk to a season-ticket holder",w:"booster",k:"talk",n:"A season-ticket holder"},{l:"Ask an assistant coach",w:"coach",k:"talk",n:"An assistant coach"},{l:"Hold a listening session in a suite",w:"session",k:"session"}]},
     morrill:{name:"Morrill Hall", map:[90,70],
-      desc:"Morrill Hall, home of the University of Nebraska State Museum, houses Archie, one of the largest mounted mammoth skeletons in the world. He has outlasted every chancellor.",
+      desc:"Morrill Hall, home of the University of Nebraska State Museum, houses Archie, one of the largest mounted mammoth skeletons in the world. A bronze Archie stands guard out front. He has outlasted every chancellor.",
       src:[{l:"Ask a museum docent",w:"docent",k:"talk",n:"The docent"},{l:"Consult Archie the mammoth",w:"archie",k:"archie"},{l:"Read the guest book",w:"note",k:"read",n:"The guest book",v:"Today's entry reads:"}]},
     sheldon:{name:"Sheldon Museum", map:[55,64],
       desc:"The Sheldon Museum of Art was designed by architect Philip Johnson and opened in 1963. Its sculpture garden is a fine place to think deep thoughts, or to cut through on the way to class.",
@@ -570,7 +963,7 @@ footer a{color:var(--red)}
     mueller:{name:"Mueller Tower", map:[80,64],
       desc:"The Ralph Mueller Carillon Tower chimes over City Campus. It's also the most popular landmark for telling someone where to meet you.",
       src:[{l:"Ask the carillonneur",w:"docent",k:"talk",n:"The carillonneur"},{l:"Talk to a student napping on the lawn",w:"student",k:"talk",n:"A student, mostly asleep"},{l:"Read the bell schedule",w:"note",k:"read",n:"The bell schedule",v:"Someone scribbled in the margin:"}]},
-    selleck:{name:"Selleck Quad", map:[100,82],
+    selleck:{name:"Selleck Quadrangle", map:[100,82],
       desc:"Nobody lives in Selleck Quadrangle anymore, but its dining center is still one of the busiest on City Campus. Every opinion on campus passes through the dessert line eventually.",
       src:[{l:"Ask a dining hall worker",w:"scooper",k:"talk",n:"A dining hall worker"},{l:"Talk to a student in the lunch line",w:"freshman",k:"talk",n:"A student waiting for chicken strips"},{l:"Read the napkin board",w:"note",k:"read",n:"The napkin board",v:"A napkin taped to the board reads:"}]},
     capitol:{name:"State Capitol", map:[106,114], far:true,
@@ -580,8 +973,8 @@ footer a{color:var(--red)}
       desc:"The Haymarket's old brick warehouses are now restaurants and bars, a few blocks from Pinnacle Bank Arena. Alumni gather here to explain how things were better when they were students.",
       src:[{l:"Ask an alum at the bar",w:"booster",k:"talk",n:"An alum, class of '89"},{l:"Ask the bartender",w:"usher",k:"talk",n:"The bartender"},{l:"Hold a listening session at a brewery",w:"session",k:"session"}]},
     oldfather:{name:"Oldfather Hall", map:[108,62],
-      desc:"Oldfather Hall is one of the tallest buildings on City Campus and home to several social science departments. Its elevators are a frequent topic of faculty discussion.",
-      src:[{l:"Ask a political science professor",w:"prof",k:"talk",n:"A political science professor"},{l:"Talk to someone waiting for the elevator",w:"grad",k:"talk",n:"A grad student who has been waiting for the elevator a while"},{l:"Read the elevator graffiti",w:"note",k:"read",n:"Graffiti inside the elevator",v:"Scratched into the wall:"}]},
+      desc:"Oldfather Hall is one of the tallest buildings on City Campus and home to several social science departments, including political science. The poli sci faculty are covering this search like an election night.",
+      src:[{l:"Ask a political science professor",w:"prof",k:"talk",n:"A political science professor"},{l:"Talk to a poli sci grad student",w:"grad",k:"talk",n:"A political science grad student, mid-spreadsheet"},{l:"Read the mock election flyer",w:"note",k:"read",n:"A mock election flyer",v:"Under 'Platform,' someone wrote:"}]},
     eastunion:{name:"East Union", map:[134,30], far:true,
       desc:"The Nebraska East Union is the student hub of East Campus, home to agricultural sciences, a lot of opinions and a lot more parking than City Campus.",
       src:[{l:"Ask a vet science student",w:"farmer",k:"talk",n:"A veterinary science student"},{l:"Ask an agronomy researcher",w:"scientist",k:"talk",n:"An agronomy researcher"},{l:"Read the 4-H bulletin board",w:"note",k:"read",n:"The bulletin board",v:"A flyer says:"}]},
@@ -611,7 +1004,7 @@ footer a{color:var(--red)}
     selleck:["Try the dining hall where nobody lives upstairs anymore.","Go to the old quad. Nobody lives there, but everybody eats there."],
     capitol:["The state senators have opinions. Go downtown, to the tallest building in Lincoln.","Ask the lawmakers. Look for the Sower on top of the tower."],
     haymarket:["The alumni are holding court downtown, near the arena.","Go where the old warehouses turned into bars. The alums are there."],
-    oldfather:["The political science department is debating this. Take the elevator, if it's working.","Go to the tall building with the famously unreliable elevators."],
+    oldfather:["The political science department is polling everyone about this. Find them.","Look up. Way up. Try the tall academic tower on City Campus."],
     eastunion:["East Campus wants its own say. Try their student union.","Go to the student union on the other campus."],
   };
 
@@ -716,7 +1109,7 @@ footer a{color:var(--red)}
     talk:["Chancellor search? Nobody told me there was a chancellor search.","Sorry, I'm late for class.","I filled out the online survey. Twice. Never heard back.","No idea. I'm still mad about the last search.","Haven't heard a thing. Is it true the finalists get free parking?","Can't help you. I only read the emails with 'free food' in the subject line.","Another search? I just learned the last one's name."],
     session:["Your listening session drew three people. All three came for the free cookies.","The session ran 90 minutes. Every single comment was about parking.","Nobody came. The calendar invite went to everyone's spam folder.","Two people showed up. They were looking for a different meeting."],
     read:["It's a gum wrapper and an old parking ticket.","Somebody drew a very detailed corn cob. Nothing about the search.","'Bring back the old dining hall pizza.' That's it.","It's blank. Somehow that feels like a statement."],
-    archie:["Archie stares into the middle distance, as he has since the Pleistocene.","Archie says nothing. He's a skeleton. Nobody has tucked a note under his tusk today."],
+    archie:["Archie stares into the middle distance, as he has since the Pleistocene.","Archie says nothing. He's a bronze statue. Nobody has tucked a note under his tusk today."],
   };
 
   // ---------- utils ----------
@@ -1065,7 +1458,7 @@ footer a{color:var(--red)}
     } else if (src.k==="read"){
       html += `<p class="who">${esc(src.n)}</p>` + (line ? `<p>${esc(src.v)}</p><p>"${esc(line)}"</p>` : `<p>${esc(pick(DUD.read))}</p>`);
     } else if (src.k==="archie"){
-      html += `<p class="who">Archie the mammoth</p>` + (line ? `<p>Archie says nothing. He's a skeleton. But someone has tucked a note under his tusk:</p><p>"${esc(line)}"</p>` : `<p>${esc(pick(DUD.archie))}</p>`);
+      html += `<p class="who">Archie the mammoth</p>` + (line ? `<p>Archie says nothing. He's a bronze statue. But someone has tucked a note under his tusk:</p><p>"${esc(line)}"</p>` : `<p>${esc(pick(DUD.archie))}</p>`);
     } else {
       if (line){
         const ram = shuffle(RAMBLES).slice(0,2), pos = rnd(3), voices = [];
