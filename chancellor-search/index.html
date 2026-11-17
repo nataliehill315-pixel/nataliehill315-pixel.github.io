@@ -112,6 +112,23 @@ footer a{color:var(--red)}
   .pan{border-width:4px;border-radius:12px}
 }
 @media (prefers-reduced-motion:reduce){.blink{animation:none}}
+/* full screen: the game fills the screen, centered, with bigger text */
+.fs-btn{font:700 12px var(--head);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:5px 10px;cursor:pointer}
+.fs-btn:hover{border-color:var(--red);color:var(--red)}
+.cs{position:relative}
+.fs-exit{display:none;position:absolute;top:10px;right:12px;z-index:2;font:600 14px var(--head);letter-spacing:.05em;text-transform:uppercase;color:#000;background:var(--g-gray);border:0;border-radius:4px;padding:4px 10px;cursor:pointer}
+.cs:fullscreen, .cs.fs{position:fixed;inset:0;z-index:1000;width:100vw;height:100vh;border-radius:0;
+  padding:5vh max(3vw, calc((100vw - 150vh)/2));gap:1.6vh;font-size:clamp(20px,1.1vw + 1.3vh,36px);
+  grid-template-rows:auto 1fr auto;overflow:auto}
+.cs:fullscreen .hd, .cs.fs .hd{font-size:1.15em}
+.cs:fullscreen .tx, .cs.fs .tx{max-height:none}
+.cs:fullscreen .fs-exit, .cs.fs .fs-exit{display:block}
+@media (max-width:760px){
+  .cs:fullscreen, .cs.fs{padding:2vh 3vw;font-size:20px;grid-template-rows:auto auto 1fr auto}
+  .cs:fullscreen .tx, .cs.fs .tx{min-height:0;overflow-y:auto}
+  .cs:fullscreen, .cs.fs{padding-top:calc(2vh + 30px)}
+  .cs:fullscreen .fs-exit, .cs.fs .fs-exit{top:6px}
+}
 </style>
 </head>
 <body>
@@ -150,13 +167,14 @@ footer a{color:var(--red)}
   <h1>Who in the World Is <em>UNL&#39;s Next Chancellor?</em></h1>
   <p class="dek">UNL needs a new chancellor, and you've been appointed to the search committee. Walk across campus, talk to people and hold listening sessions to find out what kind of leader campus wants and where to look next. Word is the best candidate in the pool is secretly scouting campus before deciding whether to stay in the race. Use the search portal to figure out who it is, then track them down and convince them to stay before the Board of Regents meets Friday at 5 p.m.</p>
   <p class="dek" style="margin-top:10px">Every action takes time. If nobody at a stop has heard anything about the search, you've wandered off the trail, so head back. When someone mentions a stranger in sunglasses asking around, the next stop is the last one. Figure out who you're looking for, go there and approach them. Places on the same campus are a walk apart; getting between City Campus, East Campus, Innovation Campus and downtown means taking the shuttle.</p>
-  <div class="rule"><span id="rankLabel">Case file · Chancellor search</span><span>Arrow keys + Enter, number keys, or click</span></div>
+  <div class="rule"><span id="rankLabel">Case file · Chancellor search</span><span style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">Arrow keys + Enter, number keys, or click <button type="button" class="fs-btn" id="fsBtn">Full screen</button></span></div>
 
   <div class="cs" id="game" tabindex="0" aria-label="Who in the World Is UNL&#39;s Next Chancellor? game">
     <div class="pan hd" id="hd"></div>
     <div class="pan sc" id="sc"></div>
     <div class="pan tx" id="tx" aria-live="polite"></div>
     <div class="pan mn" id="mn" role="menu"></div>
+    <button type="button" class="fs-exit" id="fsExit">Exit full screen</button>
   </div>
   <p class="hint">Click the text box or press Enter to skip the typing</p>
 </main>
@@ -1069,6 +1087,14 @@ footer a{color:var(--red)}
     {who:"Ella Vator", desc:"the board chair's former college roommate"},
     {who:"Gale Force", desc:"a motivational speaker best known for a viral talk about 'leaning into the wind'"},
     {who:"Dr. Ethan Ol", desc:"the president of an online university nobody has heard of"},
+    {who:"Tillie Fields", desc:"a seed company executive who has promised to 'grow the brand'"},
+    {who:"Rusty Combine", desc:"a retired farm equipment dealer who 'knows how to run things'"},
+    {who:"Sunny Prairie", desc:"a branding consultant who wants to rename UNL 'NebraskaU'"},
+    {who:"Herb Ishide", desc:"a former regent who resigned from the Board last week to become eligible"},
+    {who:"Mel Lowe", desc:"a cable news commentator who once visited Lincoln for a layover"},
+    {who:"Rocky Mountain", desc:"the outgoing president of a college in Colorado that just merged with a ski resort"},
+    {who:"Sod Bustor", desc:"a real estate developer whose plan starts with 'luxury dorms'"},
+    {who:"Corn Elius", desc:"a tech founder whose app was shut down for 'reasons he can't discuss'"},
   ];
   // What happened to last round's pick, which is why we're searching again.
   const FATES = [
@@ -1080,6 +1106,14 @@ footer a{color:var(--red)}
     "left halfway through their first Board meeting and has not been seen since",
     "never actually signed the contract",
     "accepted the job, then accepted a better one in Texas the same afternoon",
+    "tried to move the chancellor's office into Memorial Stadium's press box",
+    "announced a 'listening tour' and was never heard from again",
+    "replaced every faculty meeting with a podcast",
+    "resigned after their first budget presentation was mostly clip art",
+    "got lost on East Campus for three days",
+    "was hired away by a university with a bigger parking garage",
+    "tried to sell naming rights to Love Library",
+    "quit after learning the Unicameral only has one house",
   ];
   const FIRMS = ["Prestige & Pinnacle","Summit Ridge Partners","Horizon Talent Collective","Apex Meridian Search","Keystone & Vale","Lodestar Leadership Group"];
   const BUZZ = ["visionary","transformational","synergy","bold","student-centered","innovative"];
@@ -1090,6 +1124,11 @@ footer a{color:var(--red)}
     thursday:{text:"The Board moved its meeting up a day. The recommendation is due Thursday at 5 p.m."},
     catered:{text:"Good news: listening sessions are catered this round, so people actually show up. They take an hour less."},
     intern:{text:"You've been assigned a student intern. Your notebook now labels which trait each clue is about, and the intern is sticking around for every round after this one."},
+    scooters:{text:"Rental scooters are back on campus. Every walk within a campus takes an hour less."},
+    express:{text:"The shuttle added an express route. Trips between campuses take an hour less."},
+    survey:{text:"The search firm now requires a 45-question survey every morning. Your days start at 9 a.m. instead of 7."},
+    nightowl:{text:"Love Library is open 24 hours for finals, so you can keep working until 1 a.m. before heading home."},
+    finals:{text:"It's finals week. Listening sessions take an extra hour because everyone shows up to complain about exams."},
   };
   const VOTES = [
     'The committee votes 14-1 to recommend them. (The lone "no" was the student representative, who was in a midterm and voted by text by accident.)',
@@ -1215,6 +1254,26 @@ footer a{color:var(--red)}
   });
   tx.addEventListener("click", () => finishTyping());
 
+  // full screen: the real Fullscreen API where it exists, a fixed full-window layout everywhere else (like iPhone Safari)
+  const fsOn = () => !!(document.fullscreenElement || document.webkitFullscreenElement) || game.classList.contains("fs");
+  function toggleFullscreen(){
+    if (fsOn()){
+      if (game.classList.contains("fs")) game.classList.remove("fs");
+      else (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else {
+      const req = game.requestFullscreen || game.webkitRequestFullscreen;
+      const pr = req ? req.call(game) : null;
+      if (!req) game.classList.add("fs"); else if (pr && pr.catch) pr.catch(() => { game.classList.add("fs"); syncFs(); });
+    }
+    setTimeout(syncFs, 50); game.focus({preventScroll:true});
+  }
+  function syncFs(){ $("fsBtn").textContent = fsOn() ? "Exit full screen" : "Full screen"; }
+  $("fsBtn").addEventListener("click", toggleFullscreen);
+  $("fsExit").addEventListener("click", toggleFullscreen);
+  document.addEventListener("fullscreenchange", syncFs);
+  document.addEventListener("webkitfullscreenchange", syncFs);
+  document.addEventListener("keydown", e => { if (e.key==="Escape" && game.classList.contains("fs")) { game.classList.remove("fs"); syncFs(); } });
+
   // ---------- game state ----------
   let S = null, DB = store.load(), me = null;
   const rank = () => RANKS[Math.min(me ? me.wins : 0, RANKS.length-1)];
@@ -1235,7 +1294,10 @@ footer a{color:var(--red)}
     // twist: none on round 1, never twice in a row
     let twist = "none";
     if (round > 1 && !final){
-      const opts = ["none","shuttle","construction","catered","intern"].concat(stops <= 6 ? ["thursday"] : []).filter(t => (!prev || t !== prev.twist || t==="none") && !(t==="intern" && hasIntern()));
+      const usedTw = new Set(me.rounds.map(r => r.twist));
+      const all = Object.keys(TWISTS).filter(t => t!=="none" && !(t==="intern" && hasIntern()) && !(t==="thursday" && stops > 6));
+      let opts = all.filter(t => !usedTw.has(t));
+      if (!opts.length) opts = all.filter(t => !prev || t !== prev.twist);
       twist = pick(opts);
     }
     // Build the pool so you need 4 of the 5 traits (all 5 in the final search): for every set of 3
@@ -1245,7 +1307,8 @@ footer a{color:var(--red)}
     const triples = [];
     for (let a=0;a<5;a++) for (let b=a+1;b<5;b++) for (let c=b+1;c<5;c++) triples.push([a,b,c]);
     for (let tries=0; tries<800; tries++){
-      const tt = TRAITS.map(() => rnd(5));
+      // the right answer for each trait avoids whatever the last two targets had
+      const tt = TRAITS.map((_,k) => { const avoid = me.rounds.slice(-2).map(r => r.tt && r.tt[k]); return pick([0,1,2,3,4].filter(v => !avoid.includes(v))); });
       const pool = [tt, ...triples.map(tr => tt.map((v,k) => tr.includes(k) ? v : other(v)))];
       // in the final search, add a decoy for every set of 4 traits too, so you need all 5
       if (final) for (let skip=0; skip<5; skip++) pool.push(tt.map((v,k) => k===skip ? other(v) : v));
@@ -1256,6 +1319,9 @@ footer a{color:var(--red)}
         for (let c=1;c<pool.length;c++) if (pool[c].every((v,k) => k===skip || v===tt[k])) { ok=false; break; }
       if (!ok) continue;
       const order = shuffle(pool.map((_,i) => i)), names = shuffle(NAMES);
+      // you never find the same candidate twice (until you've found all of them)
+      const found = new Set(me.rounds.map(r => r.target)), ti = order.indexOf(0);
+      if (found.has(names[ti])) { const j = names.findIndex(n => !found.has(n)); if (j >= 0) [names[ti], names[j]] = [names[j], names[ti]]; }
       cands = order.map((pi,i) => ({name:names[i], g: WOMEN.has(names[i]) ? "f" : "m", t:pool[pi]}));
       target = order.indexOf(0);
       break;
@@ -1282,11 +1348,15 @@ footer a{color:var(--red)}
         return { text: parts.join(" "), trait: kd==="dest" ? -1 : tk };
       });
     });
+    const usedFates = new Set(me.rounds.map(r => r.fate));
+    let fateOpts = FATES.map((_,i) => i).filter(i => !usedFates.has(i));
+    if (!fateOpts.length) fateOpts = FATES.map((_,i) => i);
+    const fateIdx = pick(fateOpts);
     // the final search is long enough that the Board gives you until a special Saturday meeting
     const deadline = (final ? 5 : twist==="thursday" ? 3 : 4)*24 + 17;
     S = { final, round, t:9, deadline, twist, stops, last:stops, cands, target, trail, traitOrder, lines, progress:0, cur:start, inv:0, conns:[], notes:[], rec:null,
           portalVals:TRAITS.map(() => -1), seed:rnd(9999), firm: FIRMS[(round-1) % FIRMS.length], buzz: pick(BUZZ), buzzN: 20 + rnd(40),
-          prev, fate: pick(FATES) };
+          prev, fateIdx };
     S.conns = makeConns();
   }
 
@@ -1305,18 +1375,31 @@ footer a{color:var(--red)}
   const needsShuttle = (a, b) => LOC[a].region !== LOC[b].region;
   function walkHours(a, b){
     const [x1,y1] = LOC[a].map, [x2,y2] = LOC[b].map, d = Math.hypot(x2-x1, y2-y1);
-    if (needsShuttle(a,b)) return 2 + Math.round(d/30) + (S.twist==="shuttle" ? 2 : 0);
-    return Math.max(1, 1 + Math.round(d/18)) + (S.twist==="construction" ? 1 : 0);
+    if (needsShuttle(a,b)) return 2 + Math.round(d/30) + (S.twist==="shuttle" ? 2 : 0) - (S.twist==="express" ? 1 : 0);
+    return Math.max(1, 1 + Math.round(d/18) + (S.twist==="construction" ? 1 : 0) - (S.twist==="scooters" ? 1 : 0));
   }
   // returns {slept, out}
   function spend(h){
     let slept = false;
     S.t += h;
-    const hr = S.t % 24;
-    if (hr >= 23 || hr < 7){ const day = Math.floor(S.t/24) + (hr>=23?1:0); S.t = day*24 + 7; slept = true; }
+    const hr = S.t % 24, wake = S.twist==="survey" ? 9 : 7, late = S.twist==="nightowl";
+    if (late ? (hr >= 1 && hr < wake) : (hr >= 23 || hr < wake)){ const day = Math.floor(S.t/24) + (!late && hr>=23 ? 1 : 0); S.t = day*24 + wake; slept = true; }
     return { slept, out: S.t >= S.deadline };
   }
-  const SLEEP = `<p class="dim">It got late. You went home, answered 41 emails from bed and slept.</p>`;
+  const SLEEPS = [
+    "It got late. You went home, answered 41 emails from bed and slept.",
+    "You fell asleep on the couch with your notebook on your chest. The cat sat on it.",
+    "Too late to keep going. You dreamed the Board picked your dentist.",
+    "You went home and ate cereal for dinner. It's fine. You slept.",
+    "You stayed up refreshing the search portal until your eyes closed on their own.",
+    "The building was locking up, so you went home and slept for exactly six hours.",
+    "You slept badly. At 3 a.m. you sat up and said 'synergy' out loud for no reason.",
+    "Lights out. You set four alarms and slept through two.",
+    "You went home, watched one episode of something, then three more, then slept.",
+    "You slept like someone who has been to seven listening sessions in one day.",
+  ];
+  let sleepLast = -1;
+  function sleepText(){ let i; do { i = rnd(SLEEPS.length); } while (i === sleepLast); sleepLast = i; return `<p class="dim">${SLEEPS[i]}</p>`; }
   const dueText = () => `${DAYS[Math.floor(S.deadline/24)]} at 5 p.m.`;
 
   // ---------- screens ----------
@@ -1363,16 +1446,41 @@ footer a{color:var(--red)}
       <p>2. Enter what you learn in the search portal until only one candidate matches. That's who you're looking for.</p>
       <p>3. Rumor has it that candidate is scouting campus incognito, deciding whether they even want the job. When the trail runs out, approach them at the last stop and talk them into staying in the search.</p>`;
     } else {
-      const p = S.prev, pri = PRIORITY[p.pri] || PRIORITY[0];
+      const p = S.prev, pri = PRIORITY[p.pri] || PRIORITY[0], who = esc(pri.who), fate = esc(FATES[S.fateIdx]), tgt = esc(p.target), st = esc(startName);
+      const v = arr => arr[(S.round + me.name.length) % arr.length]; // rotates each round, so the wording keeps changing
+      const head = v(["*** The search reopens ***","*** Here we go again ***","*** Search committee: reconvened ***","*** Another chancellor, another search ***","*** Back to the search ***"]);
+      const recap = v([`Previously: the Board skipped the committee's work and named ${who} chancellor. ${who} ${fate}.`,
+        `Quick recap: the Board picked ${who} instead. ${who} ${fate}.`,
+        `Remember ${who}, the Board's surprise pick? ${who} ${fate}.`,
+        `${who}, the chancellor nobody on the committee chose, ${fate}.`,
+        `The ${who} era is over already. ${who} ${fate}.`]);
       const yours = p.outcome==="win"
-        ? `Your committee's pick, ${esc(p.target)}, has stopped returning your calls.`
-        : `The Board had removed you from the committee, but nobody else would take the job, so you're back.`;
-      html += `<p class="who">*** The search reopens ***</p>
-      <p>Previously: the Board skipped the committee's work and named ${esc(pri.who)} chancellor. ${esc(pri.who)} ${esc(S.fate)}.</p>
-      <p>${yours}</p>
-      <p>${esc(p.firm || FIRMS[0])} has been fired. The new firm, ${esc(S.firm)}, has delivered a pool of ${S.cands.length} candidates and a leadership profile that uses the word "${esc(S.buzz)}" ${S.buzzN} times.</p>
-      ${S.cur!=="canfield" ? `<p>The committee lost its conference room in Canfield to a "space utilization study," so this round starts at ${esc(startName)}.</p>` : ""}
-      <p>Same drill: listen to campus, narrow the pool in the search portal, then find the candidate before they leave town. This trail is ${S.stops} stops long.</p>`;
+        ? v([`Your committee's pick, ${tgt}, has stopped returning your calls.`,
+             `${tgt}, the candidate you found, now lists "almost UNL chancellor" on their LinkedIn.`,
+             `${tgt}, your committee's pick, took a job somewhere with a beach.`,
+             `${tgt} sent the committee a thank-you card addressed to "the search committee (if it still exists)."`,
+             `${tgt} has moved on. You still think about them sometimes.`])
+        : v(["The Board had removed you from the committee, but nobody else would take the job, so you're back.",
+             "You were kicked off the committee. Then nobody else would sit through the meetings. Welcome back.",
+             "Your lanyard has been mysteriously reactivated.",
+             "The Board reconsidered your removal after realizing you're the only one who knows where the snacks are.",
+             "Nobody else volunteered, so the Board pretended your removal never happened."]);
+      const poolLine = v([`This time the pool has ${S.cands.length} candidates.`,
+        `The new pool has ${S.cands.length} candidates, all described as "${esc(S.buzz)}."`,
+        `${S.cands.length} candidates are in the pool. The leadership profile uses the word "${esc(S.buzz)}" ${S.buzzN} times.`,
+        `There are ${S.cands.length} candidates this time, plus one who keeps emailing to ask if it's too late to apply.`,
+        `${S.cands.length} candidates made the cut. One of them listed "vibes" as a skill.`]);
+      const startLine = S.cur==="canfield" ? "" : v([`The committee lost its conference room in Canfield to a "space utilization study," so this round starts at ${st}.`,
+        `Your usual room in Canfield is booked for a training on booking rooms, so you start at ${st}.`,
+        `Facilities double-booked Canfield, so the committee is meeting at ${st}.`,
+        `Someone took your room in Canfield for a "quick sync" that has now lasted three weeks, so you start at ${st}.`,
+        `Canfield's heat is out again, so the committee starts at ${st}.`]);
+      const drill = v([`Same drill: listen to campus, narrow the pool in the search portal, then find the candidate before they leave town. This trail is ${S.stops} stops long.`,
+        `You know how this works by now. The trail is ${S.stops} stops long.`,
+        `Listen, narrow it down, find them. ${S.stops} stops this time.`,
+        `The trail is ${S.stops} stops long. Wear comfortable shoes.`,
+        `${S.stops} stops, one candidate, no pressure.`]);
+      html += `<p class="who">${head}</p><p>${recap}</p><p>${yours}</p><p>${poolLine}</p>${startLine ? `<p>${startLine}</p>` : ""}<p>${drill}</p>`;
       if (S.final) html += `<p class="who">*** Final search ***</p><p class="hot">The Board says this is the last search it will ever need. It's also the hardest: the longest trail, the biggest pool, only one person at each stop will say what they want in a chancellor, you'll need all five traits to pick out the candidate, and there are more places to wander off to. The Board scheduled a special Saturday meeting to give you a little extra time.</p>${hasIntern() ? `<p class="dim">Your student intern quit to go work for the search firm. You're on your own.</p>` : ""}<p class="dim">Calling the candidate by the wrong name this time costs you half a day while they cool off.</p>`;
       else if (TWISTS[S.twist].text) html += `<p class="hot">This round: ${esc(TWISTS[S.twist].text)}</p>`;
       if (hasIntern() && !S.final) html += `<p class="dim">Your student intern is still here, labeling which trait each clue in your notebook is about.</p>`;
@@ -1423,7 +1531,7 @@ footer a{color:var(--red)}
     animateMap(from, id, () => {
       if (S.trail[S.progress+1] === id) S.progress++;
       S.cur = id; S.inv = 0; S.conns = makeConns();
-      screenLoc(r.slept ? SLEEP : "");
+      screenLoc(r.slept ? sleepText() : "");
     });
   }
   function mapSVG(from, to){
@@ -1469,11 +1577,11 @@ footer a{color:var(--red)}
   function ask(i){
     const L = LOC[S.cur], src = L.src[i];
     S.inv++;
-    const cost = 1 + Math.floor(S.inv/2) + (src.k==="session" && S.twist!=="catered" ? 1 : 0);
+    const cost = 1 + Math.floor(S.inv/2) + (src.k==="session" ? (S.twist==="catered" ? 0 : 1) + (S.twist==="finals" ? 1 : 0) : 0);
     const r = spend(cost);
     if (r.out) return endTimeout();
     setHead(L.name, S.t);
-    const pre = r.slept ? SLEEP : "";
+    const pre = r.slept ? sleepText() : "";
     const stop = S.trail.indexOf(S.cur);
     const onTrail = stop >= 0 && stop <= S.progress && stop < S.last;
     const seed = S.seed + i*31 + stop*7 + LOC_IDS.indexOf(S.cur);
@@ -1504,7 +1612,7 @@ footer a{color:var(--red)}
     const r = spend(1);
     if (r.out) return endTimeout();
     setHead(LOC[S.cur].name, S.t);
-    encounter(r.slept ? SLEEP : "");
+    encounter(r.slept ? sleepText() : "");
   }
   function screenNotes(){
     portalState = null;
@@ -1600,7 +1708,7 @@ footer a{color:var(--red)}
   }
   function finaleNews(){
     me.wins++;
-    me.rounds.push({ outcome:"chancellor", pri:-1, target:S.cands[S.target].name, firm:S.firm, twist:S.twist, trail:S.trail });
+    me.rounds.push({ outcome:"chancellor", pri:-1, target:S.cands[S.target].name, tt:S.cands[S.target].t, firm:S.firm, twist:S.twist, trail:S.trail, fate:S.fateIdx });
     me.chancellor = { round:S.round };
     me.terms = (me.terms||0) + 1;
     store.save(DB);
@@ -1693,17 +1801,32 @@ footer a{color:var(--red)}
     if (kind==="win" && S.final) return finaleEmail();
     setHead("Canfield Admin", S.deadline - 1);
     sc.innerHTML = SCENES.hq();
-    typeHTML(`<p class="who">New message · Board of Regents</p><p class="dim">Subject: ${S.round > 1 ? "Update (again)" : "Update"}</p>
+    const v = arr => arr[(S.round - 1) % arr.length];
+    typeHTML(`<p class="who">New message · Board of Regents</p><p class="dim">Subject: ${v(["Update","Update (again)","A quick update","Search update","Re: Re: Update","Important: please read"])}</p>
       <p>Dear Search Committee,</p>
-      <p>Thank you for your tireless service and for the many hours you spent listening to our campus community. Your input has been invaluable.</p>
-      <p>After careful consideration, the University has decided to go in a different direction.</p>
-      <p class="dim">This inbox is not monitored.</p>`);
+      <p>${v(["Thank you for your tireless service and for the many hours you spent listening to our campus community. Your input has been invaluable.",
+        "We are grateful for your diligent work on behalf of the University. Your thoroughness was noted.",
+        "Thank you, once again, for your service. We especially appreciated the spreadsheet.",
+        "Your dedication to this process has been remarkable, and we have remarked on it.",
+        "We want to thank you for your continued commitment to shared governance, a phrase we enjoy saying.",
+        "Thank you for your recommendation. It was received, opened and filed."])}</p>
+      <p>${v(["After careful consideration, the University has decided to go in a different direction.",
+        "After careful consideration, the University has once again decided to go in a different direction.",
+        "In keeping with tradition, the University has decided to go in a different direction.",
+        "After a brief and confidential process, the University has decided to go in yet another different direction.",
+        "The University has decided to go in a different direction. You may have seen this coming.",
+        "As you may have guessed, the University is going in a different direction."])}</p>
+      <p class="dim">${v(["This inbox is not monitored.","Please do not reply to this email.","This message was sent from a no-reply address. So was the last one.","Replies to this address are read by no one.","This email was approved by legal.","Please print this email for your records, or don't."])}</p>`);
     setMenu([{label:"Continue", fn: () => finalScreen(kind)}]);
   }
   function finalScreen(kind){
     // don't let the same person get picked two rounds in a row
     const last = S.prev ? S.prev.pri : -1;
-    const pi = pick(PRIORITY.map((_,i) => i).filter(i => i!==last)), pri = PRIORITY[pi];
+    // the Board never picks the same person twice (until it has run out of people)
+    const usedPri = new Set(me.rounds.map(r => r.pri));
+    let options = PRIORITY.map((_,i) => i).filter(i => !usedPri.has(i));
+    if (!options.length) options = PRIORITY.map((_,i) => i).filter(i => i!==last);
+    const pi = pick(options), pri = PRIORITY[pi];
     let promo = "";
     if (kind==="win"){
       const before = rank();
@@ -1718,13 +1841,19 @@ footer a{color:var(--red)}
       if (me.wins > 0){ me.wins--; demo = ` You've been demoted to <span class="hot">${esc(rank())}</span>.`; }
       promo = `<p>The Board has removed you from the search committee, effective immediately. Your lanyard has been deactivated.${demo}</p><p class="dim">(Find the right candidate and send your recommendation before the deadline to earn a promotion.)</p>`;
     }
-    me.rounds.push({ outcome: kind, pri: pi, target: S.cands[S.target].name, firm: S.firm, twist: S.twist, trail: S.trail });
+    me.rounds.push({ outcome: kind, pri: pi, target: S.cands[S.target].name, tt: S.cands[S.target].t, firm: S.firm, twist: S.twist, trail: S.trail, fate: S.fateIdx });
     if (me.rounds.length > 50) me.rounds = me.rounds.slice(-50);
     store.save(DB);
     sc.innerHTML = SCENES.canfield();
+    const v = arr => arr[(S.round - 1) % arr.length];
     typeHTML(`<p class="who">Breaking news</p><p>The Board of Regents has named a sole priority candidate for chancellor: <span class="hot">${esc(pri.who)}, ${esc(pri.desc)}</span>.</p>
-      <p>Nobody on the search committee has met them. You learn the news the same way everyone else does: by reading The Daily Nebraskan.</p>${promo}
-      <p class="mag">END OF ROUND ${S.round}</p><p class="dim">Something tells you this won't be the last search.</p>`);
+      <p>${v(["Nobody on the search committee has met them. You learn the news the same way everyone else does: by reading The Daily Nebraskan.",
+        "The committee finds out from a Daily Nebraskan story that runs before the Board's announcement does.",
+        "Nobody tells the committee. You read about it in The Daily Nebraskan over lunch.",
+        "The Daily Nebraskan breaks the news before the committee's group chat does.",
+        "You learn about it from The Daily Nebraskan. So does the Board chair's assistant, apparently.",
+        "The Daily Nebraskan has the story first. The committee's official notice arrives two days later."])}</p>${promo}
+      <p class="mag">END OF ROUND ${S.round}</p><p class="dim">${v(["Something tells you this won't be the last search.","You have a feeling you'll be back.","You put your lanyard in a drawer. Not too far back.","See you at the next search.","You don't unpack your committee bag.","The search firm has already sent a calendar invite."])}</p>`);
     setMenu([{label:"Start the next search", fn: () => { newCase(); screenBriefing(); }}, {label:"Log out", fn: screenLogin}]);
     updateRule();
   }
