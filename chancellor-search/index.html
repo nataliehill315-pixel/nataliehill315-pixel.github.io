@@ -305,7 +305,7 @@ footer a{color:var(--red)}
     selleck: () => svg(sky()+
       R(4,40,60,60,"url(#p-brick)")+R(96,40,60,60,"url(#p-brick)")+R(54,52,52,48,"#aaa")+
       grid(10,46,4,4,8,6,13,12,"#000")+grid(102,46,4,4,8,6,13,12,"#000")+
-      R(58,56,44,9,"#000")+T(80,63,7,"SELLECK QUAD","#aaa")+
+      R(58,56,44,9,"#000")+T(80,63,7,"SELLECK DINING","#ffff55")+
       R(66,72,28,4,"#555")+C(74,70,3,"#aa5500")+C(84,70,3,"#ffff55")+
       R(70,84,20,16,"#000")+walk(100)+lawn(106)),
     capitol: () => svg(sky()+
@@ -349,7 +349,7 @@ footer a{color:var(--red)}
     grad:{shirt:"#555",acc:["glasses","bags"]}, student:{shirt:"#aa0000",acc:["N"]},
     asun:{shirt:"#0000aa",acc:["tie"]}, booster:{shirt:"#aa0000",acc:["cap","N"]},
     coach:{shirt:"#aa0000",acc:["cap","whistle"]}, docent:{shirt:"#00aa00",acc:["lanyard","glasses"]},
-    prof:{shirt:"#aa5500",acc:["glasses","tie"]}, artist:{shirt:"#000",acc:["beret"]},
+    prof:{shirts:["#555","#0000aa","#00aaaa","#aa00aa","#005500"],acc:["glasses","tie"]}, artist:{shirt:"#000",acc:["beret"]},
     scooper:{shirt:"#fff",acc:["hat"]}, farmer:{shirt:"#00aaaa",acc:["cap"]},
     reporter:{shirt:"#555",acc:["press"]}, usher:{shirt:"#000",acc:["tie"]},
     actor:{shirt:"#aa00aa",acc:["scarf"]}, trainer:{shirt:"#00aa00",acc:["headband","whistle"]},
@@ -361,10 +361,13 @@ footer a{color:var(--red)}
   };
   function portrait(type, seed){
     const p = PEOPLE[type] || PEOPLE.student;
-    const skin = SKIN[seed % SKIN.length], hair = HAIR[(seed>>2) % HAIR.length], style = (seed>>4) % 4;
+    const skin = SKIN[seed % SKIN.length], style = (seed>>4) % 4;
+    // keep skin, hair and shirt from all landing on the same color
+    let hair = HAIR[(seed>>2) % HAIR.length]; if (hair === skin) hair = "#000";
+    let shirt = p.shirts ? p.shirts[(seed>>3) % p.shirts.length] : p.shirt; if (shirt === skin || shirt === hair) shirt = ["#555","#0000aa","#00aa00"].find(c => c !== skin && c !== hair);
     let s = R(0,0,160,120,"url(#p-sky)")+R(0,0,160,120,"rgba(0,0,0,.35)");
     // body
-    s += P("M30 120 L36 92 Q40 84 60 82 L100 82 Q120 84 124 92 L130 120Z", p.shirt)+P("M100 82 Q120 84 124 92 L130 120 L110 120 Q112 98 100 82Z","rgba(0,0,0,.2)");
+    s += P("M30 120 L36 92 Q40 84 60 82 L100 82 Q120 84 124 92 L130 120Z", shirt)+P("M100 82 Q120 84 124 92 L130 120 L110 120 Q112 98 100 82Z","rgba(0,0,0,.2)");
     if (p.acc.includes("coat")) s += P("M30 120 L36 92 Q40 84 60 82 L72 82 L80 120Z","#fff")+P("M130 120 L124 92 Q120 84 100 82 L88 82 L80 120Z","#fff");
     if (p.acc.includes("vest")) s += P("M38 120 L42 92 L66 84 L72 120Z","#0000aa")+P("M122 120 L118 92 L94 84 L88 120Z","#0000aa");
     s += R(70,70,20,14,skin);
@@ -568,8 +571,8 @@ footer a{color:var(--red)}
       desc:"The Ralph Mueller Carillon Tower chimes over City Campus. It's also the most popular landmark for telling someone where to meet you.",
       src:[{l:"Ask the carillonneur",w:"docent",k:"talk",n:"The carillonneur"},{l:"Talk to a student napping on the lawn",w:"student",k:"talk",n:"A student, mostly asleep"},{l:"Read the bell schedule",w:"note",k:"read",n:"The bell schedule",v:"Someone scribbled in the margin:"}]},
     selleck:{name:"Selleck Quad", map:[100,82],
-      desc:"Selleck Quadrangle no longer houses students, but its courtyard is still a popular shortcut across City Campus.",
-      src:[{l:"Ask a facilities worker",w:"staff",k:"talk",n:"A facilities worker"},{l:"Talk to a student cutting through",w:"freshman",k:"talk",n:"A student cutting through the quad"},{l:"Read the old napkin board",w:"note",k:"read",n:"The old napkin board",v:"One napkin is still taped up. It reads:"}]},
+      desc:"Nobody lives in Selleck Quadrangle anymore, but its dining center is still one of the busiest on City Campus. Every opinion on campus passes through the dessert line eventually.",
+      src:[{l:"Ask a dining hall worker",w:"scooper",k:"talk",n:"A dining hall worker"},{l:"Talk to a student in the lunch line",w:"freshman",k:"talk",n:"A student waiting for chicken strips"},{l:"Read the napkin board",w:"note",k:"read",n:"The napkin board",v:"A napkin taped to the board reads:"}]},
     capitol:{name:"State Capitol", map:[106,114], far:true,
       desc:"The Nebraska State Capitol towers over downtown Lincoln with the Sower on top. Inside, the Unicameral is the only one-house state legislature in the country.",
       src:[{l:"Ask a state senator",w:"senator",k:"talk",n:"A state senator"},{l:"Ask a lobbyist",w:"founder",k:"talk",n:"A lobbyist"},{l:"Read the legislative journal",w:"note",k:"read",n:"The legislative journal",v:"An entry reads:"}]},
@@ -605,7 +608,7 @@ footer a{color:var(--red)}
     hawks:["The business school wants a say. Look for the people in suits.","Try the building where everyone's practicing their elevator pitch."],
     devaney:["The volleyball fans want to be heard. Go where the team usually plays.","Ask the people who sell out every volleyball match."],
     mueller:["Go to the bell tower. Someone up there hears everything.","Listen for the bells. The carillon player knows a lot."],
-    selleck:["Try the old quad where nobody lives anymore.","Go to the former residence hall that everybody uses as a shortcut."],
+    selleck:["Try the dining hall where nobody lives upstairs anymore.","Go to the old quad. Nobody lives there, but everybody eats there."],
     capitol:["The state senators have opinions. Go downtown, to the tallest building in Lincoln.","Ask the lawmakers. Look for the Sower on top of the tower."],
     haymarket:["The alumni are holding court downtown, near the arena.","Go where the old warehouses turned into bars. The alums are there."],
     oldfather:["The political science department is debating this. Take the elevator, if it's working.","Go to the tall building with the famously unreliable elevators."],
