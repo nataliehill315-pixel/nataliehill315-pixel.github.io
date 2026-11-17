@@ -759,13 +759,13 @@ footer a{color:var(--red)}
     let hair = HAIR[(seed>>2) % HAIR.length]; if (hair === skin) hair = "#000";
     let shirt = p.shirts ? p.shirts[(seed>>3) % p.shirts.length] : p.shirt; if (shirt === skin || shirt === hair) shirt = ["#555","#0000aa","#00aa00"].find(c => c !== skin && c !== hair);
     let s = R(0,0,160,120,"url(#p-sky)")+R(0,0,160,120,"rgba(0,0,0,.35)");
+    // hair back (long)
+    if (style===1) s += R(52,26,56,56,hair);
     // body
     s += P("M30 120 L36 92 Q40 84 60 82 L100 82 Q120 84 124 92 L130 120Z", shirt)+P("M100 82 Q120 84 124 92 L130 120 L110 120 Q112 98 100 82Z","rgba(0,0,0,.2)");
     if (p.acc.includes("coat")) s += P("M30 120 L36 92 Q40 84 60 82 L72 82 L80 120Z","#fff")+P("M130 120 L124 92 Q120 84 100 82 L88 82 L80 120Z","#fff");
     if (p.acc.includes("vest")) s += P("M38 120 L42 92 L66 84 L72 120Z","#0000aa")+P("M122 120 L118 92 L94 84 L88 120Z","#0000aa");
     s += R(70,70,20,14,skin);
-    // hair back (long)
-    if (style===1) s += R(52,26,56,56,hair);
     // head
     s += R(56,28,48,46,skin)+R(52,46,4,10,skin)+R(104,46,4,10,skin);
     // hair top
@@ -802,109 +802,117 @@ footer a{color:var(--red)}
 
   // A candidate's look comes from their five traits: background sets the outfit and wall
   // prop, plus hobby gear, signature look, ride and a speech bubble for their priority.
-  // Drawn smoother and in more colors than the rest of the game so the reveal feels special.
-  function candidatePortrait(c, shades, sayOverride){
+  // Drawn in the same blocky style as everyone else in the game, just with more detail.
+  function candidatePortrait(c, shades){
     let h = 7; for (const ch of c.name) h = (h*31 + ch.charCodeAt(0)) >>> 0;
     const [bg, hobby, look, plan, ride] = c.t;
-    const SKN = [["#f2c08a","#d79f68","#a8703f"],["#c68642","#a5692f","#74461b"],["#ffdcb8","#ecbb90","#c4936a"],["#8d5524","#704016","#4a2a0c"],["#e0ac69","#c38c4e","#966532"]];
-    const HRS = [["#2a1a10","#5a3a24"],["#3a3a3a","#7a7a7a"],["#7a3d10","#b0622a"],["#d9b04e","#f6e09a"],["#b8b8b8","#ececec"],["#5a1a10","#8f3a20"]];
-    const [sk, skS, skD] = SKN[h % SKN.length], [hr, hrL] = HRS[(h>>>3) % HRS.length], style = (h>>>6) % 5;
-    const X = 98, F = (d,f) => P(d,f), L = (d,c,w) => P(d,"",c,w);
-    const star = (x,y,r,f) => { let d=""; for (let i=0;i<10;i++){ const a=-Math.PI/2+i*Math.PI/5, rr=i%2?r*.45:r; d += (i?"L":"M")+(x+rr*Math.cos(a)).toFixed(1)+" "+(y+rr*Math.sin(a)).toFixed(1); } return F(d+"Z",f); };
-    let s = `<defs><radialGradient id="cpBg" cx="62%" cy="34%" r="70%"><stop offset="0" stop-color="#5b7fb8"/><stop offset=".55" stop-color="#2a3d6b"/><stop offset="1" stop-color="#0d1328"/></radialGradient>
-      <linearGradient id="cpFloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></linearGradient></defs>`;
-    s += R(0,0,160,120,"url(#cpBg)");
-    for (let y=2;y<120;y+=4) s += R(0,y,160,1,"rgba(255,255,255,.035)");
-    s += R(0,70,160,50,"url(#cpFloor)");
+    const SKN = [["#f0c08c","#d9a271"],["#c68642","#a86d32"],["#ffd9b5","#ebbd93"],["#8d5524","#734318"],["#e0ac69","#c99252"]];
+    const HRS = ["#2a1a10","#3a3a3a","#7a3d10","#d9b04e","#b8b8b8","#5a1a10"];
+    const [sk, skS] = SKN[h % SKN.length], hr = HRS[(h>>>3) % HRS.length];
+    const style = c.g==="f" ? [1,1,3,4][(h>>>6) % 4] : c.g==="m" ? [0,2,4][(h>>>6) % 3] : (h>>>6) % 5;
+    const X = 88; // body center; the head spans X-24..X+24
+    let s = "";
 
-    // ---- wall prop (top right) ----
+    // ---- the office: wall, wainscot, and a window with their ride parked outside ----
+    s += R(0,0,160,120,"#cbbd9c")+R(0,92,160,28,"#a9997a")+R(0,91,160,2,"#8f8064");
+    s += R(2,54,52,52,"#f2efe6")+R(5,57,46,46,"#9fc4dc")+R(5,92,46,11,"#4c9a3f");
+    const wheel = (x,y) => R(x-3,y-3,6,6,"#1e1e1e")+R(x-1,y-1,2,2,"#9a9a9a");
     s += [
-      R(124,5,32,24,"#b8860b")+R(126,7,28,20,"#fff6dc")+T(140,15,5.5,"DOCTORATE","#4a3a20")+R(130,18,20,.8,"#8a7a5a")+R(130,21,14,.8,"#8a7a5a")+C(150,23,3,"#b01e23")+F("M148 25 l-1 4 l2 -1 l2 1 l-1 -4Z","#b01e23"),
-      R(122,5,34,25,"#0b1a12")+L("M126 8 L126 27 L153 27","#3d6b4f",.8)+L("M127 25 L133 19 L139 22 L151 10","#4dff88",1.5)+F("M151 10 l-4 0 l3 3Z","#4dff88")+T(131,12,5,"Q3 +18%","#4dff88"),
-      `<ellipse cx="140" cy="17" rx="13" ry="8" fill="#8b4513" transform="rotate(-20 140 17)"/>`+L("M131 20 Q140 14 149 13","#fff",1)+Array.from({length:4},(_,i)=>L(`M${135+i*3} ${17.5-i*1.2} l1 2.6`,"#fff",.8)).join("")+L("M128 21 Q140 26 152 12","#5a2a0a",.6),
-      R(129,3,1.5,30,"#ddd")+C(130,3,1.5,"#d9b04e")+F("M131 5 L156 5 L156 20 L131 20 Q136 12 131 5Z","#1a3a8a")+C(144,12.5,4,"#d9b04e")+C(144,12.5,2.5,"#1a3a8a"),
-      star(130,14,6,"#f2d04a")+star(142,14,6,"#f2d04a")+star(154,14,6,"#f2d04a"),
-    ][bg];
-
-    // ---- ride (bottom left) ----
-    const wheel = (x,y,r) => C(x,y,r,"#151515")+C(x,y,r*.55,"#9a9a9a")+C(x,y,r*.2,"#444");
-    s += [
-      F("M4 96 L4 86 L26 86 L28 76 Q30 73 34 73 L46 73 Q50 73 52 78 L56 86 L58 88 L58 98 L4 98Z","#b01e23")+F("M31 76 L46 76 Q48 76 49 79 L52 86 L31 86Z","#9fd8ff")+R(4,86,22,2,"#7e1418")+R(56,89,2.5,3,"#ffe680")+R(2,95,6,3,"#888")+R(54,95,6,3,"#888")+wheel(16,99,6)+wheel(46,99,6),
-      F("M4 96 Q4 84 14 82 L22 74 Q26 71 34 71 L44 71 Q52 72 56 82 Q58 86 58 92 L58 97 L4 97Z","#f4f4f4")+F("M24 75 L33 75 L33 82 L18 82Z","#9fd8ff")+F("M36 75 L44 75 Q49 76 51 82 L36 82Z","#9fd8ff")+F("M30 85 l-4 6 l3 0 l-2 5 l6 -7 l-3 0 l2 -4Z","#3ad1ff")+L("M58 90 Q62 92 60 98","#3ad1ff",1)+wheel(16,98,6)+wheel(46,98,6),
-      `<circle cx="14" cy="100" r="9" fill="none" stroke="#ddd" stroke-width="1.6"/><circle cx="46" cy="100" r="9" fill="none" stroke="#ddd" stroke-width="1.6"/>`+
-        Array.from({length:6},(_,i)=>{const a=i*Math.PI/3;return L(`M${14+8*Math.cos(a)} ${100+8*Math.sin(a)} L${14-8*Math.cos(a)} ${100-8*Math.sin(a)}M${46+8*Math.cos(a)} ${100+8*Math.sin(a)} L${46-8*Math.cos(a)} ${100-8*Math.sin(a)}`,"#888",.4);}).join("")+
-        L("M14 100 L24 86 L40 86 L46 100 M24 86 L30 100 L40 86 M30 100 L14 100","#d8262c",1.8)+L("M22 82 L28 82 M40 86 L38 80 L44 79","#222",1.6),
-      R(6,72,50,3,"#2f8f3a")+R(9,75,1.6,16,"#bbb")+R(52,75,1.6,16,"#bbb")+F("M6 92 L6 88 L44 88 L50 82 L56 82 L58 92 Z","#f4f4f4")+R(12,82,20,6,"#2f8f3a")+R(10,84,4,4,"#24702d")+wheel(16,95,4.5)+wheel(48,95,4.5),
-      R(10,100,32,3,"#2f8f3a")+L("M38 100 L40 76","#555",2.5)+L("M33 76 L47 76","#333",2)+R(36,90,5,2,"#2f8f3a")+wheel(14,105,3.5)+wheel(40,105,3.5),
+      R(8,84,36,7,"#b8302a")+R(26,77,14,8,"#b8302a")+R(29,79,9,5,"#9fd8ff")+R(8,84,18,1.5,"#8a2420")+wheel(15,92)+wheel(37,92),
+      R(9,82,34,8,"#f4f4f4")+R(15,76,22,7,"#f4f4f4")+R(17,78,8,4,"#9fd8ff")+R(27,78,8,4,"#9fd8ff")+P("M25 83 L23 87 L26 87 L24 90","","#2b8fd6",1.2)+wheel(16,91)+wheel(36,91),
+      `<circle cx="16" cy="92" r="6" fill="none" stroke="#2a2a2a" stroke-width="1.4"/><circle cx="38" cy="92" r="6" fill="none" stroke="#2a2a2a" stroke-width="1.4"/>`+P("M16 92 L24 82 L34 82 L38 92 M24 82 L28 92 L34 82 M22 78 L26 78 M34 82 L33 78 L37 78","","#c8232c",1.4),
+      R(9,74,34,2,"#2f8f3a")+R(11,76,1.5,10,"#aaa")+R(40,76,1.5,10,"#aaa")+R(9,84,34,6,"#f4f4f4")+R(14,80,14,4,"#2f8f3a")+wheel(15,91)+wheel(37,91),
+      R(12,90,24,2.5,"#2f8f3a")+R(32,74,2,17,"#555")+R(27,73,11,2,"#333")+wheel(14,94)+wheel(34,94),
     ][ride];
 
-    // ---- outfit by background (red blazer and fleece vest override) ----
-    const OUT = [["#8b5a2b","#6a4220"],["#1c2541","#10162b"],["#b01e23","#7e1418"],["#5a5f66","#3f4349"],["#3b5323","#2a3b18"]];
-    let [jk, jkS] = OUT[bg];
-    if (look===3) [jk, jkS] = ["#d8262c","#a01a1f"];
-    if (look===2) [jk, jkS] = ["#cfe0f5","#a9c0dd"];
-    s += F(`M${X-56} 120 Q${X-55} 94 ${X-34} 87 L${X-11} 79 L${X+11} 79 L${X+34} 87 Q${X+55} 94 ${X+56} 120Z`, jk);
-    s += F(`M${X+20} 82 L${X+34} 87 Q${X+55} 94 ${X+56} 120 L${X+30} 120 Q${X+34} 100 ${X+20} 82Z`, jkS);
-    if (bg===0 && look!==2 && look!==3) for (let i=0;i<40;i++) s += R(X-50+((i*37)%100), 92+((i*53)%26), 1, 1, "rgba(255,255,255,.18)");
-    if (bg===2){ // polo
-      s += F(`M${X-11} 79 L${X} 92 L${X+11} 79 L${X+6} 79 L${X} 86 L${X-6} 79Z`, "#fff")+R(X-1,86,2,10,jkS)+C(X,90,1,"#fff")+C(X,94,1,"#fff");
-    } else {
-      s += F(`M${X-11} 79 L${X} 104 L${X+11} 79Z`, bg===4 ? "#c9b98a" : "#fbfbfb");
-      s += F(`M${X-11} 79 L${X-5} 79 L${X} 88 L${X-3} 92Z`, "#e6e6e6")+F(`M${X+11} 79 L${X+5} 79 L${X} 88 L${X+3} 92Z`, "#e6e6e6");
-      if (look!==2) s += F(`M${X-11} 79 L${X-22} 88 L${X-7} 112 L${X} 104Z`, jkS)+F(`M${X+11} 79 L${X+22} 88 L${X+7} 112 L${X} 104Z`, jkS);
-      if (look!==0 && (bg===1 || bg===3 || bg===4)) s += F(`M${X-3} 88 L${X+3} 88 L${X+2} 92 L${X+4} 104 L${X} 108 L${X-4} 104 L${X-2} 92Z`, bg===4 ? "#222" : bg===1 ? "#1f4fa8" : "#b01e23");
-      if (look!==2) s += C(X-2,108,1,"#222")+C(X-2,114,1,"#222");
-    }
-    if (look===2){ // fleece vest over a button-down
-      s += F(`M${X-50} 120 Q${X-49} 98 ${X-32} 90 L${X-12} 81 L${X-4} 120Z`,"#26324d")+F(`M${X+50} 120 Q${X+49} 98 ${X+32} 90 L${X+12} 81 L${X+4} 120Z`,"#1c263b")+R(X-5,96,1,24,"#bbb")+R(X+4,96,1,24,"#999");
-    }
-    if (bg===4) s += R(X-46,88,16,4,"#d9b04e")+R(X+30,88,16,4,"#d9b04e")+star(X-38,90,1.6,"#fff")+star(X+38,90,1.6,"#fff")+
-      [["#b01e23","#1a3a8a","#f2d04a"],["#2f8f3a","#fff","#b01e23"]].map((row,r)=>row.map((f,i)=>R(X-30+i*5,98+r*4,5,3,f)).join("")).join("");
-    if (bg===3) s += C(X+24,96,2.4,"#d9b04e")+C(X+24,96,1.2,"#1a3a8a");
+    // the window's center bar sits in front of whatever is parked outside
+    s += R(27,57,2,46,"#f2efe6")+R(2,103,52,3,"#e2ddd2");
 
-    // ---- neck and head ----
-    s += R(X-9,68,18,14,sk)+F(`M${X-9} 70 Q${X} 80 ${X+9} 70 L${X+9} 76 Q${X} 82 ${X-9} 76Z`, skS);
-    if (style===1) s += F(`M${X-26} 40 Q${X-30} 74 ${X-20} 84 L${X+20} 84 Q${X+30} 74 ${X+26} 40Z`, hr);
-    s += `<ellipse cx="${X-22}" cy="50" rx="3.5" ry="6" fill="${sk}"/><ellipse cx="${X+22}" cy="50" rx="3.5" ry="6" fill="${skS}"/>`;
-    s += F(`M${X-22} 36 Q${X-23} 64 ${X-12} 74 Q${X} 82 ${X+12} 74 Q${X+23} 64 ${X+22} 36 Q${X+20} 18 ${X} 17 Q${X-20} 18 ${X-22} 36Z`, sk);
-    s += F(`M${X+22} 36 Q${X+23} 64 ${X+12} 74 Q${X+6} 78 ${X+2} 79 Q${X+15} 66 ${X+16} 38 Q${X+16} 26 ${X+10} 19 Q${X+21} 23 ${X+22} 36Z`, skS);
-    s += C(X-12,60,3.5,"rgba(220,90,90,.18)")+C(X+12,60,3.5,"rgba(220,90,90,.14)");
-    // hair
-    if (style===0) s += F(`M${X-23} 44 Q${X-26} 16 ${X} 14 Q${X+26} 16 ${X+23} 44 Q${X+21} 30 ${X+8} 26 Q${X-6} 30 ${X-12} 24 Q${X-17} 34 ${X-23} 44Z`, hr)+L(`M${X-14} 22 Q${X-2} 17 ${X+12} 20`, hrL, 1);
-    if (style===1) s += F(`M${X-25} 52 Q${X-28} 14 ${X} 13 Q${X+28} 14 ${X+25} 52 Q${X+22} 28 ${X+4} 24 Q${X-14} 28 ${X-25} 52Z`, hr)+L(`M${X-18} 22 Q${X} 15 ${X+16} 21`, hrL, 1);
-    if (style===2) s += F(`M${X-23} 32 Q${X-25} 44 ${X-21} 52 L${X-20} 36Z`, hr)+F(`M${X+23} 32 Q${X+25} 44 ${X+21} 52 L${X+20} 36Z`, hr)+`<ellipse cx="${X-6}" cy="24" rx="7" ry="3" fill="#fff" opacity=".25"/>`;
-    if (style===3) s += C(X,11,7,hr)+C(X-2,9,2,hrL)+F(`M${X-23} 42 Q${X-25} 15 ${X} 15 Q${X+25} 15 ${X+23} 42 Q${X+20} 24 ${X} 23 Q${X-20} 24 ${X-23} 42Z`, hr);
-    if (style===4) s += Array.from({length:13},(_,i)=>{const a=Math.PI*(1.05+i*0.075);return C(X+24*Math.cos(a), 34+20*Math.sin(a), 6, hr);}).join("")+C(X-8,18,2,hrL)+C(X+6,16,2,hrL);
-    if (look===1) s += F(`M${X-40} 26 Q${X} 32 ${X+40} 26 Q${X+34} 20 ${X+22} 22 L${X-22} 22 Q${X-34} 20 ${X-40} 26Z`,"#8b5a2b")+F(`M${X-21} 23 Q${X-22} 4 ${X} 6 Q${X+22} 4 ${X+21} 23Z`,"#8b5a2b")+R(X-21,18,42,4,"#4a2a10")+L(`M${X-8} 8 Q${X} 12 ${X+8} 8`,"#6a4220",1);
-    // face
-    s += L(`M${X-16} 39 Q${X-10} 36 ${X-5} 39`, hr, 2)+L(`M${X+5} 39 Q${X+10} 36 ${X+16} 39`, hr, 2);
-    const eyes = `<ellipse cx="${X-10}" cy="45" rx="4.2" ry="2.6" fill="#fff"/><ellipse cx="${X+10}" cy="45" rx="4.2" ry="2.6" fill="#fff"/>`+C(X-10,45,2,"#3b2a1a")+C(X+10,45,2,"#3b2a1a")+C(X-9.3,44.3,.7,"#fff")+C(X+10.7,44.3,.7,"#fff");
-    s += L(`M${X} 46 Q${X-3} 56 ${X-2} 58 Q${X} 60 ${X+3} 58`, skD, 1.2);
-    if (shades){
-      s += F(`M${X-19} 41 L${X-2} 41 L${X-3} 49 Q${X-11} 52 ${X-18} 48Z`,"#111")+F(`M${X+19} 41 L${X+2} 41 L${X+3} 49 Q${X+11} 52 ${X+18} 48Z`,"#111")+
-        R(X-2,42,4,1.5,"#111")+L(`M${X-19} 42 L${X-23} 44 M${X+19} 42 L${X+23} 44`,"#111",1.5)+L(`M${X-16} 43 L${X-12} 43 M${X+6} 43 L${X+10} 43`,"#6a8aaa",1);
-      s += L(`M${X-6} 66 Q${X+1} 68 ${X+7} 65`, "#7a2a2a", 1.5);
-    } else {
-      const gy = look===1 ? 25 : 28; // sunglasses pushed up on the forehead
-      s += eyes+F(`M${X-17} ${gy} L${X-3} ${gy} L${X-4} ${gy+5} Q${X-10} ${gy+7} ${X-16} ${gy+4}Z`,"#111")+F(`M${X+17} ${gy} L${X+3} ${gy} L${X+4} ${gy+5} Q${X+10} ${gy+7} ${X+16} ${gy+4}Z`,"#111")+R(X-3,gy,6,1.5,"#111")+L(`M${X-14} ${gy+1.5} L${X-10} ${gy+1.5} M${X+6} ${gy+1.5} L${X+10} ${gy+1.5}`,"#6a8aaa",1);
-      s += F(`M${X-8} 65 Q${X} 72 ${X+8} 65 Q${X} 68 ${X-8} 65Z`, "#fff")+L(`M${X-8} 65 Q${X} 72 ${X+8} 65`, "#7a2a2a", 1.3);
-    }
-    if (look===4) s += L(`M${X-24} 46 Q${X-34} 84 ${X} 93 Q${X+34} 84 ${X+24} 46`, "#e8c35a", .9);
-    if (look===0) s += F(`M${X} 84 L${X-11} 78 L${X-11} 90Z`,"#7b2a8c")+F(`M${X} 84 L${X+11} 78 L${X+11} 90Z`,"#5e1f6b")+R(X-2.5,81.5,5,5,"#9b3aac")+C(X-6,82,.8,"#fff")+C(X+6,86,.8,"#fff");
-
-    // ---- hobby gear ----
+    // ---- wall prop for their background: always framed and hung on the wall (top right) ----
+    const frame = (inner, wood="#6a4220") => R(124,6,32,22,wood)+R(126,8,28,18,"#1e2228")+inner;
     s += [
-      L("M151 119 L141 44","#cfcfcf",2)+F("M141 44 L133 42 Q131 46 135 48 L142 47Z","#888")+C(153,114,2.6,"#fff")+C(152.4,113.4,.5,"#ccc"),
-      R(X+14,94,26,17,"#fff")+R(X+14,94,26,3,"#b01e23")+T(X+27,108,9,"26.2","#111")+C(X+16,99,.9,"#999")+C(X+38,99,.9,"#999"),
-      L(`M${X-14} 80 L${X-8} 96 M${X+14} 80 L${X+8} 96`,"#222",1.2)+R(X-13,95,10,12,"#222")+R(X+3,95,10,12,"#222")+R(X-3,98,6,4,"#444")+C(X-8,106,3.5,"#3a5a7a")+C(X+8,106,3.5,"#3a5a7a")+C(X-9,105,1,"#9fd8ff")+C(X+7,105,1,"#9fd8ff"),
-      F("M133 60 Q133 54 141 54 Q149 54 149 60 L149 76 Q149 82 141 82 Q133 82 133 76Z","#2fbf5a")+F("M137 82 L145 82 L144 98 L138 98Z","#111")+C(126,58,4.5,"#f2e64a")+C(125,57,.8,"#c8bc20")+C(127.5,59.5,.8,"#c8bc20"),
-      L("M155 119 L131 24","#7a4a1c",2)+L("M131 24 Q102 -2 72 12 Q58 20 63 30","#fff",.6)+F("M61 30 l4 0 l-2 4Z","#ff5555")+R(150,100,6,6,"#444"),
+      R(124,6,32,22,"#8a5a2b")+R(126,8,28,18,"#fff6dc")+T(140,15,4.6,"DOCTORATE","#4a3a20")+R(131,18,18,1,"#8a7a5a")+R(133,21,14,1,"#8a7a5a")+R(147,22,4,4,"#b8302a"),
+      frame(P("M128 24 L134 19 L140 21 L151 11","","#4dff88",1.5)+R(149,10,3,3,"#4dff88")+T(133,13,4,"Q3","#4dff88")),
+      frame(R(132,13,16,8,"#8b4513")+R(130,15,2,4,"#8b4513")+R(148,15,2,4,"#8b4513")+R(134,16.5,12,1,"#fff")+[136,139,142,145].map(x=>R(x,15.5,1,3,"#fff")).join("")),
+      frame(R(126,8,28,18,"#1a3a8a")+R(137,13,6,6,"#d9b04e")+R(139,15,2,2,"#1a3a8a"),"#8a7a5a"),
+      frame([132,140,148].map(x => R(x-3,16,6,2,"#f2d04a")+R(x-1,13,2,8,"#f2d04a")+R(x-2,14.5,4,5,"#f2d04a")).join("")),
+    ][bg];
+
+    // ---- a wall shelf with a few books, and their hobby gear where it would really sit ----
+    if (hobby===0) s += R(146,78,12,42,"#1f4fa8")+R(146,84,12,3,"#fff")+R(146,110,12,3,"#fff")+R(147,68,2,10,"#ccc")+R(151,66,2,12,"#ccc")+R(155,69,2,9,"#ccc")+R(146,66,4,3,"#888")+R(150,64,4,3,"#888")+R(154,67,4,3,"#888");
+    if (hobby===4) s += P("M157 119 L148 26","","#7a4a1c",2)+R(153,100,5,5,"#444")+P("M148 26 L145 34 L147 42","","#fff",.6)+R(145.5,42,3,3,"#ff5555");
+    s += R(118,62,36,3,"#7a5232")+R(120,65,2,5,"#5a3a22")+R(150,65,2,5,"#5a3a22");
+    s += R(120,48,4,14,"#b8302a")+R(124.5,50,3.5,12,"#1f4fa8")+R(128.5,47,4,15,"#2f8f3a")+R(133,51,3,11,"#d9b04e");
+    s += [
+      R(144,58,4,4,"#fff")+R(145.5,62,1,0,"#fff"),
+      P("M142 65 L146 72 L150 65","","#b8302a",1.2)+R(143.5,71,5,5,"#d9b04e")+R(145,72.5,2,2,"#b8902e"),
+      R(140,55,10,6,"#7a5232")+R(148,52,5,5,"#7a5232")+R(152,53.5,3,1.5,"#d9b04e")+R(140,57,4,2,"#5a3a22")+R(142,61,1,1,"#333")+R(146,61,1,1,"#333"),
+      R(140,43,10,13,"#2fbf5a")+R(141,44,8,1.5,"#5fdf8a")+R(143.5,56,3,6,"#111")+R(147,58,4,4,"#f2e64a")+R(148,59,1,1,"#c8bc20"),
+      R(138,57,12,5,"#5a6068")+R(139,58,10,1,"#8a8f96"),
     ][hobby];
 
+    // ---- hair behind the body (long styles) ----
+    if (style===1) s += R(X-30,24,60,54,hr);
+
+    // ---- outfit: background sets the jacket; red blazer and fleece vest override ----
+    const OUT = [["#8b5a2b","#6a4220"],["#1f2a4a","#141c33"],["#b8302a","#8a2420"],["#5a5f66","#41454a"],["#3b5323","#2a3b18"]];
+    let [jk, jkS] = OUT[bg];
+    if (look===3) [jk, jkS] = ["#d8262c","#a81c20"];
+    if (look===2) [jk, jkS] = ["#cfe0f5","#a9c0dd"];
+    s += P(`M${X-54} 120 L${X-50} 94 L${X-38} 86 L${X+38} 86 L${X+50} 94 L${X+54} 120Z`, jk);
+    s += P(`M${X+20} 86 L${X+38} 86 L${X+50} 94 L${X+54} 120 L${X+30} 120Z`, jkS);
+    if (bg===2){ // polo: collar and buttons
+      s += P(`M${X-12} 84 L${X} 94 L${X+12} 84 L${X+6} 84 L${X} 90 L${X-6} 84Z`,"#fff")+R(X-1,90,2,10,jkS)+R(X-1,92,2,2,"#fff")+R(X-1,96,2,2,"#fff");
+    } else {
+      s += P(`M${X-12} 84 L${X} 106 L${X+12} 84Z`, bg===4 ? "#c9b98a" : "#f6f6f6");
+      if (look!==2) s += P(`M${X-12} 84 L${X-22} 92 L${X-8} 116 L${X} 106Z`, jkS)+P(`M${X+12} 84 L${X+22} 92 L${X+8} 116 L${X} 106Z`, jkS);
+      if (look!==0 && (bg===1 || bg===3 || bg===4)) s += P(`M${X-3} 88 L${X+3} 88 L${X+2} 92 L${X+4} 106 L${X} 110 L${X-4} 106 L${X-2} 92Z`, bg===4 ? "#222" : bg===1 ? "#1f4fa8" : "#b8302a");
+      if (look!==2) s += R(X-3,110,2,2,"#222")+R(X-3,115,2,2,"#222");
+    }
+    if (look===2) s += P(`M${X-50} 120 L${X-46} 96 L${X-30} 88 L${X-12} 86 L${X-4} 120Z`,"#26324d")+P(`M${X+50} 120 L${X+46} 96 L${X+30} 88 L${X+12} 86 L${X+4} 120Z`,"#1c263b")+R(X-5,96,1,24,"#bbb")+R(X+4,96,1,24,"#999");
+    if (bg===4) s += R(X-46,88,16,4,"#d9b04e")+R(X+30,88,16,4,"#d9b04e")+R(X-39,89,2,2,"#fff")+R(X+37,89,2,2,"#fff")+
+      [["#b8302a","#1a3a8a","#f2d04a"],["#2f8f3a","#fff","#b8302a"]].map((row,r)=>row.map((f,i)=>R(X-30+i*5,98+r*4,5,3,f)).join("")).join("");
+    if (bg===3) s += R(X+22,94,4,4,"#d9b04e");
+
+    // ---- neck and head, same blocky build as everyone else ----
+    s += R(X-10,70,20,16,sk)+R(X-10,74,20,4,"rgba(0,0,0,.18)");
+    s += R(X-24,28,48,46,sk)+R(X-28,46,4,10,sk)+R(X+24,46,4,10,skS)+R(X+16,30,8,44,"rgba(0,0,0,.08)");
+    // hair on top
+    if (style===0) s += R(X-26,22,52,12,hr)+R(X-26,30,6,8,hr)+R(X-18,24,20,2,"rgba(255,255,255,.18)");
+    if (style===1) s += R(X-26,22,52,10,hr)+R(X-26,30,8,14,hr)+R(X+18,30,8,14,hr)+R(X-16,24,18,2,"rgba(255,255,255,.18)");
+    if (style===2) s += R(X-26,30,6,12,hr)+R(X+20,30,6,12,hr)+R(X-10,30,14,3,"rgba(255,255,255,.25)");
+    if (style===3) s += R(X-6,10,12,12,hr)+R(X-26,22,52,9,hr)+R(X-4,12,4,2,"rgba(255,255,255,.2)");
+    if (style===4) for (let i=0;i<7;i++) s += R(X-28+i*8,18+(i%2)*3,8,10,hr);
+    // women's buns and curls frame the face with hair down the sides
+    if (c.g==="f" && style===3) s += R(X-28,30,6,22,hr)+R(X+22,30,6,22,hr);
+    if (c.g==="f" && style===4) s += R(X-32,26,9,30,hr)+R(X+23,26,9,30,hr)+R(X-32,52,7,8,hr)+R(X+25,52,7,8,hr);
+    if (look===1) s += R(X-38,22,76,5,"#8b5a2b")+R(X-22,6,44,17,"#8b5a2b")+R(X-22,17,44,4,"#4a2a10");
+    // face
+    s += R(X-15,39,10,2,hr==="#d9b04e"?"#a0782a":hr)+R(X+5,39,10,2,hr==="#d9b04e"?"#a0782a":hr);
+    s += R(X-2,50,4,9,"rgba(0,0,0,.12)")+R(X-4,58,8,2,"rgba(0,0,0,.2)");
+    s += R(X-19,55,6,4,"rgba(255,80,80,.14)")+R(X+13,55,6,4,"rgba(255,80,80,.14)");
+    if (shades){
+      s += R(X-18,43,15,9,"#111")+R(X+3,43,15,9,"#111")+R(X-3,45,6,2,"#111")+R(X-24,44,6,2,"#111")+R(X+18,44,6,2,"#111")+R(X-16,44,5,2,"#56708a")+R(X+5,44,5,2,"#56708a");
+      s += R(X-8,64,16,2,c.g==="f" ? "#b8304a" : "#7a2a2a");
+    } else {
+      s += R(X-15,45,10,5,"#fff")+R(X-12,45,4,5,"#2a1a10")+R(X-11,45,1,1,"#fff")+R(X+5,45,10,5,"#fff")+R(X+8,45,4,5,"#2a1a10")+R(X+9,45,1,1,"#fff");
+      const gy = look===1 ? 23 : 28; // sunglasses pushed up onto the forehead
+      s += R(X-18,gy,15,6,"#111")+R(X+3,gy,15,6,"#111")+R(X-3,gy+1,6,2,"#111");
+      const lip = c.g==="f" ? "#b8304a" : "#7a2a2a";
+      s += R(X-10,63,20,3,lip)+R(X-8,63,16,1.5,"#fff")+R(X-12,61,2,2,lip)+R(X+10,61,2,2,lip);
+      if (c.g==="f") s += R(X-17,44,2,2,"#1a1a1a")+R(X+15,44,2,2,"#1a1a1a");
+    }
+    if (look===4) s += P(`M${X-25} 48 L${X-30} 78 L${X} 92 L${X+30} 78 L${X+25} 48`,"","#e8c35a",.9);
+    if (look===0) s += P(`M${X} 86 L${X-11} 80 L${X-11} 92Z`,"#7b2a8c")+P(`M${X} 86 L${X+11} 80 L${X+11} 92Z`,"#5e1f6b")+R(X-3,83,6,6,"#9b3aac");
+
+    // ---- hobby gear they're wearing ----
+    if (hobby===1) s += R(X+14,96,26,16,"#fff")+R(X+14,96,26,3,"#b8302a")+T(X+27,109,9,"26.2","#111")+R(X+15,99,1.5,1.5,"#999")+R(X+37.5,99,1.5,1.5,"#999");
+    if (hobby===2) s += P(`M${X-14} 84 L${X-8} 96 M${X+14} 84 L${X+8} 96`,"","#222",1.2)+R(X-14,95,10,13,"#222")+R(X+4,95,10,13,"#222")+R(X-4,98,8,4,"#444")+R(X-12,104,6,4,"#3a5a7a")+R(X+6,104,6,4,"#3a5a7a");
+
     // ---- priority, in a speech bubble ----
-    const say = sayOverride || ["AAU OR BUST!","ENROLLMENT!","BALANCE IT!","GO BIG RED!","MENTAL HEALTH!"][plan];
-    s += `<rect x="3" y="4" width="62" height="18" rx="5" fill="#fff" stroke="#111" stroke-width="1"/>`+F("M44 21 L54 30 L50 21Z","#fff")+L("M44 21.5 L54 30 L50 21.5","#111",1)+T(34,16,7.5,say,"#111");
-    return `<svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="shape-rendering:geometricPrecision">${s}</svg>`;
+    const say = ["AAU OR BUST!","ENROLLMENT!","BALANCE IT!","GO BIG RED!","MENTAL HEALTH!"][plan];
+    s += R(3,4,64,18,"#111")+R(4,5,62,16,"#fff")+P("M44 21 L52 30 L50 21Z","#111")+P("M45 21 L51.5 28 L49.5 21Z","#fff")+T(35,16,7.5,say,"#111");
+    return svg(s);
   }
 
   // ---------- campus ----------
@@ -1048,6 +1056,8 @@ footer a{color:var(--red)}
   ];
 
   const NAMES = ["Dr. Cornelius Husk","Dr. Platte Rivers","Sandy Hills","Dr. Hilda Crane","Scott S. Bluff","Carl Henge","Dr. Arbor Dey","Meadow Larkin","Rod Golden","Rhonda Runza","Dr. Uni Cameral","Seymour Sower","Dr. Cornelia Cobb","Cy Lowe","Wendell Chill","Dr. Chim Rockwell"];
+  // which candidates are women, so their portraits match their names
+  const WOMEN = new Set(["Sandy Hills","Dr. Hilda Crane","Dr. Arbor Dey","Meadow Larkin","Rhonda Runza","Dr. Uni Cameral","Dr. Cornelia Cobb","Dr. Chim Rockwell"]);
   // Who the Board picks instead. Made up.
   const PRIORITY = [
     {who:"Buck Wheaton", desc:"a regional bank executive who once donated a scoreboard"},
@@ -1238,7 +1248,7 @@ footer a{color:var(--red)}
         for (let c=1;c<pool.length;c++) if (pool[c].every((v,k) => k===skip || v===tt[k])) { ok=false; break; }
       if (!ok) continue;
       const order = shuffle(pool.map((_,i) => i)), names = shuffle(NAMES);
-      cands = order.map((pi,i) => ({name:names[i], t:pool[pi]}));
+      cands = order.map((pi,i) => ({name:names[i], g: WOMEN.has(names[i]) ? "f" : "m", t:pool[pi]}));
       target = order.indexOf(0);
       break;
     }
