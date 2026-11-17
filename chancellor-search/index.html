@@ -81,6 +81,7 @@ footer a{color:var(--red)}
 .sc .pxwrap svg.pxtext{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto}
 .tx{grid-area:tx;padding:12px 16px;overflow-y:auto;min-height:260px;max-height:440px}
 .tx p{margin:0 0 .55em}
+.tx .ty-off{visibility:hidden}
 .tx .who{color:var(--g-cyan);text-transform:uppercase}
 .tx .dim{color:var(--g-gray)}
 .tx .hot{color:var(--g-yellow)}
@@ -597,7 +598,7 @@ footer a{color:var(--red)}
       [74.5,78.8,83.1].forEach(x => { s += R(x,19,2.4,20,"#2f3540"); for (let y=21;y<39;y+=2.5) s += R(x,y,2.4,.6,"#8a8f96"); });
       s += R(72,42,16,1,LD)+R(77,G-8,6,8,"#3a302a");
       // trees and lawn
-      s += C(8,G-26,14,"#3f7f35")+C(152,G-26,14,"#3f7f35");
+      s += R(7,G-14,2,14,"#6b4a2b")+R(151,G-14,2,14,"#6b4a2b")+C(8,G-26,14,"#3f7f35")+C(152,G-26,14,"#3f7f35");
       s += magnolia(20)+magnolia(140);
       s += R(0,G,160,120-G,"url(#p-grass)")+R(0,G+8,160,2,"#d6d0c4");
       return svg(s);
@@ -756,14 +757,15 @@ footer a{color:var(--red)}
   };
 
   // ---------- retro pixel look for the location scenes ----------
-  // Each scene is drawn once onto a 160x120 pixel grid, then restyled like an old PC game: a fixed 35-color
+  // Each scene is drawn once onto a 160x120 pixel grid, then restyled like an old PC game: a fixed 37-color
   // palette, ordered (Bayer) dithering for in-between shades, dark pixel edges where light meets dark,
   // and faint CRT scanlines. It's shown scaled up with hard pixel edges. Until a scene's pixel version
   // is ready, the plain drawing shows instead.
   const hexRGB = h => [1,3,5].map(i => parseInt(h.slice(i,i+2),16));
   const RETRO = ["#101018","#3a3a46","#6c6c78","#a8a8b4","#e0e0e8","#ffffff","#5a1810","#8c2c1c","#b8442c","#e05a40","#6a4a2c","#9a7448","#c8a878","#e8d4a8",
     "#1e4a1e","#3a7a2a","#6ab040","#1c2c6c","#3a5aa8","#5a8ad8","#9cc4f0","#d8a020","#f8e070","#a03c8c","#e070c0","#2a6a7a","#5aa8b8","#3a2418",
-    "#ffdcbc","#f2c49a","#e0a878","#c88a58","#a86c40","#7a4a28","#5a3420"].map(hexRGB); // the last seven are skin tones
+    "#ffdcbc","#f2c49a","#e0a878","#c88a58","#a86c40","#7a4a28","#5a3420", // skin tones
+    "#e8a0c8","#f6d0e4"].map(hexRGB); // blossom pinks
   const BAYER = [[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
   const luma = c => .3*c[0] + .59*c[1] + .11*c[2];
   function nearestRetro(c){
@@ -1019,10 +1021,10 @@ footer a{color:var(--red)}
       desc:"Love Library is named for Don L. Love, a former mayor of Lincoln, not the feeling. During finals week it inspires neither.",
       src:[{l:"Ask a librarian",w:"librarian",k:"talk",n:"The librarian"},{l:"Talk to a grad student",w:"grad",k:"talk",n:"A grad student, from behind a fort of books"},{l:"Check the suggestion box",w:"note",k:"read",n:"The suggestion box",v:"A folded note reads:"}]},
     union:{name:"Nebraska Union", map:[70,86], region:"city",
-      desc:"The Nebraska Union is the heart of City Campus: a food court, meeting rooms and a coffee line that moves at the speed of shared governance.",
-      src:[{l:"Talk to a student at the food court",w:"student",k:"talk",n:"A student, mid-chicken strip"},{l:"Drop by student government",w:"asun",k:"talk",n:"A student senator"},{l:"Hold a listening session",w:"session",k:"session"}]},
+      desc:"The Nebraska Union is the heart of City Campus. Its food court has been under construction for so long that this year's freshmen assume the plywood is part of the design.",
+      src:[{l:"Talk to a student by the construction fence",w:"student",k:"talk",n:"A student eating lunch next to the construction fence"},{l:"Drop by student government",w:"asun",k:"talk",n:"A student senator"},{l:"Hold a listening session",w:"session",k:"session"}]},
     stadium:{name:"Memorial Stadium", map:[44,58], region:"city",
-      desc:"Memorial Stadium has sold out every home game since 1962, the longest streak in college football. On game days it becomes one of the biggest cities in Nebraska.",
+      desc:"Memorial Stadium has sold out every home game since 1962, the longest streak in college football. The streak gets a lot easier when the athletic department buys whatever tickets are left.",
       src:[{l:"Talk to a season-ticket holder",w:"booster",k:"talk",n:"A season-ticket holder"},{l:"Ask an assistant coach",w:"coach",k:"talk",n:"An assistant coach"},{l:"Hold a listening session in a suite",w:"session",k:"session"}]},
     morrill:{name:"Morrill Hall", map:[72,62], region:"city",
       desc:"Morrill Hall, home of the University of Nebraska State Museum, houses Archie, one of the largest mounted mammoth skeletons in the world. A bronze Archie stands guard out front. He has outlasted every chancellor.",
@@ -1088,7 +1090,7 @@ footer a{color:var(--red)}
   const DEST = {
     canfield:["Somebody in the administration building knows more than they're saying.","Go ask the provost's office. They're pretending not to know anything."],
     love:["Try the library. The grad students basically live in the stacks now.","Go somewhere quiet with a lot of books and a lot of overdue fines."],
-    union:["You should hear from student government. They meet in the Union.","Go where the students are: the food court."],
+    union:["You should hear from student government. They meet in the Union.","Go where the students are: the Union, wherever they've moved the food court this semester."],
     stadium:["The boosters want a say. Try the place with all the red seats.","Talk to the people who care about Saturdays."],
     morrill:["Go ask Archie. He's been on campus longer than any chancellor.","Go see the mammoth. Trust me."],
     sheldon:["The arts faculty are meeting somewhere with a lot of travertine.","Check with the museum crowd. The one with the sculpture garden."],
@@ -1280,21 +1282,34 @@ footer a{color:var(--red)}
   let typer = null, menuItems = [], sel = 0, menuMode = "list", portalState = null;
 
   function finishTyping(){ if (typer){ typer.finish(); return true; } return false; }
+  // Types text in letter by letter, but the full text is laid out (invisibly) from the start,
+  // so the text box never grows mid-typing and the menu below it never jumps.
   function typeHTML(html){
     if (typer) typer.finish();
     tx.innerHTML = html; tx.scrollTop = 0;
     if (reduceMotion) return;
-    const nodes = [], w = document.createTreeWalker(tx, NodeFilter.SHOW_TEXT);
-    let n; while ((n = w.nextNode())) { nodes.push([n, n.nodeValue]); n.nodeValue = ""; }
+    const texts = [], w = document.createTreeWalker(tx, NodeFilter.SHOW_TEXT);
+    let n; while ((n = w.nextNode())) texts.push(n);
+    const parts = texts.map(t => {
+      const full = t.nodeValue, shown = document.createTextNode(""), hidden = document.createElement("span");
+      hidden.className = "ty-off"; hidden.textContent = full;
+      t.parentNode.insertBefore(shown, t); t.parentNode.replaceChild(hidden, t);
+      return { shown, hidden, full };
+    });
     let i = 0, j = 0;
     const id = setInterval(() => {
       for (let k=0;k<3;k++){
-        if (i >= nodes.length) { done(); return; }
-        const [node, full] = nodes[i]; j++; node.nodeValue = full.slice(0,j);
-        if (j >= full.length){ i++; j = 0; }
+        if (i >= parts.length) { done(); return; }
+        const p = parts[i]; j++;
+        p.shown.nodeValue = p.full.slice(0,j); p.hidden.textContent = p.full.slice(j);
+        if (j >= p.full.length){ i++; j = 0; }
       }
     }, 18);
-    function done(){ clearInterval(id); nodes.forEach(([nd,f]) => nd.nodeValue = f); typer = null; }
+    function done(){
+      clearInterval(id);
+      parts.forEach(p => { p.shown.nodeValue = p.full; if (p.hidden.parentNode) p.hidden.remove(); });
+      typer = null;
+    }
     typer = { finish: done };
   }
   function setHead(title, t){ hd.innerHTML = `<b>${esc(title)}</b>${t!=null ? esc(fmtTime(t)) : "&nbsp;"}`; }
