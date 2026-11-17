@@ -973,8 +973,8 @@ footer a{color:var(--red)}
       desc:"Nebraska Innovation Campus rose on the old State Fair grounds next to City Campus. Today it's full of labs, startups and corporate partners in lanyards.",
       src:[{l:"Ask a startup founder",w:"founder",k:"talk",n:"A startup founder"},{l:"Ask a researcher in the lab",w:"scientist",k:"talk",n:"A researcher"},{l:"Hold a listening session",w:"session",k:"session"}]},
     fountain:{name:"Broyhill Fountain", map:[70,80], region:"city",
-      desc:"Broyhill Fountain splashes on the plaza by the Nebraska Union. It's the traditional site of first dates, protests and, apparently, search committee business.",
-      src:[{l:"Talk to a student protester",w:"activist",k:"talk",n:"A student protester"},{l:"Ask a couple on a first date",w:"student",k:"talk",n:"Someone on a first date"},{l:"Read the sidewalk chalk",w:"note",k:"read",n:"The sidewalk chalk",v:"In pink chalk:"}]},
+      desc:"Broyhill Fountain splashes on the plaza by the Nebraska Union. It's a favorite spot for lunch on the ledge, protests and, apparently, search committee business.",
+      src:[{l:"Talk to a student protester",w:"activist",k:"talk",n:"A student protester"},{l:"Talk to a student eating lunch on the ledge",w:"student",k:"talk",n:"A student eating lunch on the fountain ledge"},{l:"Read the sidewalk chalk",w:"note",k:"read",n:"The sidewalk chalk",v:"In pink chalk:"}]},
     kauffman:{name:"Kauffman Center", map:[80,70], region:"city",
       desc:"The Kauffman Academic Residential Center is home to the Jeffrey S. Raikes School of Computer Science and Management. Somewhere inside, a student is building an app to rank chancellor candidates.",
       src:[{l:"Ask a Raikes student",w:"coder",k:"talk",n:"A Raikes student, not looking up from their laptop"},{l:"Ask a computer science professor",w:"prof",k:"talk",n:"A computer science professor"},{l:"Read the group chat",w:"note",k:"read",n:"The group chat",v:"A pinned message says:"}]},
@@ -989,9 +989,9 @@ footer a{color:var(--red)}
       src:[{l:"Talk to a volleyball fan",w:"booster",k:"talk",n:"A volleyball season-ticket holder"},{l:"Ask a team manager",w:"coach",k:"talk",n:"A team manager"},{l:"Hold a listening session courtside",w:"session",k:"session"}]},
     mueller:{name:"Mueller Tower", map:[66,70], region:"city",
       desc:"The Ralph Mueller Carillon Tower chimes over City Campus. It's also the most popular landmark for telling someone where to meet you.",
-      src:[{l:"Ask the carillonneur",w:"docent",k:"talk",n:"The carillonneur"},{l:"Talk to a student napping on the lawn",w:"student",k:"talk",n:"A student, mostly asleep"},{l:"Read the bell schedule",w:"note",k:"read",n:"The bell schedule",v:"Someone scribbled in the margin:"}]},
+      src:[{l:"Ask a campus tour guide",w:"docent",k:"talk",n:"A campus tour guide, walking backward"},{l:"Talk to a student napping on the lawn",w:"student",k:"talk",n:"A student, mostly asleep"},{l:"Read the bell schedule",w:"note",k:"read",n:"The bell schedule",v:"Someone scribbled in the margin:"}]},
     selleck:{name:"Selleck Quadrangle", map:[88,74], region:"city",
-      desc:"Nobody lives in Selleck Quadrangle anymore, but its dining center is still one of the busiest on City Campus. Every opinion on campus passes through the dessert line eventually.",
+      desc:"Nobody lives in Selleck Quadrangle anymore, but its dining center is still one of the busiest on City Campus. Every opinion on campus gets aired over lunch there eventually.",
       src:[{l:"Ask a dining hall worker",w:"scooper",k:"talk",n:"A dining hall worker"},{l:"Talk to a student in the lunch line",w:"freshman",k:"talk",n:"A student waiting for chicken strips"},{l:"Read the napkin board",w:"note",k:"read",n:"The napkin board",v:"A napkin taped to the board reads:"}]},
     capitol:{name:"State Capitol", map:[80,112], region:"downtown",
       desc:"The Nebraska State Capitol towers over downtown Lincoln with the Sower on top. Inside, the Unicameral is the only one-house state legislature in the country.",
@@ -1027,7 +1027,7 @@ footer a{color:var(--red)}
     westbrook:["The music faculty have opinions. Follow the sound of a tuba.","Go ask the folks at the music building. They're rehearsing a protest song."],
     hawks:["The business school wants a say. Look for the people in suits.","Try the building where everyone's practicing their elevator pitch."],
     devaney:["The volleyball fans want to be heard. Go where the team usually plays.","Ask the people who sell out every volleyball match."],
-    mueller:["Go to the bell tower. Someone up there hears everything.","Listen for the bells. The carillon player knows a lot."],
+    mueller:["Go to the bell tower. Half of campus uses it as a meeting spot.","Listen for the bells and follow them to the tower."],
     selleck:["Try the dining hall where nobody lives upstairs anymore.","Go to the old quad. Nobody lives there, but everybody eats there."],
     capitol:["The state senators have opinions. Go downtown, to the tallest building in Lincoln.","Ask the lawmakers. Look for the Sower on top of the tower."],
     haymarket:["The alumni are holding court downtown, near the arena.","Go where the old warehouses turned into bars. The alums are there."],
@@ -1077,6 +1077,11 @@ footer a{color:var(--red)}
   const NAMES = ["Dr. Cornelius Husk","Dr. Platte Rivers","Sandy Hills","Dr. Hilda Crane","Scott S. Bluff","Carl Henge","Dr. Arbor Dey","Meadow Larkin","Rod Golden","Rhonda Runza","Dr. Uni Cameral","Seymour Sower","Dr. Cornelia Cobb","Cy Lowe","Wendell Chill","Dr. Chim Rockwell"];
   // which candidates are women, so their portraits match their names
   const WOMEN = new Set(["Sandy Hills","Dr. Hilda Crane","Dr. Arbor Dey","Meadow Larkin","Rhonda Runza","Dr. Uni Cameral","Dr. Cornelia Cobb","Dr. Chim Rockwell"]);
+  // he/she pronouns for a candidate or Board pick, from their name
+  const PRO = g => g==="f" ? {they:"she", them:"her", their:"her", They:"She", is:"is"} : {they:"he", them:"him", their:"his", They:"He", is:"is"};
+  const proFor = c => PRO(c && (c.g || (WOMEN.has(c.name) || PRI_WOMEN.has(c.who) ? "f" : "m")));
+  const PRI_WOMEN = new Set(["Barb Wire","Ella Vator","Gale Force","Tillie Fields","Sunny Prairie"]);
+  const fill = (text, pr) => text.replace(/\{their\}/g, pr.their).replace(/\{them\}/g, pr.them).replace(/\{they\}/g, pr.they).replace(/\{They\}/g, pr.They);
   // Who the Board picks instead. Made up.
   const PRIORITY = [
     {who:"Buck Wheaton", desc:"a regional bank executive who once donated a scoreboard"},
@@ -1099,17 +1104,17 @@ footer a{color:var(--red)}
   // What happened to last round's pick, which is why we're searching again.
   const FATES = [
     "lasted 19 days before taking a job at a university in Iowa",
-    "resigned after asking, in their first speech, where the ocean was",
+    "resigned after asking, in {their} first speech, where the ocean was",
     "was quietly reassigned to 'special advisor' after mixing up UNL and UNO in a press release",
     "turned out to be allergic to corn",
     "was named athletic director instead, somehow",
-    "left halfway through their first Board meeting and has not been seen since",
+    "left halfway through {their} first Board meeting and has not been seen since",
     "never actually signed the contract",
     "accepted the job, then accepted a better one in Texas the same afternoon",
     "tried to move the chancellor's office into Memorial Stadium's press box",
     "announced a 'listening tour' and was never heard from again",
     "replaced every faculty meeting with a podcast",
-    "resigned after their first budget presentation was mostly clip art",
+    "resigned after {their} first budget presentation was mostly clip art",
     "got lost on East Campus for three days",
     "was hired away by a university with a bigger parking garage",
     "tried to sell naming rights to Love Library",
@@ -1131,14 +1136,14 @@ footer a{color:var(--red)}
     finals:{text:"It's finals week. Listening sessions take an extra hour because everyone shows up to complain about exams."},
   };
   const VOTES = [
-    'The committee votes 14-1 to recommend them. (The lone "no" was the student representative, who was in a midterm and voted by text by accident.)',
+    'The committee votes 14-1 to recommend {them}. (The lone "no" was the student representative, who was in a midterm and voted by text by accident.)',
     "The committee votes unanimously, which has never happened before. Two members have to sit down.",
     "The vote is 9-6 after a 40-minute debate about whether 'synergy' counts as a qualification.",
-    "The committee approves them by voice vote. Someone on Zoom yells 'aye' from a car wash.",
+    "The committee approves {them} by voice vote. Someone on Zoom yells 'aye' from a car wash.",
     "The vote is 12-2-1. The abstention was the parliamentarian, who fell asleep during roll call.",
     "The committee votes 15-0, then spends an hour arguing over who gets to send the email.",
     "The vote passes 11-4 after the Faculty Senate rep demands a recount of a show of hands.",
-    "The committee approves them 13-1. The 'no' vote says they just wanted to see what would happen.",
+    "The committee approves {them} 13-1. The 'no' vote says they just wanted to see what would happen.",
     "The vote is 10-5. The five 'no' votes are all from people who thought this was the parking committee.",
     "The committee votes 14-0 by email reply-all. It takes 212 messages.",
   ];
@@ -1446,7 +1451,7 @@ footer a{color:var(--red)}
       <p>2. Enter what you learn in the search portal until only one candidate matches. That's who you're looking for.</p>
       <p>3. Rumor has it that candidate is scouting campus incognito, deciding whether they even want the job. When the trail runs out, approach them at the last stop and talk them into staying in the search.</p>`;
     } else {
-      const p = S.prev, pri = PRIORITY[p.pri] || PRIORITY[0], who = esc(pri.who), fate = esc(FATES[S.fateIdx]), tgt = esc(p.target), st = esc(startName);
+      const p = S.prev, pri = PRIORITY[p.pri] || PRIORITY[0], who = esc(pri.who), fate = esc(fill(FATES[S.fateIdx], proFor(pri))), tgt = esc(p.target), tp = proFor({name:p.target}), st = esc(startName);
       const v = arr => arr[(S.round + me.name.length) % arr.length]; // rotates each round, so the wording keeps changing
       const head = v(["*** The search reopens ***","*** Here we go again ***","*** Search committee: reconvened ***","*** Another chancellor, another search ***","*** Back to the search ***"]);
       const recap = v([`Previously: the Board skipped the committee's work and named ${who} chancellor. ${who} ${fate}.`,
@@ -1456,10 +1461,10 @@ footer a{color:var(--red)}
         `The ${who} era is over already. ${who} ${fate}.`]);
       const yours = p.outcome==="win"
         ? v([`Your committee's pick, ${tgt}, has stopped returning your calls.`,
-             `${tgt}, the candidate you found, now lists "almost UNL chancellor" on their LinkedIn.`,
+             `${tgt}, the candidate you found, now lists "almost UNL chancellor" on ${tp.their} LinkedIn.`,
              `${tgt}, your committee's pick, took a job somewhere with a beach.`,
              `${tgt} sent the committee a thank-you card addressed to "the search committee (if it still exists)."`,
-             `${tgt} has moved on. You still think about them sometimes.`])
+             `${tgt} has moved on. You still think about ${tp.them} sometimes.`])
         : v(["The Board had removed you from the committee, but nobody else would take the job, so you're back.",
              "You were kicked off the committee. Then nobody else would sit through the meetings. Welcome back.",
              "Your lanyard has been mysteriously reactivated.",
@@ -1508,7 +1513,7 @@ footer a{color:var(--red)}
     const L = LOC[S.cur];
     setHead(L.name, S.t);
     sc.innerHTML = SCENES[S.cur]();
-    const tip = atFinal() ? `<p class="hot">Someone in sunglasses is quietly taking photos of everything and asking strangers about parking. That has to be the candidate, scouting campus!</p><p class="dim">${S.rec==null ? "You don't know who you're looking for yet. Use the search portal before you approach them." : "Approach them when you're ready."}</p>` : "";
+    const tip = atFinal() ? `<p class="hot">Someone in sunglasses is quietly taking photos of everything and asking strangers about parking. That has to be the candidate, scouting campus!</p><p class="dim">${S.rec==null ? "You don't know who you're looking for yet. Use the search portal before you approach " + proFor(S.cands[S.target]).them + "." : "Approach " + proFor(S.cands[S.target]).them + " when you're ready."}</p>` : "";
     typeHTML(extra + tip + `<p>${L.desc}</p>`);
     setMenu(locMenu());
   }
@@ -1654,7 +1659,7 @@ footer a{color:var(--red)}
     S.rec = null;
     if (ps.vals.every(v => v<0)) ps.msg = `<p class="dim">You need at least one trait. The search firm suggests "${esc(S.buzz)}."</p>`;
     else if (m.length===0) ps.msg = `<p class="hot">No candidate in the pool matches. Have you considered the Board's preferred candidate?</p>`;
-    else if (m.length===1){ S.rec = m[0]; ps.msg = `<p class="hot">Only one match: ${esc(S.cands[m[0]].name)}.</p><p>That's who you're looking for. Now find them before they leave town.</p>`; }
+    else if (m.length===1){ S.rec = m[0]; ps.msg = `<p class="hot">Only one match: ${esc(S.cands[m[0]].name)}.</p><p>That's who you're looking for. Now find ${proFor(S.cands[m[0]]).them} before ${proFor(S.cands[m[0]]).they} leaves town.</p>`; }
     else ps.msg = `<p>${m.length} possible candidates:</p><p class="mag">${m.map(i => esc(S.cands[i].name)).join(", ")}</p><p class="dim">Keep listening to narrow it down.</p>`;
     renderPortal();
     sel = 0; paintSel();
@@ -1662,24 +1667,24 @@ footer a{color:var(--red)}
 
   // ---------- endings ----------
   function encounter(pre){
-    const T_ = S.cands[S.target];
+    const T_ = S.cands[S.target], tp = proFor(T_);
     sc.innerHTML = candidatePortrait(T_, S.rec !== S.target);
     let html = pre + `<p class="who">!!! Candidate spotted !!!</p><p>Behind a pillar, someone in sunglasses and ${esc(["a bow tie","cowboy boots","a fleece vest","a red blazer","reading glasses on a chain"][T_.t[2]])} is pretending to read a campus map.</p>`;
     if (S.rec === S.target){
-      html += `<p>"Hello, ${esc(T_.name)}," you say. They push their sunglasses up onto their forehead. You found them.</p><p class="mag">${TRAITS.map((tr,k) => esc(tr.vals[T_.t[k]][0])).join(" · ")}</p><p>Exactly who campus asked for. You make your pitch, and they agree to stay in the search.</p><p>${esc(VOTES[(S.round-1) % VOTES.length])}</p>`;
+      html += `<p>"Hello, ${esc(T_.name)}," you say. ${tp.They} pushes ${tp.their} sunglasses up onto ${tp.their} forehead. You found ${tp.them}.</p><p class="mag">${TRAITS.map((tr,k) => esc(tr.vals[T_.t[k]][0])).join(" · ")}</p><p>Exactly who campus asked for. You make your pitch, and ${tp.they} agrees to stay in the search.</p><p>${esc(fill(VOTES[(S.round-1) % VOTES.length], tp))}</p>`;
       typeHTML(html); setMenu([{label:"Send your recommendation to the Board", fn: () => emailEnding("win")}]);
     } else if (S.rec != null){
-      html += `<p>"Hello, ${esc(S.cands[S.rec].name)}!" you say.</p><p>They lower their sunglasses and stare at you. "Wrong name," they say coldly. "Come back when you've done your homework."</p>`;
+      html += `<p>"Hello, ${esc(S.cands[S.rec].name)}!" you say.</p><p>${tp.They} lowers ${tp.their} sunglasses and stares at you. "Wrong name," ${tp.they} says coldly. "Come back when you've done your homework."</p>`;
       if (S.final){
         const r2 = spend(4);
         if (r2.out) return endTimeout();
         setHead(LOC[S.cur].name, S.t);
-        html += `<p class="hot">They storm off to cool down. It takes four hours to coax them back to the same pillar.</p>`;
+        html += `<p class="hot">${tp.They} storms off to cool down. It takes four hours to coax ${tp.them} back to the same pillar.</p>`;
       }
       html += `<p class="dim">Recheck your notes and the search portal, then try again. The clock is still running.</p>`;
       typeHTML(html); setMenu(locMenu());
     } else {
-      html += `<p>You don't know who you're looking for, so you just stand there and wave. The stranger slowly backs away.</p><p class="dim">Use the search portal to figure out who this is, then approach them again. The clock is still running.</p>`;
+      html += `<p>You don't know who you're looking for, so you just stand there and wave. The stranger slowly backs away.</p><p class="dim">Use the search portal to figure out who this is, then approach ${tp.them} again. The clock is still running.</p>`;
       typeHTML(html); setMenu(locMenu());
     }
   }
@@ -1719,7 +1724,7 @@ footer a{color:var(--red)}
       <p>The Board of Regents has named <span class="hot">${esc(me.name)}</span> the sole priority candidate for chancellor.</p>
       <p>${esc(me.name)} did not apply. Nobody on the search committee was consulted, including ${esc(me.name)}.</p>
       <p>The candidate you found, ${esc(S.cands[S.target].name)}, sends a fruit basket and a note that just says "Good luck."</p>
-      <p>Then your phone buzzes again. The Daily Nebraskan is sending a photographer to Canfield in 20 minutes for the front page.</p>`);
+      <p>Then your phone buzzes again. The Daily Nebraskan is sending a photographer to Canfield in 20 minutes for its story.</p>`);
     setMenu([{label:"Get ready for your picture", fn: screenAvatar}]);
   }
   // ---------- picture day: the player customizes how they look in the DN ----------
@@ -1747,7 +1752,7 @@ footer a{color:var(--red)}
     const st = avatarState;
     sc.innerHTML = avatarSVG("SAY CHEESE!");
     const rows = AV_ROWS.map(([label, opts, key], i) => `<tr class="${st.focusRows && i===st.row ? "sel":""}"><td>${label}:</td><td><button type="button" data-r="${i}" data-d="-1" aria-label="Previous ${label}">&lt;</button>${esc(opts[avatarVals[key]])}<button type="button" data-r="${i}" data-d="1" aria-label="Next ${label}">&gt;</button></td></tr>`).join("");
-    tx.innerHTML = `<p class="who">Get ready for your picture</p><p class="dim">The Daily Nebraskan photographer is setting up. How do you want to look on the front page?</p>
+    tx.innerHTML = `<p class="who">Get ready for your picture</p><p class="dim">The Daily Nebraskan photographer is setting up. How do you want to look in the story?</p>
       <table class="portal">${rows}</table>
       <p class="dim" style="margin-top:.5em">${st.focusRows ? "Up/down picks a row, left/right changes it. Tab jumps to the menu." : "Tab jumps back to your look."}</p>`;
     tx.querySelectorAll("button[data-r]").forEach(b => b.addEventListener("click", () => { st.row = +b.dataset.r; st.focusRows = true; avatarCycle(+b.dataset.d); }));
@@ -1758,9 +1763,9 @@ footer a{color:var(--red)}
     avatarState = null;
     me.avatar = {...avatarVals}; store.save(DB);
     sc.innerHTML = avatarSVG("CHANCELLOR!");
-    typeHTML(`<p class="who">The Daily Nebraskan · Front page</p>
+    typeHTML(`<p class="who">dailynebraskan.com · Breaking news</p>
       <p class="hot">"Search committee member named chancellor; search committee not consulted"</p>
-      <p>The photo runs above the fold. Your mom buys 12 copies.</p>`);
+      <p>The story goes up on the Daily Nebraskan's website with your photo at the top. Your mom shares it 12 times.</p>`);
     setMenu([{label:"Go to your first day", fn: finaleEpilogue}]);
   }
   function finaleEpilogue(){
@@ -1847,7 +1852,7 @@ footer a{color:var(--red)}
     sc.innerHTML = SCENES.canfield();
     const v = arr => arr[(S.round - 1) % arr.length];
     typeHTML(`<p class="who">Breaking news</p><p>The Board of Regents has named a sole priority candidate for chancellor: <span class="hot">${esc(pri.who)}, ${esc(pri.desc)}</span>.</p>
-      <p>${v(["Nobody on the search committee has met them. You learn the news the same way everyone else does: by reading The Daily Nebraskan.",
+      <p>${v([`Nobody on the search committee has met ${proFor(pri).them}. You learn the news the same way everyone else does: by reading The Daily Nebraskan.`,
         "The committee finds out from a Daily Nebraskan story that runs before the Board's announcement does.",
         "Nobody tells the committee. You read about it in The Daily Nebraskan over lunch.",
         "The Daily Nebraskan breaks the news before the committee's group chat does.",
