@@ -149,7 +149,7 @@ footer a{color:var(--red)}
   <p class="kicker">A Daily Nebraskan Game</p>
   <h1>Who in the World Is <em>UNL&#39;s Next Chancellor?</em></h1>
   <p class="dek">UNL needs a new chancellor, and you've been appointed to the search committee. Walk across campus, talk to people and hold listening sessions to find out what kind of leader campus wants and where to look next. Word is the best candidate in the pool is secretly scouting campus before deciding whether to stay in the race. Use the search portal to figure out who it is, then track them down and convince them to stay before the Board of Regents meets Friday at 5 p.m.</p>
-  <p class="dek" style="margin-top:10px">Every action takes time. If nobody at a stop has heard anything about the search, you've wandered off the trail, so head back. When someone mentions a stranger in sunglasses asking around, the next stop is the last one. Figure out who you're looking for, go there and investigate to find them.</p>
+  <p class="dek" style="margin-top:10px">Every action takes time. If nobody at a stop has heard anything about the search, you've wandered off the trail, so head back. When someone mentions a stranger in sunglasses asking around, the next stop is the last one. Figure out who you're looking for, go there and approach them. Places on the same campus are a walk apart; getting between City Campus, East Campus, Innovation Campus and downtown means taking the shuttle.</p>
   <div class="rule"><span id="rankLabel">Case file · Chancellor search</span><span>Arrow keys + Enter, number keys, or click</span></div>
 
   <div class="cs" id="game" tabindex="0" aria-label="Who in the World Is UNL&#39;s Next Chancellor? game">
@@ -803,13 +803,14 @@ footer a{color:var(--red)}
   // A candidate's look comes from their five traits: background sets the outfit and wall
   // prop, plus hobby gear, signature look, ride and a speech bubble for their priority.
   // Drawn in the same blocky style as everyone else in the game, just with more detail.
-  function candidatePortrait(c, shades){
+  function candidatePortrait(c, shades, o={}){
     let h = 7; for (const ch of c.name) h = (h*31 + ch.charCodeAt(0)) >>> 0;
     const [bg, hobby, look, plan, ride] = c.t;
     const SKN = [["#f0c08c","#d9a271"],["#c68642","#a86d32"],["#ffd9b5","#ebbd93"],["#8d5524","#734318"],["#e0ac69","#c99252"]];
     const HRS = ["#2a1a10","#3a3a3a","#7a3d10","#d9b04e","#b8b8b8","#5a1a10"];
-    const [sk, skS] = SKN[h % SKN.length], hr = HRS[(h>>>3) % HRS.length];
-    const style = c.g==="f" ? [1,1,3,4][(h>>>6) % 4] : c.g==="m" ? [0,2,4][(h>>>6) % 3] : (h>>>6) % 5;
+    const [sk, skS] = SKN[o.skin ?? (h % SKN.length)], hr = HRS[o.hairColor ?? ((h>>>3) % HRS.length)];
+    const style = o.hair ?? (c.g==="f" ? [1,1,3,4][(h>>>6) % 4] : c.g==="m" ? [0,2,4][(h>>>6) % 3] : (h>>>6) % 5);
+    const has = k => look===k || o.acc===k; // signature look, or an accessory the player picked
     const X = 88; // body center; the head spans X-24..X+24
     let s = "";
 
@@ -823,7 +824,7 @@ footer a{color:var(--red)}
       `<circle cx="16" cy="92" r="6" fill="none" stroke="#2a2a2a" stroke-width="1.4"/><circle cx="38" cy="92" r="6" fill="none" stroke="#2a2a2a" stroke-width="1.4"/>`+P("M16 92 L24 82 L34 82 L38 92 M24 82 L28 92 L34 82 M22 78 L26 78 M34 82 L33 78 L37 78","","#c8232c",1.4),
       R(9,74,34,2,"#2f8f3a")+R(11,76,1.5,10,"#aaa")+R(40,76,1.5,10,"#aaa")+R(9,84,34,6,"#f4f4f4")+R(14,80,14,4,"#2f8f3a")+wheel(15,91)+wheel(37,91),
       R(12,90,24,2.5,"#2f8f3a")+R(32,74,2,17,"#555")+R(27,73,11,2,"#333")+wheel(14,94)+wheel(34,94),
-    ][ride];
+    ][ride] || "";
 
     // the window's center bar sits in front of whatever is parked outside
     s += R(27,57,2,46,"#f2efe6")+R(2,103,52,3,"#e2ddd2");
@@ -849,7 +850,7 @@ footer a{color:var(--red)}
       R(140,55,10,6,"#7a5232")+R(148,52,5,5,"#7a5232")+R(152,53.5,3,1.5,"#d9b04e")+R(140,57,4,2,"#5a3a22")+R(142,61,1,1,"#333")+R(146,61,1,1,"#333"),
       R(140,43,10,13,"#2fbf5a")+R(141,44,8,1.5,"#5fdf8a")+R(143.5,56,3,6,"#111")+R(147,58,4,4,"#f2e64a")+R(148,59,1,1,"#c8bc20"),
       R(138,57,12,5,"#5a6068")+R(139,58,10,1,"#8a8f96"),
-    ][hobby];
+    ][hobby] || "";
 
     // ---- hair behind the body (long styles) ----
     if (style===1) s += R(X-30,24,60,54,hr);
@@ -866,7 +867,7 @@ footer a{color:var(--red)}
     } else {
       s += P(`M${X-12} 84 L${X} 106 L${X+12} 84Z`, bg===4 ? "#c9b98a" : "#f6f6f6");
       if (look!==2) s += P(`M${X-12} 84 L${X-22} 92 L${X-8} 116 L${X} 106Z`, jkS)+P(`M${X+12} 84 L${X+22} 92 L${X+8} 116 L${X} 106Z`, jkS);
-      if (look!==0 && (bg===1 || bg===3 || bg===4)) s += P(`M${X-3} 88 L${X+3} 88 L${X+2} 92 L${X+4} 106 L${X} 110 L${X-4} 106 L${X-2} 92Z`, bg===4 ? "#222" : bg===1 ? "#1f4fa8" : "#b8302a");
+      if (!has(0) && (bg===1 || bg===3 || bg===4)) s += P(`M${X-3} 88 L${X+3} 88 L${X+2} 92 L${X+4} 106 L${X} 110 L${X-4} 106 L${X-2} 92Z`, bg===4 ? "#222" : bg===1 ? "#1f4fa8" : "#b8302a");
       if (look!==2) s += R(X-3,110,2,2,"#222")+R(X-3,115,2,2,"#222");
     }
     if (look===2) s += P(`M${X-50} 120 L${X-46} 96 L${X-30} 88 L${X-12} 86 L${X-4} 120Z`,"#26324d")+P(`M${X+50} 120 L${X+46} 96 L${X+30} 88 L${X+12} 86 L${X+4} 120Z`,"#1c263b")+R(X-5,96,1,24,"#bbb")+R(X+4,96,1,24,"#999");
@@ -886,7 +887,7 @@ footer a{color:var(--red)}
     // women's buns and curls frame the face with hair down the sides
     if (c.g==="f" && style===3) s += R(X-28,30,6,22,hr)+R(X+22,30,6,22,hr);
     if (c.g==="f" && style===4) s += R(X-32,26,9,30,hr)+R(X+23,26,9,30,hr)+R(X-32,52,7,8,hr)+R(X+25,52,7,8,hr);
-    if (look===1) s += R(X-38,22,76,5,"#8b5a2b")+R(X-22,6,44,17,"#8b5a2b")+R(X-22,17,44,4,"#4a2a10");
+    if (has(1)) s += R(X-38,22,76,5,"#8b5a2b")+R(X-22,6,44,17,"#8b5a2b")+R(X-22,17,44,4,"#4a2a10");
     // face
     s += R(X-15,39,10,2,hr==="#d9b04e"?"#a0782a":hr)+R(X+5,39,10,2,hr==="#d9b04e"?"#a0782a":hr);
     s += R(X-2,50,4,9,"rgba(0,0,0,.12)")+R(X-4,58,8,2,"rgba(0,0,0,.2)");
@@ -896,94 +897,94 @@ footer a{color:var(--red)}
       s += R(X-8,64,16,2,c.g==="f" ? "#b8304a" : "#7a2a2a");
     } else {
       s += R(X-15,45,10,5,"#fff")+R(X-12,45,4,5,"#2a1a10")+R(X-11,45,1,1,"#fff")+R(X+5,45,10,5,"#fff")+R(X+8,45,4,5,"#2a1a10")+R(X+9,45,1,1,"#fff");
-      const gy = look===1 ? 23 : 28; // sunglasses pushed up onto the forehead
-      s += R(X-18,gy,15,6,"#111")+R(X+3,gy,15,6,"#111")+R(X-3,gy+1,6,2,"#111");
+      const gy = has(1) ? 23 : 28; // sunglasses pushed up onto the forehead
+      if (!o.noShades) s += R(X-18,gy,15,6,"#111")+R(X+3,gy,15,6,"#111")+R(X-3,gy+1,6,2,"#111");
       const lip = c.g==="f" ? "#b8304a" : "#7a2a2a";
       s += R(X-10,63,20,3,lip)+R(X-8,63,16,1.5,"#fff")+R(X-12,61,2,2,lip)+R(X+10,61,2,2,lip);
       if (c.g==="f") s += R(X-17,44,2,2,"#1a1a1a")+R(X+15,44,2,2,"#1a1a1a");
     }
-    if (look===4) s += P(`M${X-25} 48 L${X-30} 78 L${X} 92 L${X+30} 78 L${X+25} 48`,"","#e8c35a",.9);
-    if (look===0) s += P(`M${X} 86 L${X-11} 80 L${X-11} 92Z`,"#7b2a8c")+P(`M${X} 86 L${X+11} 80 L${X+11} 92Z`,"#5e1f6b")+R(X-3,83,6,6,"#9b3aac");
+    if (has(4)) s += P(`M${X-25} 48 L${X-30} 78 L${X} 92 L${X+30} 78 L${X+25} 48`,"","#e8c35a",.9);
+    if (has(0)) s += P(`M${X} 86 L${X-11} 80 L${X-11} 92Z`,"#7b2a8c")+P(`M${X} 86 L${X+11} 80 L${X+11} 92Z`,"#5e1f6b")+R(X-3,83,6,6,"#9b3aac");
 
     // ---- hobby gear they're wearing ----
     if (hobby===1) s += R(X+14,96,26,16,"#fff")+R(X+14,96,26,3,"#b8302a")+T(X+27,109,9,"26.2","#111")+R(X+15,99,1.5,1.5,"#999")+R(X+37.5,99,1.5,1.5,"#999");
     if (hobby===2) s += P(`M${X-14} 84 L${X-8} 96 M${X+14} 84 L${X+8} 96`,"","#222",1.2)+R(X-14,95,10,13,"#222")+R(X+4,95,10,13,"#222")+R(X-4,98,8,4,"#444")+R(X-12,104,6,4,"#3a5a7a")+R(X+6,104,6,4,"#3a5a7a");
 
     // ---- priority, in a speech bubble ----
-    const say = ["AAU OR BUST!","ENROLLMENT!","BALANCE IT!","GO BIG RED!","MENTAL HEALTH!"][plan];
+    const say = o.say || ["AAU OR BUST!","ENROLLMENT!","BALANCE IT!","GO BIG RED!","MENTAL HEALTH!"][plan];
     s += R(3,4,64,18,"#111")+R(4,5,62,16,"#fff")+P("M44 21 L52 30 L50 21Z","#111")+P("M45 21 L51.5 28 L49.5 21Z","#fff")+T(35,16,7.5,say,"#111");
     return svg(s);
   }
 
   // ---------- campus ----------
   const LOC = {
-    canfield:{name:"Canfield Admin", map:[78,88],
+    canfield:{name:"Canfield Admin", map:[76,88], region:"city",
       desc:"The Canfield Administration Building houses the chancellor's office, the registrar and a hallway of framed portraits of chancellors past. There's an empty nail at the end. The carving across the top still says 'Teachers College.' Nobody has found the budget to change it.",
       src:[{l:"Ask the front desk",w:"staff",k:"talk",n:"The receptionist"},{l:"Read the provost's sticky notes",w:"note",k:"read",n:"A sticky note on a monitor",v:"It reads:"},{l:"Hold a listening session",w:"session",k:"session"}]},
-    love:{name:"Love Library", map:[72,58],
+    love:{name:"Love Library", map:[64,78], region:"city",
       desc:"Love Library is named for Don L. Love, a former mayor of Lincoln, not the feeling. During finals week it inspires neither.",
       src:[{l:"Ask a librarian",w:"librarian",k:"talk",n:"The librarian"},{l:"Talk to a grad student",w:"grad",k:"talk",n:"A grad student, from behind a fort of books"},{l:"Check the suggestion box",w:"note",k:"read",n:"The suggestion box",v:"A folded note reads:"}]},
-    union:{name:"Nebraska Union", map:[67,73],
+    union:{name:"Nebraska Union", map:[70,86], region:"city",
       desc:"The Nebraska Union is the heart of City Campus: a food court, meeting rooms and a coffee line that moves at the speed of shared governance.",
       src:[{l:"Talk to a student at the food court",w:"student",k:"talk",n:"A student, mid-chicken strip"},{l:"Drop by student government",w:"asun",k:"talk",n:"A student senator"},{l:"Hold a listening session",w:"session",k:"session"}]},
-    stadium:{name:"Memorial Stadium", map:[40,48],
+    stadium:{name:"Memorial Stadium", map:[44,58], region:"city",
       desc:"Memorial Stadium has sold out every home game since 1962, the longest streak in college football. On game days it becomes one of the biggest cities in Nebraska.",
       src:[{l:"Talk to a season-ticket holder",w:"booster",k:"talk",n:"A season-ticket holder"},{l:"Ask an assistant coach",w:"coach",k:"talk",n:"An assistant coach"},{l:"Hold a listening session in a suite",w:"session",k:"session"}]},
-    morrill:{name:"Morrill Hall", map:[90,70],
+    morrill:{name:"Morrill Hall", map:[72,62], region:"city",
       desc:"Morrill Hall, home of the University of Nebraska State Museum, houses Archie, one of the largest mounted mammoth skeletons in the world. A bronze Archie stands guard out front. He has outlasted every chancellor.",
       src:[{l:"Ask a museum docent",w:"docent",k:"talk",n:"The docent"},{l:"Consult Archie the mammoth",w:"archie",k:"archie"},{l:"Read the guest book",w:"note",k:"read",n:"The guest book",v:"Today's entry reads:"}]},
-    sheldon:{name:"Sheldon Museum", map:[55,64],
+    sheldon:{name:"Sheldon Museum", map:[56,80], region:"city",
       desc:"The Sheldon Museum of Art was designed by architect Philip Johnson and opened in 1963. Its sculpture garden is a fine place to think deep thoughts, or to cut through on the way to class.",
       src:[{l:"Ask an art professor",w:"prof",k:"talk",n:"An art professor"},{l:"Talk to a student sketching",w:"artist",k:"talk",n:"A student with a sketchbook"},{l:"Read the comment cards",w:"note",k:"read",n:"A comment card",v:"It reads:"}]},
-    dairy:{name:"Dairy Store", map:[148,20], far:true,
+    dairy:{name:"Dairy Store", map:[146,40], region:"east",
       desc:"The Dairy Store on East Campus has been scooping university-made ice cream for generations. Ag students consider it a sacred site.",
       src:[{l:"Ask the person scooping ice cream",w:"scooper",k:"talk",n:"The scooper"},{l:"Talk to an ag student",w:"farmer",k:"talk",n:"An ag student"},{l:"Hold a listening session",w:"session",k:"session"}]},
-    andersen:{name:"Andersen Hall", map:[58,86],
+    andersen:{name:"Andersen Hall", map:[84,92], region:"city",
       desc:"Andersen Hall is home to the College of Journalism and Mass Communications, where student reporters have already filed three public records requests about this search.",
       src:[{l:"Ask a student reporter",w:"reporter",k:"talk",n:"A student reporter, on deadline"},{l:"Ask a journalism professor",w:"prof",k:"talk",n:"A journalism professor"},{l:"Check the anonymous tip line",w:"note",k:"read",n:"The tip line voicemail",v:"A muffled voice says:"}]},
-    lied:{name:"Lied Center", map:[44,92],
+    lied:{name:"Lied Center", map:[54,88], region:"city",
       desc:"The Lied Center for Performing Arts opened in 1990. It hosts touring Broadway shows, orchestras and, this week, a student production about the search.",
       src:[{l:"Ask an usher",w:"usher",k:"talk",n:"An usher"},{l:"Talk to a theater major",w:"actor",k:"talk",n:"A theater major, dramatically"},{l:"Hold a listening session in the lobby",w:"session",k:"session"}]},
-    rec:{name:"Campus Rec", map:[96,40],
+    rec:{name:"Campus Rec", map:[76,48], region:"city",
       desc:"The Campus Recreation Center has a climbing wall, an indoor track and dozens of students pretending they didn't see their professor on the next treadmill.",
       src:[{l:"Ask a trainer",w:"trainer",k:"talk",n:"A personal trainer"},{l:"Talk to someone on the treadmill",w:"student",k:"talk",n:"A student, panting"},{l:"Read the whiteboard",w:"note",k:"read",n:"The whiteboard",v:"Someone wrote:"}]},
-    abel:{name:"Abel Hall", map:[114,46],
+    abel:{name:"Abel Hall", map:[94,46], region:"city",
       desc:"Abel Hall's tower looms over the northeast corner of City Campus. Its residents will be seniors by the time the new chancellor learns their names.",
       src:[{l:"Ask an RA",w:"ra",k:"talk",n:"A resident assistant"},{l:"Talk to a freshman",w:"freshman",k:"talk",n:"A freshman"},{l:"Read the floor bulletin board",w:"note",k:"read",n:"The bulletin board",v:"A flyer says:"}]},
-    innovation:{name:"Innovation Campus", map:[18,24], far:true,
+    innovation:{name:"Innovation Campus", map:[104,24], region:"innovation",
       desc:"Nebraska Innovation Campus rose on the old State Fair grounds next to City Campus. Today it's full of labs, startups and corporate partners in lanyards.",
       src:[{l:"Ask a startup founder",w:"founder",k:"talk",n:"A startup founder"},{l:"Ask a researcher in the lab",w:"scientist",k:"talk",n:"A researcher"},{l:"Hold a listening session",w:"session",k:"session"}]},
-    fountain:{name:"Broyhill Fountain", map:[74,80],
+    fountain:{name:"Broyhill Fountain", map:[70,80], region:"city",
       desc:"Broyhill Fountain splashes on the plaza by the Nebraska Union. It's the traditional site of first dates, protests and, apparently, search committee business.",
       src:[{l:"Talk to a student protester",w:"activist",k:"talk",n:"A student protester"},{l:"Ask a couple on a first date",w:"student",k:"talk",n:"Someone on a first date"},{l:"Read the sidewalk chalk",w:"note",k:"read",n:"The sidewalk chalk",v:"In pink chalk:"}]},
-    kauffman:{name:"Kauffman Center", map:[84,98],
+    kauffman:{name:"Kauffman Center", map:[80,70], region:"city",
       desc:"The Kauffman Academic Residential Center is home to the Jeffrey S. Raikes School of Computer Science and Management. Somewhere inside, a student is building an app to rank chancellor candidates.",
       src:[{l:"Ask a Raikes student",w:"coder",k:"talk",n:"A Raikes student, not looking up from their laptop"},{l:"Ask a computer science professor",w:"prof",k:"talk",n:"A computer science professor"},{l:"Read the group chat",w:"note",k:"read",n:"The group chat",v:"A pinned message says:"}]},
-    westbrook:{name:"Westbrook Music", map:[92,56],
+    westbrook:{name:"Westbrook Music", map:[48,84], region:"city",
       desc:"The Westbrook Music Building is home to the Glenn Korff School of Music. On a quiet day you can hear six instruments practicing six different songs.",
       src:[{l:"Ask a music professor",w:"prof",k:"talk",n:"A music professor"},{l:"Talk to a tuba player",w:"musician",k:"talk",n:"A tuba player, between notes"},{l:"Hold a listening session in the recital hall",w:"session",k:"session"}]},
-    hawks:{name:"Hawks Hall", map:[106,94],
+    hawks:{name:"Hawks Hall", map:[80,58], region:"city",
       desc:"Howard L. Hawks Hall, home of the College of Business, opened in 2017. Its atrium is full of students practicing their elevator pitches.",
       src:[{l:"Ask a student in a suit",w:"asun",k:"talk",n:"A business student in a suit"},{l:"Ask a finance professor",w:"prof",k:"talk",n:"A finance professor"},{l:"Read the stock ticker",w:"note",k:"read",n:"The scrolling ticker",v:"Between stock prices, it says:"}]},
-    devaney:{name:"Devaney Center", map:[34,32],
+    devaney:{name:"Devaney Center", map:[54,40], region:"city",
       desc:"The Bob Devaney Sports Center is home to Husker volleyball. In 2023 the team drew 92,003 fans to Memorial Stadium, a world record for a women's sporting event.",
       src:[{l:"Talk to a volleyball fan",w:"booster",k:"talk",n:"A volleyball season-ticket holder"},{l:"Ask a team manager",w:"coach",k:"talk",n:"A team manager"},{l:"Hold a listening session courtside",w:"session",k:"session"}]},
-    mueller:{name:"Mueller Tower", map:[80,64],
+    mueller:{name:"Mueller Tower", map:[66,70], region:"city",
       desc:"The Ralph Mueller Carillon Tower chimes over City Campus. It's also the most popular landmark for telling someone where to meet you.",
       src:[{l:"Ask the carillonneur",w:"docent",k:"talk",n:"The carillonneur"},{l:"Talk to a student napping on the lawn",w:"student",k:"talk",n:"A student, mostly asleep"},{l:"Read the bell schedule",w:"note",k:"read",n:"The bell schedule",v:"Someone scribbled in the margin:"}]},
-    selleck:{name:"Selleck Quadrangle", map:[100,82],
+    selleck:{name:"Selleck Quadrangle", map:[88,74], region:"city",
       desc:"Nobody lives in Selleck Quadrangle anymore, but its dining center is still one of the busiest on City Campus. Every opinion on campus passes through the dessert line eventually.",
       src:[{l:"Ask a dining hall worker",w:"scooper",k:"talk",n:"A dining hall worker"},{l:"Talk to a student in the lunch line",w:"freshman",k:"talk",n:"A student waiting for chicken strips"},{l:"Read the napkin board",w:"note",k:"read",n:"The napkin board",v:"A napkin taped to the board reads:"}]},
-    capitol:{name:"State Capitol", map:[106,114], far:true,
+    capitol:{name:"State Capitol", map:[80,112], region:"downtown",
       desc:"The Nebraska State Capitol towers over downtown Lincoln with the Sower on top. Inside, the Unicameral is the only one-house state legislature in the country.",
       src:[{l:"Ask a state senator",w:"senator",k:"talk",n:"A state senator"},{l:"Ask a lobbyist",w:"founder",k:"talk",n:"A lobbyist"},{l:"Read the legislative journal",w:"note",k:"read",n:"The legislative journal",v:"An entry reads:"}]},
-    haymarket:{name:"The Haymarket", map:[20,104], far:true,
+    haymarket:{name:"The Haymarket", map:[46,104], region:"downtown",
       desc:"The Haymarket's old brick warehouses are now restaurants and bars, a few blocks from Pinnacle Bank Arena. Alumni gather here to explain how things were better when they were students.",
       src:[{l:"Ask an alum at the bar",w:"booster",k:"talk",n:"An alum, class of '89"},{l:"Ask the bartender",w:"usher",k:"talk",n:"The bartender"},{l:"Hold a listening session at a brewery",w:"session",k:"session"}]},
-    oldfather:{name:"Oldfather Hall", map:[108,62],
+    oldfather:{name:"Oldfather Hall", map:[58,70], region:"city",
       desc:"Oldfather Hall is one of the tallest buildings on City Campus and home to several social science departments, including political science. The poli sci faculty are covering this search like an election night.",
       src:[{l:"Ask a political science professor",w:"prof",k:"talk",n:"A political science professor"},{l:"Talk to a poli sci grad student",w:"grad",k:"talk",n:"A political science grad student, mid-spreadsheet"},{l:"Read the mock election flyer",w:"note",k:"read",n:"A mock election flyer",v:"Under 'Platform,' someone wrote:"}]},
-    eastunion:{name:"East Union", map:[134,30], far:true,
+    eastunion:{name:"East Union", map:[152,48], region:"east",
       desc:"The Nebraska East Union is the student hub of East Campus, home to agricultural sciences, a lot of opinions and a lot more parking than City Campus.",
       src:[{l:"Ask a vet science student",w:"farmer",k:"talk",n:"A veterinary science student"},{l:"Ask an agronomy researcher",w:"scientist",k:"talk",n:"An agronomy researcher"},{l:"Read the 4-H bulletin board",w:"note",k:"read",n:"The bulletin board",v:"A flyer says:"}]},
   };
@@ -1084,8 +1085,8 @@ footer a{color:var(--red)}
   const BUZZ = ["visionary","transformational","synergy","bold","student-centered","innovative"];
   const TWISTS = {
     none:{text:""},
-    shuttle:{text:"Budget cuts: the campus shuttle has been canceled. Trips to East Campus, Innovation Campus and downtown take 2 extra hours."},
-    construction:{text:"It's construction season. Every walk takes an extra hour because of detours."},
+    shuttle:{text:"Budget cuts: the campus shuttle is running half as often. Every trip between City Campus, East Campus, Innovation Campus and downtown takes 2 extra hours."},
+    construction:{text:"It's construction season. Every walk within a campus takes an extra hour because of detours."},
     thursday:{text:"The Board moved its meeting up a day. The recommendation is due Thursday at 5 p.m."},
     catered:{text:"Good news: listening sessions are catered this round, so people actually show up. They take an hour less."},
     intern:{text:"You've been assigned a student intern. Your notebook now labels which trait each clue is about, and the intern is sticking around for every round after this one."},
@@ -1193,6 +1194,9 @@ footer a{color:var(--red)}
 
   game.addEventListener("keydown", e => {
     if (e.target.tagName === "INPUT") return;
+    if (avatarState && (e.key==="ArrowLeft" || e.key==="ArrowRight")) { e.preventDefault(); avatarCycle(e.key==="ArrowRight"?1:-1); return; }
+    if (avatarState && (e.key==="ArrowUp" || e.key==="ArrowDown") && avatarState.focusRows) { e.preventDefault(); avatarMove(e.key==="ArrowDown"?1:-1); return; }
+    if (avatarState && e.key==="Tab"){ e.preventDefault(); avatarState.focusRows = !avatarState.focusRows; renderAvatar(); return; }
     if (portalState && (e.key==="ArrowLeft" || e.key==="ArrowRight")) { e.preventDefault(); portalCycle(e.key==="ArrowRight"?1:-1); return; }
     if (portalState && (e.key==="ArrowUp" || e.key==="ArrowDown") && portalState.focusRows) {
       e.preventDefault(); portalMove(e.key==="ArrowDown"?1:-1); return;
@@ -1203,6 +1207,7 @@ footer a{color:var(--red)}
       e.preventDefault();
       if (finishTyping()) return;
       if (portalState && portalState.focusRows) { portalCycle(1); return; }
+      if (avatarState && avatarState.focusRows) { avatarCycle(1); return; }
       menuItems[sel] && menuItems[sel].fn();
     }
     else if (/^[1-9]$/.test(e.key)){ const i = +e.key-1; if (menuItems[i]) { finishTyping(); sel=i; paintSel(); menuItems[i].fn(); } }
@@ -1233,8 +1238,8 @@ footer a{color:var(--red)}
       const opts = ["none","shuttle","construction","catered","intern"].concat(stops <= 6 ? ["thursday"] : []).filter(t => (!prev || t !== prev.twist || t==="none") && !(t==="intern" && hasIntern()));
       twist = pick(opts);
     }
-    // Build the pool so you need 4 of the 5 traits: for every set of 3 traits there's a
-    // decoy who matches the target on exactly those 3. Any 4 traits still pick out the target.
+    // Build the pool so you need 4 of the 5 traits (all 5 in the final search): for every set of 3
+    // traits there's a decoy who matches the target on exactly those 3.
     let cands, target;
     const other = v => (v + 1 + rnd(4)) % 5;
     const triples = [];
@@ -1242,9 +1247,12 @@ footer a{color:var(--red)}
     for (let tries=0; tries<800; tries++){
       const tt = TRAITS.map(() => rnd(5));
       const pool = [tt, ...triples.map(tr => tt.map((v,k) => tr.includes(k) ? v : other(v)))];
+      // in the final search, add a decoy for every set of 4 traits too, so you need all 5
+      if (final) for (let skip=0; skip<5; skip++) pool.push(tt.map((v,k) => k===skip ? other(v) : v));
       while (pool.length < poolSize) pool.push(TRAITS.map(() => rnd(5)));
       let ok = true;
-      for (let skip=0; skip<5 && ok; skip++)
+      if (final) { for (let c=1;c<pool.length;c++) if (pool[c].every((v,k) => v===tt[k])) { ok=false; break; } }
+      else for (let skip=0; skip<5 && ok; skip++)
         for (let c=1;c<pool.length;c++) if (pool[c].every((v,k) => k===skip || v===tt[k])) { ok=false; break; }
       if (!ok) continue;
       const order = shuffle(pool.map((_,i) => i)), names = shuffle(NAMES);
@@ -1253,8 +1261,10 @@ footer a{color:var(--red)}
       break;
     }
     // where you start: Canfield the first time, then wherever the committee got bumped to
-    const start = round===1 ? "canfield" : pick(LOC_IDS.filter(id => !LOC[id].far && id!=="morrill"));
-    const trail = [start, ...shuffle(LOC_IDS.filter(id => id!==start)).slice(0, stops)];
+    const start = round===1 ? "canfield" : pick(LOC_IDS.filter(id => LOC[id].region==="city" && id!=="morrill"));
+    const recent = new Set(me.rounds.slice(-2).flatMap(r => r.trail || []));
+    const rest = LOC_IDS.filter(id => id!==start);
+    const trail = [start, ...shuffle(rest.filter(id => !recent.has(id))), ...shuffle(rest.filter(id => recent.has(id)))].slice(0, stops+1);
     const first5 = shuffle([0,1,2,3,4]);
     const traitOrder = Array.from({length:stops}, (_,i) => i<5 ? first5[i] : rnd(5));
     // pre-write every clue so asking twice gives the same answer
@@ -1290,12 +1300,13 @@ footer a{color:var(--red)}
     const list = key ? [key, ...pool.slice(0,extra)] : pool.slice(0,extra+1);
     return shuffle(list);
   }
+  // Walking within a region (City Campus, East Campus, Innovation Campus, downtown) takes longer the farther
+  // apart two places really are. Going between regions means the campus shuttle.
+  const needsShuttle = (a, b) => LOC[a].region !== LOC[b].region;
   function walkHours(a, b){
-    const [x1,y1] = LOC[a].map, [x2,y2] = LOC[b].map, far = LOC[a].far || LOC[b].far;
-    let h = Math.min(6, 2 + Math.round(Math.hypot(x2-x1, y2-y1)/32) + (far?1:0));
-    if (S.twist==="shuttle" && far) h += 2;
-    if (S.twist==="construction") h += 1;
-    return h;
+    const [x1,y1] = LOC[a].map, [x2,y2] = LOC[b].map, d = Math.hypot(x2-x1, y2-y1);
+    if (needsShuttle(a,b)) return 2 + Math.round(d/30) + (S.twist==="shuttle" ? 2 : 0);
+    return Math.max(1, 1 + Math.round(d/18)) + (S.twist==="construction" ? 1 : 0);
   }
   // returns {slept, out}
   function spend(h){
@@ -1350,7 +1361,7 @@ footer a{color:var(--red)}
       <p>Your assignment:</p>
       <p>1. Investigate each stop. People will tell you what campus wants in a chancellor and where to go next.</p>
       <p>2. Enter what you learn in the search portal until only one candidate matches. That's who you're looking for.</p>
-      <p>3. Rumor has it that candidate is scouting campus incognito, deciding whether they even want the job. When the trail runs out, investigate the last stop to find them and talk them into staying in the search.</p>`;
+      <p>3. Rumor has it that candidate is scouting campus incognito, deciding whether they even want the job. When the trail runs out, approach them at the last stop and talk them into staying in the search.</p>`;
     } else {
       const p = S.prev, pri = PRIORITY[p.pri] || PRIORITY[0];
       const yours = p.outcome==="win"
@@ -1362,7 +1373,7 @@ footer a{color:var(--red)}
       <p>${esc(p.firm || FIRMS[0])} has been fired. The new firm, ${esc(S.firm)}, has delivered a pool of ${S.cands.length} candidates and a leadership profile that uses the word "${esc(S.buzz)}" ${S.buzzN} times.</p>
       ${S.cur!=="canfield" ? `<p>The committee lost its conference room in Canfield to a "space utilization study," so this round starts at ${esc(startName)}.</p>` : ""}
       <p>Same drill: listen to campus, narrow the pool in the search portal, then find the candidate before they leave town. This trail is ${S.stops} stops long.</p>`;
-      if (S.final) html += `<p class="who">*** Final search ***</p><p class="hot">The Board says this is the last search it will ever need. It's also the hardest: the longest trail, the biggest pool, only one person at each stop will say what they want in a chancellor, and there are more places to wander off to. The Board scheduled a special Saturday meeting to give you a little extra time.</p>${hasIntern() ? `<p class="dim">Your student intern quit to go work for the search firm. You're on your own.</p>` : ""}<p class="dim">Calling the candidate by the wrong name this time costs you half a day while they cool off.</p>`;
+      if (S.final) html += `<p class="who">*** Final search ***</p><p class="hot">The Board says this is the last search it will ever need. It's also the hardest: the longest trail, the biggest pool, only one person at each stop will say what they want in a chancellor, you'll need all five traits to pick out the candidate, and there are more places to wander off to. The Board scheduled a special Saturday meeting to give you a little extra time.</p>${hasIntern() ? `<p class="dim">Your student intern quit to go work for the search firm. You're on your own.</p>` : ""}<p class="dim">Calling the candidate by the wrong name this time costs you half a day while they cool off.</p>`;
       else if (TWISTS[S.twist].text) html += `<p class="hot">This round: ${esc(TWISTS[S.twist].text)}</p>`;
       if (hasIntern() && !S.final) html += `<p class="dim">Your student intern is still here, labeling which trait each clue in your notebook is about.</p>`;
     }
@@ -1371,6 +1382,12 @@ footer a{color:var(--red)}
     setMenu([{label:"Begin the search", fn: () => screenLoc()}]);
   }
   function locMenu(){
+    if (atFinal()) return [
+      {label:"Approach the stranger", fn: approach},
+      {label:"Investigate", fn: screenInvestigate},
+      {label:"Search portal", fn: () => screenPortal()},
+      {label:"Notebook", fn: screenNotes},
+    ];
     return [
       {label:"Walk to...", fn: screenWalk},
       {label:"Investigate", fn: screenInvestigate},
@@ -1383,17 +1400,18 @@ footer a{color:var(--red)}
     const L = LOC[S.cur];
     setHead(L.name, S.t);
     sc.innerHTML = SCENES[S.cur]();
-    const tip = atFinal() ? `<p class="hot">Someone in sunglasses is quietly taking photos of everything and asking strangers about parking. That has to be the candidate, scouting campus!</p><p class="dim">${S.rec==null ? "You don't know who you're looking for yet. Use the search portal before you investigate." : "Investigate to go talk to them."}</p>` : "";
+    const tip = atFinal() ? `<p class="hot">Someone in sunglasses is quietly taking photos of everything and asking strangers about parking. That has to be the candidate, scouting campus!</p><p class="dim">${S.rec==null ? "You don't know who you're looking for yet. Use the search portal before you approach them." : "Approach them when you're ready."}</p>` : "";
     typeHTML(extra + tip + `<p>${L.desc}</p>`);
     setMenu(locMenu());
   }
   function screenWalk(){
     portalState = null;
     sc.innerHTML = SCENES[S.cur]();
-    const items = S.conns.map(id => ({label:`${LOC[id].name} (${walkHours(S.cur,id)} hr)`, fn: () => travel(id)}));
+    const items = S.conns.map(id => ({label:`${LOC[id].name} (${walkHours(S.cur,id)} hr${needsShuttle(S.cur,id) ? ", shuttle" : ""})`, fn: () => travel(id)}));
     items.push({label:"Never mind", fn: () => { typeHTML(`<p>${LOC[S.cur].desc}</p>`); setMenu(locMenu()); }});
-    const via = id => LOC[id].far ? ` <span class="dim">(${S.twist==="shuttle" ? "no shuttle, long walk" : "campus shuttle"})</span>` : "";
-    typeHTML(`<p class="who">Where to?</p><p>From ${LOC[S.cur].name} you can walk to:</p><ul>${S.conns.map(id => `<li>${LOC[id].name}${via(id)}</li>`).join("")}</ul>`);
+    const RG = {city:"City Campus", east:"East Campus", innovation:"Innovation Campus", downtown:"downtown"};
+    const via = id => needsShuttle(S.cur,id) ? ` <span class="dim">(shuttle to ${RG[LOC[id].region]})</span>` : ` <span class="dim">(walk)</span>`;
+    typeHTML(`<p class="who">Where to?</p><p>From ${LOC[S.cur].name} you can go to:</p><ul>${S.conns.map(id => `<li>${LOC[id].name}${via(id)}</li>`).join("")}</ul>`);
     setMenu(items);
   }
   function travel(id){
@@ -1412,18 +1430,21 @@ footer a{color:var(--red)}
     let s = R(0,0,160,120,"#000");
     for (let x=8;x<160;x+=16) s += R(x,0,1,120,"#003333");
     for (let y=8;y<120;y+=16) s += R(0,y,160,1,"#003333");
-    s += R(28,30,100,72,"rgba(170,0,0,.25)")+T(78,27,6,"CITY CAMPUS","#aa0000")+T(140,40,6,"EAST CAMPUS","#00aa00")+T(18,40,6,"INNOVATION","#aaa")+T(62,117,6,"DOWNTOWN","#aa5500");
-    s += P("M0 18 L160 10","","#555",2)+T(150,6,5,"RAILROAD","#555","end");
+    s += R(38,34,64,64,"rgba(170,0,0,.25)")+T(70,31,6,"CITY CAMPUS","#ff5555");
+    s += R(138,32,22,22,"rgba(0,170,0,.25)")+T(149,29,5,"EAST CAMPUS","#55ff55");
+    s += R(94,14,22,18,"rgba(170,170,170,.25)")+T(105,11,5,"INNOVATION","#ccc");
+    s += R(36,99,56,19,"rgba(170,85,0,.25)")+T(64,119,5,"DOWNTOWN","#ffaa55");
+    s += P("M0 28 L160 20","","#555",1.5)+T(4,26,4,"RAILROAD","#777","start");
     LOC_IDS.forEach(id => { const [x,y] = LOC[id].map; s += R(x-1,y-1,3,3, id===from||id===to ? "#ffff55" : "#aaa"); });
     const [x1,y1] = LOC[from].map, [x2,y2] = LOC[to].map;
-    s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ff55ff" stroke-width="1" stroke-dasharray="2 2"/>`;
+    s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${needsShuttle(from,to) ? "#ffff55" : "#ff55ff"}" stroke-width="1" stroke-dasharray="${needsShuttle(from,to) ? "4 2" : "2 2"}"/>`;
     s += T(Math.min(140,Math.max(20,x1)), Math.max(8,y1-4), 6, LOC[from].name, "#fff")+T(Math.min(140,Math.max(20,x2)), Math.min(118,y2+9), 6, LOC[to].name, "#55ffff");
     s += `<circle id="mover" cx="${x1}" cy="${y1}" r="3" fill="#ff55ff"/>`;
     return svg(s);
   }
   function animateMap(from, to, done){
     sc.innerHTML = mapSVG(from, to);
-    typeHTML(`<p>Walking to ${LOC[to].name}...</p><p class="dim">${pick(["You dodge three scooters and a campus tour.","You get stopped twice by people asking if you're on 'the committee.'","You take the long way to avoid a professor you owe an email.","A squirrel watches you with open suspicion.","You check your phone. The search firm has sent another survey.","Someone asks if you're 'the search person.' You say no."])}</p>`);
+    typeHTML(`<p>${needsShuttle(from,to) ? "Taking the shuttle" : "Walking"} to ${LOC[to].name}...</p><p class="dim">${pick(["You dodge three scooters and a campus tour.","You get stopped twice by people asking if you're on 'the committee.'","You take the long way to avoid a professor you owe an email.","A squirrel watches you with open suspicion.","You check your phone. The search firm has sent another survey.","Someone asks if you're 'the search person.' You say no."])}</p>`);
     const m = sc.querySelector("#mover"), [x1,y1] = LOC[from].map, [x2,y2] = LOC[to].map;
     const dur = reduceMotion ? 0 : 1300, t0 = performance.now();
     let finished = false;
@@ -1453,7 +1474,6 @@ footer a{color:var(--red)}
     if (r.out) return endTimeout();
     setHead(L.name, S.t);
     const pre = r.slept ? SLEEP : "";
-    if (atFinal()) return encounter(pre);
     const stop = S.trail.indexOf(S.cur);
     const onTrail = stop >= 0 && stop <= S.progress && stop < S.last;
     const seed = S.seed + i*31 + stop*7 + LOC_IDS.indexOf(S.cur);
@@ -1480,12 +1500,18 @@ footer a{color:var(--red)}
     typeHTML(html);
     setMenu(locMenu());
   }
+  function approach(){
+    const r = spend(1);
+    if (r.out) return endTimeout();
+    setHead(LOC[S.cur].name, S.t);
+    encounter(r.slept ? SLEEP : "");
+  }
   function screenNotes(){
     portalState = null;
     sc.innerHTML = SCENES.note();
     const rec = S.rec!=null ? `<p class="hot">Looking for: ${esc(S.cands[S.rec].name)}</p>` : `<p class="dim">You don't know who you're looking for yet.</p>`;
     const tag = n => internOn() && n.trait>=0 ? ` <span class="mag">[${esc(TRAITS[n.trait].label)}]</span>` : "";
-    const body = S.notes.length ? S.notes.map(n => `<p><span class="who">${esc(n.loc)}:</span> "${esc(n.text)}"${tag(n)}</p>`).join("") : `<p class="dim">Nothing useful yet. Go investigate.</p>`;
+    const body = S.notes.length ? S.notes.slice().reverse().map(n => `<p><span class="who">${esc(n.loc)}:</span> "${esc(n.text)}"${tag(n)}</p>`).join("") : `<p class="dim">Nothing useful yet. Go investigate.</p>`;
     typeHTML(`<p class="who">Your notebook · Round ${S.round}</p>${rec}<p class="dim">Due: ${dueText()}</p>${body}`);
     setMenu([{label:"Close notebook", fn: () => screenLoc()}]);
   }
@@ -1545,7 +1571,7 @@ footer a{color:var(--red)}
       html += `<p class="dim">Recheck your notes and the search portal, then try again. The clock is still running.</p>`;
       typeHTML(html); setMenu(locMenu());
     } else {
-      html += `<p>You don't know who you're looking for, so you just stand there and wave. The stranger slowly backs away.</p><p class="dim">Use the search portal to figure out who this is, then investigate again. The clock is still running.</p>`;
+      html += `<p>You don't know who you're looking for, so you just stand there and wave. The stranger slowly backs away.</p><p class="dim">Use the search portal to figure out who this is, then approach them again. The clock is still running.</p>`;
       typeHTML(html); setMenu(locMenu());
     }
   }
@@ -1574,24 +1600,66 @@ footer a{color:var(--red)}
   }
   function finaleNews(){
     me.wins++;
-    me.rounds.push({ outcome:"chancellor", pri:-1, target:S.cands[S.target].name, firm:S.firm, twist:S.twist });
+    me.rounds.push({ outcome:"chancellor", pri:-1, target:S.cands[S.target].name, firm:S.firm, twist:S.twist, trail:S.trail });
     me.chancellor = { round:S.round };
     me.terms = (me.terms||0) + 1;
     store.save(DB);
     updateRule();
-    sc.innerHTML = candidatePortrait({ name: me.name, t:[0,0,0,0,0].map((_,k) => (me.name.length*7 + k*3) % 5) }, false, "WAIT, WHAT?");
+    avatarVals = me.avatar ? {...me.avatar} : { skin:0, hair:0, hairColor:0, outfit:1, acc:0 };
+    sc.innerHTML = avatarSVG("WAIT, WHAT?");
     typeHTML(`<p class="who">Breaking news</p>
       <p>The Board of Regents has named <span class="hot">${esc(me.name)}</span> the sole priority candidate for chancellor.</p>
       <p>${esc(me.name)} did not apply. Nobody on the search committee was consulted, including ${esc(me.name)}.</p>
       <p>The candidate you found, ${esc(S.cands[S.target].name)}, sends a fruit basket and a note that just says "Good luck."</p>
-      <p>You learn the news the same way everyone else does: by reading The Daily Nebraskan.</p>`);
+      <p>Then your phone buzzes again. The Daily Nebraskan is sending a photographer to Canfield in 20 minutes for the front page.</p>`);
+    setMenu([{label:"Get ready for your picture", fn: screenAvatar}]);
+  }
+  // ---------- picture day: the player customizes how they look in the DN ----------
+  const AV_ROWS = [
+    ["Skin tone", ["Medium","Tan","Light","Deep","Golden"], "skin"],
+    ["Hair", ["Short","Long","Balding","Bun","Curly"], "hair"],
+    ["Hair color", ["Black","Gray","Auburn","Blond","Silver","Red"], "hairColor"],
+    ["Outfit", ["Tweed jacket","Navy suit","Red polo","Gray suit","Red blazer","Fleece vest"], "outfit"],
+    ["Accessory", ["None","Bow tie","Cowboy hat","Glasses chain"], "acc"],
+  ];
+  const OUTFIT = [[0,-1],[1,-1],[2,-1],[3,-1],[1,3],[1,2]]; // [background, signature look] that draws each outfit
+  const ACC = [-1,0,1,4];
+  let avatarVals = null, avatarState = null;
+  function avatarSVG(say, a=avatarVals){
+    const [bg, look] = OUTFIT[a.outfit];
+    return candidatePortrait({ name: me.name, t:[bg,-1,look,0,-1] }, false, { skin:a.skin, hair:a.hair, hairColor:a.hairColor, acc:ACC[a.acc], say, noShades:true });
+  }
+  function screenAvatar(){
+    avatarState = { row:0, focusRows:true };
+    hd.innerHTML = `<b>Canfield Admin</b>Picture day`;
+    renderAvatar();
+    setMenu([{label:"Take the picture", fn: takePicture}]);
+  }
+  function renderAvatar(){
+    const st = avatarState;
+    sc.innerHTML = avatarSVG("SAY CHEESE!");
+    const rows = AV_ROWS.map(([label, opts, key], i) => `<tr class="${st.focusRows && i===st.row ? "sel":""}"><td>${label}:</td><td><button type="button" data-r="${i}" data-d="-1" aria-label="Previous ${label}">&lt;</button>${esc(opts[avatarVals[key]])}<button type="button" data-r="${i}" data-d="1" aria-label="Next ${label}">&gt;</button></td></tr>`).join("");
+    tx.innerHTML = `<p class="who">Get ready for your picture</p><p class="dim">The Daily Nebraskan photographer is setting up. How do you want to look on the front page?</p>
+      <table class="portal">${rows}</table>
+      <p class="dim" style="margin-top:.5em">${st.focusRows ? "Up/down picks a row, left/right changes it. Tab jumps to the menu." : "Tab jumps back to your look."}</p>`;
+    tx.querySelectorAll("button[data-r]").forEach(b => b.addEventListener("click", () => { st.row = +b.dataset.r; st.focusRows = true; avatarCycle(+b.dataset.d); }));
+  }
+  function avatarMove(d){ avatarState.row = (avatarState.row + d + AV_ROWS.length) % AV_ROWS.length; renderAvatar(); }
+  function avatarCycle(d){ const [, opts, key] = AV_ROWS[avatarState.row]; avatarVals[key] = (avatarVals[key] + d + opts.length) % opts.length; renderAvatar(); }
+  function takePicture(){
+    avatarState = null;
+    me.avatar = {...avatarVals}; store.save(DB);
+    sc.innerHTML = avatarSVG("CHANCELLOR!");
+    typeHTML(`<p class="who">The Daily Nebraskan · Front page</p>
+      <p class="hot">"Search committee member named chancellor; search committee not consulted"</p>
+      <p>The photo runs above the fold. Your mom buys 12 copies.</p>`);
     setMenu([{label:"Go to your first day", fn: finaleEpilogue}]);
   }
   function finaleEpilogue(){
     hd.innerHTML = `<b>Canfield Admin</b>Monday, 9 a.m.`;
-    sc.innerHTML = SCENES.canfield();
+    sc.innerHTML = me.avatar ? avatarSVG("I'M IN CHARGE?") : SCENES.canfield();
     typeHTML(`<p class="who">Your first day</p>
-      <p>At the end of the hallway of chancellor portraits, the empty nail finally has something on it. It's you, in the sunglasses.</p>
+      <p>At the end of the hallway of chancellor portraits, the empty nail finally has something on it. It's your Daily Nebraskan photo, in a frame from the campus bookstore.</p>
       <p>Your first official act is to appoint a search committee for a new parking director. You do not attend a single listening session.</p>
       <p>Somewhere on City Campus, a Faculty Senate Alternate is just getting started.</p>
       <p class="mag">THE END</p><p class="dim">Thanks for playing.</p>
@@ -1603,7 +1671,7 @@ footer a{color:var(--red)}
     portalState = null;
     updateRule();
     hd.innerHTML = `<b>Chancellor's Office</b>Canfield Admin`;
-    sc.innerHTML = SCENES.canfield();
+    sc.innerHTML = me.avatar ? avatarSVG("WELCOME BACK!", me.avatar) : SCENES.canfield();
     typeHTML(`<p class="who">Office of the Chancellor</p>
       <p>Welcome back, Chancellor ${esc(me.name)}. There are no more searches. The Board is very happy with its choice.</p>
       <p class="dim">(For now.)</p>
@@ -1650,7 +1718,7 @@ footer a{color:var(--red)}
       if (me.wins > 0){ me.wins--; demo = ` You've been demoted to <span class="hot">${esc(rank())}</span>.`; }
       promo = `<p>The Board has removed you from the search committee, effective immediately. Your lanyard has been deactivated.${demo}</p><p class="dim">(Find the right candidate and send your recommendation before the deadline to earn a promotion.)</p>`;
     }
-    me.rounds.push({ outcome: kind, pri: pi, target: S.cands[S.target].name, firm: S.firm, twist: S.twist });
+    me.rounds.push({ outcome: kind, pri: pi, target: S.cands[S.target].name, firm: S.firm, twist: S.twist, trail: S.trail });
     if (me.rounds.length > 50) me.rounds = me.rounds.slice(-50);
     store.save(DB);
     sc.innerHTML = SCENES.canfield();
